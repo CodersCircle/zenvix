@@ -542,100 +542,8 @@
                 </div>
                 <span class="browser-refresh-btn"><i data-lucide="rotate-cw"></i></span>
             </div>
-            <div class="browser-viewport">
-                <!-- High-Fidelity Website Dashboard Content -->
-                <div class="m3-dashboard">
-                    <div class="m3-sidebar">
-                        <div class="m3-sidebar-brand"><span class="logo-dot"></span> Studio Pro</div>
-                        <div class="m3-sidebar-item active"><i data-lucide="layout-dashboard"></i> Overview</div>
-                        <div class="m3-sidebar-item"><i data-lucide="users"></i> Audience</div>
-                        <div class="m3-sidebar-item"><i data-lucide="bar-chart-2"></i> Analytics</div>
-                        <div class="m3-sidebar-item"><i data-lucide="settings"></i> Settings</div>
-                    </div>
-                    <div class="m3-main-content">
-                        <div class="m3-header">
-                            <div>
-                                <h2 id="m3-site-title">Material 3 Studio</h2>
-                                <p id="m3-site-subtitle">Production Environment Node.js App</p>
-                            </div>
-                            <span class="m3-chip"><span class="chip-dot"></span> Live Syncing</span>
-                        </div>
-                        <div class="m3-grid">
-                            <div class="m3-card m3-card-purple">
-                                <span class="m3-card-title">Monthly Revenue</span>
-                                <span class="m3-card-value" id="m3-val-1">$24,890</span>
-                                <div class="m3-sparkline">
-                                    <div class="spark-point" style="height: 30%"></div>
-                                    <div class="spark-point" style="height: 50%"></div>
-                                    <div class="spark-point" style="height: 40%"></div>
-                                    <div class="spark-point" style="height: 70%"></div>
-                                    <div class="spark-point" style="height: 90%"></div>
-                                </div>
-                                <span class="m3-card-meta text-green">+12.4% this week</span>
-                            </div>
-                            <div class="m3-card m3-card-cyan">
-                                <span class="m3-card-title">Active Requests</span>
-                                <span class="m3-card-value" id="m3-val-2">1,402 /s</span>
-                                <div class="m3-sparkline">
-                                    <div class="spark-point" style="height: 70%"></div>
-                                    <div class="spark-point" style="height: 60%"></div>
-                                    <div class="spark-point" style="height: 80%"></div>
-                                    <div class="spark-point" style="height: 75%"></div>
-                                    <div class="spark-point animate-pulse" style="height: 95%"></div>
-                                </div>
-                                <span class="m3-card-meta text-green">Stable Latency 14ms</span>
-                            </div>
-                            <div class="m3-card m3-card-indigo">
-                                <span class="m3-card-title">Memory Allocation</span>
-                                <span class="m3-card-value" id="m3-val-3">184 MB</span>
-                                <div class="m3-sparkline">
-                                    <div class="spark-point" style="height: 40%"></div>
-                                    <div class="spark-point" style="height: 42%"></div>
-                                    <div class="spark-point" style="height: 38%"></div>
-                                    <div class="spark-point" style="height: 45%"></div>
-                                    <div class="spark-point" style="height: 43%"></div>
-                                </div>
-                                <span class="m3-card-meta">Garbage collection optimized</span>
-                            </div>
-                        </div>
-
-                        <div class="m3-chart-row">
-                            <div class="m3-chart-container main-chart">
-                                <div class="m3-chart-header">
-                                    <h4>Real-time Server Traffic</h4>
-                                    <span class="badge badge-success">Online</span>
-                                </div>
-                                <!-- Sleek CSS bar chart -->
-                                <div class="m3-bar-chart">
-                                    <div class="chart-bar" style="height: 35%;"></div>
-                                    <div class="chart-bar" style="height: 50%;"></div>
-                                    <div class="chart-bar" style="height: 25%;"></div>
-                                    <div class="chart-bar" style="height: 65%;"></div>
-                                    <div class="chart-bar" style="height: 85%;"></div>
-                                    <div class="chart-bar" style="height: 70%;"></div>
-                                    <div class="chart-bar animate-pulse" style="height: 95%;"></div>
-                                </div>
-                            </div>
-                            <div class="m3-recent-activity">
-                                <h4>Active Sessions</h4>
-                                <div class="activity-list">
-                                    <div class="activity-item">
-                                        <span class="activity-badge badge-green">GET</span>
-                                        <span class="activity-text">/api/v1/users (200 OK)</span>
-                                    </div>
-                                    <div class="activity-item">
-                                        <span class="activity-badge badge-green">POST</span>
-                                        <span class="activity-text">/api/v1/auth/login (201 OK)</span>
-                                    </div>
-                                    <div class="activity-item">
-                                        <span class="activity-badge badge-orange">PUT</span>
-                                        <span class="activity-text">/api/v1/settings (304)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="browser-viewport" id="browser-viewport-container">
+                <!-- High-Fidelity Website Dashboard Content Loaded Dynamically from components/dashboard-preview.html -->
             </div>
         </div>
     </div>
@@ -803,15 +711,62 @@
         // 4. Browser Preview Popup Modal Interactivity
         const viewSiteBtns = document.querySelectorAll('.btn-view-site');
         const browserModal = document.getElementById('browser-modal');
+        const browserViewport = document.getElementById('browser-viewport-container');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const modalBrowserBack = document.getElementById('modal-browser-back');
         const modalBrowserUrlText = document.getElementById('modal-browser-url-text');
         const browserModalTitle = document.getElementById('browser-modal-title');
-        const m3SiteTitle = document.getElementById('m3-site-title');
-        const m3SiteSubtitle = document.getElementById('m3-site-subtitle');
-        const m3Val1 = document.getElementById('m3-val-1');
-        const m3Val2 = document.getElementById('m3-val-2');
-        const m3Val3 = document.getElementById('m3-val-3');
+
+        async function loadDashboardPreview(site) {
+            try {
+                // Fetch the separate standalone HTML dashboard component if not loaded
+                if (!browserViewport.querySelector('.m3-dashboard')) {
+                    const response = await fetch('components/dashboard-preview.html');
+                    if (response.ok) {
+                        browserViewport.innerHTML = await response.text();
+                    } else {
+                        console.error("Failed to fetch dashboard component:", response.statusText);
+                    }
+                }
+
+                // Update contents dynamically based on the site clicked!
+                const m3SiteTitle = document.getElementById('m3-site-title');
+                const m3SiteSubtitle = document.getElementById('m3-site-subtitle');
+                const m3Val1 = document.getElementById('m3-val-1');
+                const m3Val2 = document.getElementById('m3-val-2');
+                const m3Val3 = document.getElementById('m3-val-3');
+
+                if (site === 'react-dashboard.test') {
+                    modalBrowserUrlText.innerText = 'https://react-dashboard.test/dashboard';
+                    browserModalTitle.innerText = 'react-dashboard.test - Zenvix Browser Preview';
+                    if (m3SiteTitle) m3SiteTitle.innerText = 'Material 3 Studio';
+                    if (m3SiteSubtitle) m3SiteSubtitle.innerText = 'Production Environment Node.js App';
+                    if (m3Val1) m3Val1.innerText = '$24,890';
+                    if (m3Val2) m3Val2.innerText = '1,402 /s';
+                    if (m3Val3) m3Val3.innerText = '184 MB';
+                } else if (site === 'laravel-blog.test') {
+                    modalBrowserUrlText.innerText = 'https://laravel-blog.test/admin';
+                    browserModalTitle.innerText = 'laravel-blog.test - Zenvix Browser Preview';
+                    if (m3SiteTitle) m3SiteTitle.innerText = 'Laravel Control Panel';
+                    if (m3SiteSubtitle) m3SiteSubtitle.innerText = 'Artisan Engine v10.4';
+                    if (m3Val1) m3Val1.innerText = '8,412 Views';
+                    if (m3Val2) m3Val2.innerText = '42 Active';
+                    if (m3Val3) m3Val3.innerText = '64 MB';
+                } else {
+                    modalBrowserUrlText.innerText = 'https://wordpress-store.test/dashboard';
+                    browserModalTitle.innerText = 'wordpress-store.test - Zenvix Browser Preview';
+                    if (m3SiteTitle) m3SiteTitle.innerText = 'WordPress Storefront';
+                    if (m3SiteSubtitle) m3SiteSubtitle.innerText = 'WooCommerce Cloud Engine';
+                    if (m3Val1) m3Val1.innerText = '14 Orders';
+                    if (m3Val2) m3Val2.innerText = '19.2k Visits';
+                    if (m3Val3) m3Val3.innerText = '112 MB';
+                }
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error("Network error loading dashboard preview component:", err);
+            }
+        }
 
         viewSiteBtns.forEach(btn => {
             btn.addEventListener('click', function (e) {
@@ -821,34 +776,8 @@
                 // Open browser modal popup
                 browserModal.classList.add('show');
 
-                // Update contents dynamically based on the site clicked!
-                if (site === 'react-dashboard.test') {
-                    modalBrowserUrlText.innerText = 'https://react-dashboard.test/dashboard';
-                    browserModalTitle.innerText = 'react-dashboard.test - Zenvix Browser Preview';
-                    m3SiteTitle.innerText = 'Material 3 Studio';
-                    m3SiteSubtitle.innerText = 'Production Environment Node.js App';
-                    m3Val1.innerText = '$24,890';
-                    m3Val2.innerText = '1,402 /s';
-                    m3Val3.innerText = '184 MB';
-                } else if (site === 'laravel-blog.test') {
-                    modalBrowserUrlText.innerText = 'https://laravel-blog.test/admin';
-                    browserModalTitle.innerText = 'laravel-blog.test - Zenvix Browser Preview';
-                    m3SiteTitle.innerText = 'Laravel Control Panel';
-                    m3SiteSubtitle.innerText = 'Artisan Engine v10.4';
-                    m3Val1.innerText = '8,412 Views';
-                    m3Val2.innerText = '42 Active';
-                    m3Val3.innerText = '64 MB';
-                } else {
-                    modalBrowserUrlText.innerText = 'https://wordpress-store.test/dashboard';
-                    browserModalTitle.innerText = 'wordpress-store.test - Zenvix Browser Preview';
-                    m3SiteTitle.innerText = 'WordPress Storefront';
-                    m3SiteSubtitle.innerText = 'WooCommerce Cloud Engine';
-                    m3Val1.innerText = '14 Orders';
-                    m3Val2.innerText = '19.2k Visits';
-                    m3Val3.innerText = '112 MB';
-                }
-
-                lucide.createIcons();
+                // Trigger dynamic component loading
+                loadDashboardPreview(site);
             });
         });
 
