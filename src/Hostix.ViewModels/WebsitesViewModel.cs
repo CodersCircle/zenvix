@@ -612,6 +612,18 @@ DB_CONNECTION=sqlite</pre>
         }
 
         [RelayCommand]
+        private void OpenDocs(Website website)
+        {
+            if (website == null) return;
+            var docsUrl = website.SslEnabled ? $"https://docs.{website.Domain}" : $"http://docs.{website.Domain}";
+            try
+            {
+                Process.Start(new ProcessStartInfo(docsUrl) { UseShellExecute = true });
+            }
+            catch (Exception ex) { Log.Error(ex, "Failed to open docs site"); }
+        }
+
+        [RelayCommand]
         private async Task ToggleSsl(Website website)
         {
             website.SslEnabled = !website.SslEnabled;
