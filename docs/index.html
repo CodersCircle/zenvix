@@ -135,21 +135,30 @@
                                             <div class="item-title">laravel-blog.test</div>
                                             <div class="item-subtitle">C:\Zenvix\projects\laravel-blog</div>
                                         </div>
-                                        <span class="badge badge-success">HTTPS Active</span>
+                                        <div class="item-controls">
+                                            <button class="btn btn-secondary btn-xs btn-view-site" data-site="laravel-blog.test"><i data-lucide="eye" style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i> View</button>
+                                            <span class="badge badge-success">HTTPS Active</span>
+                                        </div>
                                     </div>
                                     <div class="list-item">
                                         <div class="item-info">
                                             <div class="item-title">react-dashboard.test</div>
                                             <div class="item-subtitle">Port 3000 • Proxy -> Node.js</div>
                                         </div>
-                                        <span class="badge badge-success">Online</span>
+                                        <div class="item-controls">
+                                            <button class="btn btn-secondary btn-xs btn-view-site" data-site="react-dashboard.test"><i data-lucide="eye" style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i> View</button>
+                                            <span class="badge badge-success">Online</span>
+                                        </div>
                                     </div>
                                     <div class="list-item">
                                         <div class="item-info">
                                             <div class="item-title">wordpress-store.test</div>
                                             <div class="item-subtitle">Apache Server • PHP 8.2</div>
                                         </div>
-                                        <span class="badge badge-success">HTTPS Active</span>
+                                        <div class="item-controls">
+                                            <button class="btn btn-secondary btn-xs btn-view-site" data-site="wordpress-store.test"><i data-lucide="eye" style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i> View</button>
+                                            <span class="badge badge-success">HTTPS Active</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -236,6 +245,63 @@
                                         <p class="text-green">[✓] Mailpit SMTP relay captures ready</p>
                                         <br>
                                         <p><span class="text-cyan">zenvix &gt;</span> <span class="terminal-cursor">_</span></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PAGE: BROWSER PREVIEW (MATERIAL 3 DASHBOARD) -->
+                            <div class="mockup-page" id="page-browser-preview" style="display: none;">
+                                <div class="browser-address-bar">
+                                    <span class="browser-back-btn" id="browser-back"><i data-lucide="arrow-left"></i> Back</span>
+                                    <div class="browser-url">
+                                        <i data-lucide="lock" class="text-green"></i> 
+                                        <span id="browser-url-text">https://react-dashboard.test/dashboard</span>
+                                    </div>
+                                    <span class="browser-refresh-btn"><i data-lucide="rotate-cw"></i></span>
+                                </div>
+                                <div class="browser-viewport">
+                                    <div class="m3-dashboard">
+                                        <div class="m3-header">
+                                            <div>
+                                                <h2 id="m3-site-title">Material 3 Studio</h2>
+                                                <p id="m3-site-subtitle">Production Environment Node.js App</p>
+                                            </div>
+                                            <span class="m3-chip"><span class="chip-dot"></span> Live Syncing</span>
+                                        </div>
+                                        <div class="m3-grid">
+                                            <div class="m3-card m3-card-purple">
+                                                <span class="m3-card-title">Monthly Revenue</span>
+                                                <span class="m3-card-value" id="m3-val-1">$24,890</span>
+                                                <span class="m3-card-meta text-green">+12.4% this week</span>
+                                            </div>
+                                            <div class="m3-card m3-card-cyan">
+                                                <span class="m3-card-title">Active Requests</span>
+                                                <span class="m3-card-value" id="m3-val-2">1,402 /s</span>
+                                                <span class="m3-card-meta text-green">Stable Latency 14ms</span>
+                                            </div>
+                                            <div class="m3-card m3-card-indigo">
+                                                <span class="m3-card-title">Memory Allocation</span>
+                                                <span class="m3-card-value" id="m3-val-3">184 MB</span>
+                                                <span class="m3-card-meta">Garbage collection optimized</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="m3-chart-container">
+                                            <div class="m3-chart-header">
+                                                <h4>Real-time Server Traffic</h4>
+                                                <span class="badge badge-success">Online</span>
+                                            </div>
+                                            <!-- Sleek CSS bar chart -->
+                                            <div class="m3-bar-chart">
+                                                <div class="chart-bar" style="height: 35%;"></div>
+                                                <div class="chart-bar" style="height: 48px; height: 50%;"></div>
+                                                <div class="chart-bar" style="height: 25%;"></div>
+                                                <div class="chart-bar" style="height: 65%;"></div>
+                                                <div class="chart-bar" style="height: 85%;"></div>
+                                                <div class="chart-bar" style="height: 70%;"></div>
+                                                <div class="chart-bar animate-pulse" style="height: 95%;"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -517,6 +583,85 @@
                 toast.classList.remove('show');
             }, 2000);
         }
+
+        // 4. Browser Preview Interactivity
+        const viewSiteBtns = document.querySelectorAll('.btn-view-site');
+        const browserPreviewPage = document.getElementById('page-browser-preview');
+        const browserBackBtn = document.getElementById('browser-back');
+        const browserUrlText = document.getElementById('browser-url-text');
+        const m3SiteTitle = document.getElementById('m3-site-title');
+        const m3SiteSubtitle = document.getElementById('m3-site-subtitle');
+        const m3Val1 = document.getElementById('m3-val-1');
+        const m3Val2 = document.getElementById('m3-val-2');
+        const m3Val3 = document.getElementById('m3-val-3');
+
+        viewSiteBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const site = this.getAttribute('data-site');
+                
+                // Hide all sidebar active selections
+                sidebarItems.forEach(i => i.classList.remove('active'));
+                
+                // Hide all pages
+                mockupPages.forEach(page => {
+                    page.style.display = 'none';
+                    page.classList.remove('active');
+                });
+
+                // Show browser preview page
+                browserPreviewPage.style.display = 'block';
+                browserPreviewPage.classList.add('active');
+
+                // Update contents dynamically based on the site clicked!
+                if (site === 'react-dashboard.test') {
+                    browserUrlText.innerText = 'https://react-dashboard.test/dashboard';
+                    m3SiteTitle.innerText = 'Material 3 Studio';
+                    m3SiteSubtitle.innerText = 'Production Environment Node.js App';
+                    m3Val1.innerText = '$24,890';
+                    m3Val2.innerText = '1,402 /s';
+                    m3Val3.innerText = '184 MB';
+                } else if (site === 'laravel-blog.test') {
+                    browserUrlText.innerText = 'https://laravel-blog.test/admin';
+                    m3SiteTitle.innerText = 'Laravel Control Panel';
+                    m3SiteSubtitle.innerText = 'Artisan Engine v10.4';
+                    m3Val1.innerText = '8,412 Views';
+                    m3Val2.innerText = '42 Active';
+                    m3Val3.innerText = '64 MB';
+                } else {
+                    browserUrlText.innerText = 'https://wordpress-store.test/dashboard';
+                    m3SiteTitle.innerText = 'WordPress Storefront';
+                    m3SiteSubtitle.innerText = 'WooCommerce Cloud Engine';
+                    m3Val1.innerText = '14 Orders';
+                    m3Val2.innerText = '19.2k Visits';
+                    m3Val3.innerText = '112 MB';
+                }
+
+                lucide.createIcons();
+            });
+        });
+
+        // Browser Back Button to return to websites tab
+        browserBackBtn.addEventListener('click', () => {
+            // Find sidebar website item and set active
+            sidebarItems.forEach(i => {
+                if (i.getAttribute('data-target') === 'websites') {
+                    i.classList.add('active');
+                }
+            });
+
+            // Hide all pages
+            mockupPages.forEach(page => {
+                page.style.display = 'none';
+                page.classList.remove('active');
+            });
+
+            // Show Websites page
+            const websitesPage = document.getElementById('page-websites');
+            websitesPage.style.display = 'block';
+            websitesPage.classList.add('active');
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
