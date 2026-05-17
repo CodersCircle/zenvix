@@ -1592,15 +1592,8 @@ a {
 }
 
 /* Download Counter Styles */
-.download-cta-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-}
-
 .download-stats {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     font-size: 0.8rem;
@@ -1617,6 +1610,19 @@ a {
     border-color: rgba(139, 92, 246, 0.3);
     transform: translateY(-1.5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.download-stats.compact-stats {
+    font-size: 0.72rem;
+    padding: 5px 12px;
+    background: rgba(139, 92, 246, 0.04);
+    border-color: rgba(139, 92, 246, 0.15);
+    margin-right: 6px;
+}
+
+.download-stats.compact-stats:hover {
+    background: rgba(139, 92, 246, 0.08);
+    border-color: rgba(139, 92, 246, 0.35);
 }
 
 .pulse-green-dot {
@@ -1665,6 +1671,10 @@ a {
 @media (max-width: 768px) {
     .nav-menu {
         display: none;
+    }
+    
+    .compact-stats {
+        display: none !important;
     }
     
     .hero-title {
