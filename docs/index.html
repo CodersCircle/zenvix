@@ -240,6 +240,17 @@
                                 </div>
                             </div>
 
+                            <!-- Premium Toast Notification -->
+                            <div class="mockup-toast" id="mockup-toast">
+                                <div class="toast-icon-wrapper" id="toast-icon-box">
+                                    <i data-lucide="check-circle" id="toast-icon"></i>
+                                </div>
+                                <div class="toast-details">
+                                    <h5 id="toast-title">Service Started</h5>
+                                    <p id="toast-msg">Service is now operational.</p>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -448,6 +459,64 @@
                 }, 1000);
             });
         });
+
+        // 3. Services Toggle Button UI/UX Toggling & Toast Notification
+        const serviceToggleBtns = document.querySelectorAll('#page-services .toggle-btn');
+        const toast = document.getElementById('mockup-toast');
+        const toastTitle = document.getElementById('toast-title');
+        const toastMsg = document.getElementById('toast-msg');
+        const toastIconBox = document.getElementById('toast-icon-box');
+        let toastTimeout = null;
+
+        serviceToggleBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const listItem = this.closest('.list-item.mini');
+                const serviceName = listItem.querySelector('.item-title').innerText;
+                const statusBadge = listItem.querySelector('.badge');
+                
+                // Toggle active state
+                const isActive = this.classList.toggle('active');
+                
+                // Update badge and trigger Toast
+                if (isActive) {
+                    statusBadge.innerText = 'Running';
+                    statusBadge.className = 'badge badge-success';
+                    showToast('Service Started', `${serviceName} is now active and listening.`, 'success');
+                } else {
+                    statusBadge.innerText = 'Stopped';
+                    statusBadge.className = 'badge badge-muted';
+                    showToast('Service Stopped', `${serviceName} has been shut down.`, 'warning');
+                }
+            });
+        });
+
+        function showToast(title, message, type) {
+            // Clear existing timeout
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+            }
+
+            // Set content
+            toastTitle.innerText = title;
+            toastMsg.innerText = message;
+            
+            // Set styles and icons based on type
+            if (type === 'success') {
+                toast.className = 'mockup-toast show success';
+                toastIconBox.innerHTML = '<i data-lucide="check-circle"></i>';
+            } else {
+                toast.className = 'mockup-toast show warning';
+                toastIconBox.innerHTML = '<i data-lucide="alert-circle"></i>';
+            }
+            
+            // Refresh lucide icon
+            lucide.createIcons();
+
+            // Auto-hide after 2 seconds (2000ms)
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
     </script>
 </body>
 </html>
