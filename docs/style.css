@@ -218,6 +218,12 @@ a {
     letter-spacing: 0.05em;
 }
 
+.nav-logo-img {
+    height: 25px;
+    width: auto;
+    display: block;
+}
+
 .logo-dot {
     width: 10px;
     height: 10px;
@@ -947,6 +953,12 @@ a {
     justify-content: flex-start;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+.footer-logo-img {
+    height: 26px;
+    width: auto;
+    display: block;
 }
 
 .footer-brand .brand-name {
