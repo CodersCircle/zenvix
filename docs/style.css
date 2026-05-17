@@ -936,26 +936,52 @@ a {
 
 .footer-container {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 28px;
+    align-items: stretch;
 }
 
 .footer-brand {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 8px;
-    font-family: var(--font-primary);
-    font-weight: 800;
-    color: #fff;
-    font-size: 1.2rem;
+    flex-wrap: wrap;
 }
 
-.footer-brand p {
+.footer-brand .brand-name {
+    font-family: var(--font-primary);
+    font-weight: 850;
+    color: #fff;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+}
+
+.footer-brand .brand-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 10px;
+}
+
+.footer-brand .brand-description {
     font-family: var(--font-secondary);
     font-weight: 400;
     font-size: 0.85rem;
     color: var(--text-muted);
-    margin-top: 2px;
+    margin: 0;
+}
+
+.footer-copyright {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    padding-top: 24px;
+    width: 100%;
 }
 
 /* Premium Glassmorphic Toast Notification */
