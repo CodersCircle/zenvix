@@ -544,6 +544,12 @@ a {
     background: rgba(255, 255, 255, 0.04);
     color: var(--text-muted);
     border: 1px solid rgba(255, 255, 255, 0.06);
+    animation: blinkSoft 2.5s infinite ease-in-out;
+}
+
+@keyframes blinkSoft {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 /* Tab Pages Layout Styles */
@@ -609,7 +615,17 @@ a {
 }
 
 .list-item.mini {
-    padding: 10px 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
 }
 
 .toggle-btn {
@@ -621,6 +637,8 @@ a {
     cursor: pointer;
     transition: var(--transition-smooth);
     border: 1px solid var(--border-glass);
+    flex-shrink: 0;
+    display: inline-block;
 }
 
 .toggle-dot {
@@ -635,8 +653,8 @@ a {
 }
 
 .toggle-btn.active {
-    background: var(--accent-violet);
-    border-color: rgba(139, 92, 246, 0.3);
+    background: #10B981;
+    border-color: rgba(16, 185, 129, 0.3);
 }
 
 .toggle-btn.active .toggle-dot {
