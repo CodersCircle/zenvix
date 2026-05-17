@@ -251,92 +251,427 @@
 
         <!-- 3. Add Website Overlay (Themed) -->
         <Border Grid.RowSpan="2" Background="#88000000" Visibility="{Binding IsAddingWebsite, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Width="480" VerticalAlignment="Center" Padding="30" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                <StackPanel>
-                    <TextBlock Text="Add New Website" Style="{DynamicResource Hostix.Title}" Margin="0,0,0,4" />
-                    <TextBlock Text="Provision a new local site and virtual host." Style="{DynamicResource Hostix.Subtitle}" Margin="0,0,0,24" />
-                    
-                    <TextBlock Text="PROJECT NAME" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
-                    <TextBox Text="{Binding NewWebsiteName, UpdateSourceTrigger=PropertyChanged}" 
-                             mah:TextBoxHelper.Watermark="e.g. My Website" 
-                             mah:ControlsHelper.CornerRadius="8"
-                             mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
-                             mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
-                             Background="{StaticResource SurfaceBrush}"
-                             Foreground="Black"
-                             BorderBrush="{StaticResource BorderBrush}"
-                             Height="38" Margin="0,0,0,16" Padding="10,0" VerticalContentAlignment="Center" />
+            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Width="820" VerticalAlignment="Center" Padding="35" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <Grid>
+                    <Grid.Resources>
+                        <!-- Style for Step 1 -->
+                        <Style x:Key="Step1VisibilityStyle" TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding WizardStep}" Value="1">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                        <!-- Style for Step 2 -->
+                        <Style x:Key="Step2VisibilityStyle" TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding WizardStep}" Value="2">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                        <!-- Style for Step 3 -->
+                        <Style x:Key="Step3VisibilityStyle" TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding WizardStep}" Value="3">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                        
+                        <!-- Framework-specific Parameter Panels -->
+                        <Style x:Key="LaravelParamsVisibilityStyle" TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Laravel">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="FilamentPHP">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Laravel API">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                        
+                        <Style x:Key="FlutterParamsVisibilityStyle" TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Flutter">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="React Native">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Ionic">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
 
-                    <TextBlock Text="LOCAL DOMAIN" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
-                    <Grid Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="100" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding NewWebsiteDomain, UpdateSourceTrigger=PropertyChanged}" 
-                                 mah:TextBoxHelper.Watermark="e.g. mysite.test" 
-                                 mah:ControlsHelper.CornerRadius="8,0,0,8"
-                                 mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
-                                 mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
-                                 Background="{StaticResource SurfaceBrush}"
-                                 Foreground="Black"
-                                 BorderBrush="{StaticResource BorderBrush}"
-                                 Height="38" Padding="10,0" VerticalContentAlignment="Center" />
-                        <ComboBox Grid.Column="1" 
-                                  ItemsSource="{Binding Suffixes}" 
-                                  SelectedItem="{Binding SelectedSuffix}"
-                                  mah:ControlsHelper.CornerRadius="0,8,8,0"
-                                  Background="{StaticResource SurfaceBrush}"
-                                  Foreground="Black"
-                                  BorderThickness="0,1,1,1"
-                                  BorderBrush="{StaticResource BorderBrush}"
-                                  Height="38" VerticalContentAlignment="Center">
-                            <ComboBox.Resources>
-                                <Style TargetType="ComboBoxItem">
-                                    <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-                                    <Setter Property="Foreground" Value="Black" />
-                                </Style>
-                            </ComboBox.Resources>
-                        </ComboBox>
+                        <Style x:Key="DefaultParamsVisibilityStyle" TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Laravel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="FilamentPHP">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Laravel API">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Flutter">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="React Native">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Ionic">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+
+                        <!-- Wizard Card Button Style -->
+                        <Style x:Key="WizardCardButton" TargetType="Button" BasedOn="{StaticResource Hostix.Button}">
+                            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Padding" Value="16" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="cardBorder" Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="cardBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                                <Setter TargetName="cardBorder" Property="Background" Value="{DynamicResource SurfaceBrush}" />
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.08" Color="Black" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Grid.Resources>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Grid Grid.Row="0" Margin="0,0,0,24">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="Create New Zenvix Project" Style="{DynamicResource Hostix.Title}" VerticalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Border Background="{DynamicResource AccentBrush}" Padding="8,4" CornerRadius="6" Margin="0,0,8,0">
+                                        <TextBlock Text="{Binding WizardStep, StringFormat='Step {0} of 3'}" FontSize="11" FontWeight="Bold" Foreground="White" />
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                            <TextBlock Text="Smart Project Wizard &amp; Dynamic Environment Generator" Style="{DynamicResource Hostix.Subtitle}" Margin="0,4,0,0" />
+                            <Separator Background="{DynamicResource BorderBrush}" Margin="0,12,0,0" />
+                        </StackPanel>
                     </Grid>
 
-                    <TextBlock Text="PARENT DIRECTORY" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
-                    <Grid Margin="0,0,0,12">
+                    <!-- STEP 1: Category Selection -->
+                    <Grid Grid.Row="1" Style="{StaticResource Step1VisibilityStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Select Project Category" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,16" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <UniformGrid Columns="2">
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Website" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="🌐" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Website" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <TextBlock Text="Laravel, WordPress, React, Vue, PHP" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Mobile App" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="📱" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Mobile App" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <TextBlock Text="Flutter, React Native, Ionic previews" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Admin Panel" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="📊" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Admin Panel" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <TextBlock Text="FilamentPHP, React or Vue admin portals" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="API Backend" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="⚡" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="API Backend" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <TextBlock Text="Laravel API, Node.js Express, pure APIs" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Static Site" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="📄" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Static Site" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <TextBlock Text="Plain HTML/CSS, Tailwind starter kits" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Button>
+                                </UniformGrid>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- STEP 2: Framework Selection -->
+                    <Grid Grid.Row="1" Style="{StaticResource Step2VisibilityStyle}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                <TextBlock Text="Technology Stack for: " FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                <TextBlock Text="{Binding SelectedCategory}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="4,0,0,0" />
+                            </StackPanel>
+                            <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding Frameworks}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding}" 
+                                                    Command="{Binding DataContext.SelectFrameworkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource WizardCardButton}" 
+                                                    Width="170" Height="70" Margin="6" FontSize="13" FontWeight="Bold" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- STEP 3: Parameter Configuration -->
+                    <Grid Grid.Row="1" Style="{StaticResource Step3VisibilityStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Column 1: General Parameters -->
+                            <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                <TextBlock Text="GENERAL PROJECT SETTINGS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
+                                
+                                <TextBlock Text="PROJECT NAME" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                <TextBox Text="{Binding NewWebsiteName, UpdateSourceTrigger=PropertyChanged}" 
+                                         mah:TextBoxHelper.Watermark="e.g. my-laravel-app" 
+                                         mah:ControlsHelper.CornerRadius="8"
+                                         Background="{StaticResource SurfaceBrush}" Foreground="Black" BorderBrush="{StaticResource BorderBrush}"
+                                         Height="36" Margin="0,0,0,12" Padding="10,0" VerticalContentAlignment="Center" />
+
+                                <TextBlock Text="LOCAL DOMAIN" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding NewWebsiteDomain, UpdateSourceTrigger=PropertyChanged}" 
+                                             mah:TextBoxHelper.Watermark="e.g. myapp.zenvix" 
+                                             mah:ControlsHelper.CornerRadius="8,0,0,8"
+                                             Background="{StaticResource SurfaceBrush}" Foreground="Black" BorderBrush="{StaticResource BorderBrush}"
+                                             Height="36" Padding="10,0" VerticalContentAlignment="Center" />
+                                    <ComboBox Grid.Column="1" 
+                                              ItemsSource="{Binding Suffixes}" 
+                                              SelectedItem="{Binding SelectedSuffix}"
+                                              mah:ControlsHelper.CornerRadius="0,8,8,0"
+                                              Background="{StaticResource SurfaceBrush}" Foreground="Black" BorderThickness="0,1,1,1" BorderBrush="{StaticResource BorderBrush}"
+                                              Height="36" VerticalContentAlignment="Center" />
+                                </Grid>
+
+                                <TextBlock Text="WORKSPACE PARENT DIRECTORY" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding NewWebsitePath}" IsReadOnly="True" 
+                                             mah:ControlsHelper.CornerRadius="8"
+                                             Background="{StaticResource SurfaceBrush}" Foreground="Black" BorderBrush="{StaticResource BorderBrush}"
+                                             Height="36" FontSize="11" VerticalContentAlignment="Center" Padding="10,0" />
+                                    <Button Grid.Column="1" Command="{Binding BrowseFolderCommand}"
+                                            Content="Browse" Style="{DynamicResource Hostix.Button}" 
+                                            Height="36" Width="70" Margin="6,0,0,0" Padding="0" />
+                                </Grid>
+
+                                <Border Background="{DynamicResource BackgroundBrush}" Padding="8" CornerRadius="6" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <TextBlock Text="Full Workspace Target Path:" FontSize="9" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                        <TextBlock Text="{Binding FullCreatedPathDisplay}" FontSize="10" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Divider -->
+                            <Separator Grid.Column="1" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="8,0,16,0" Background="{DynamicResource BorderBrush}" />
+
+                            <!-- Column 2: Framework Specific Parameters -->
+                            <Grid Grid.Column="2">
+                                <!-- Laravel Panel -->
+                                <StackPanel Style="{StaticResource LaravelParamsVisibilityStyle}">
+                                    <TextBlock Text="LARAVEL CONFIGURATIONS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
+
+                                    <TextBlock Text="PHP VERSION" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                    <ComboBox SelectedItem="{Binding LaravelPhpVersion}" mah:ControlsHelper.CornerRadius="8" Height="36" Margin="0,0,0,12" VerticalContentAlignment="Center">
+                                        <ComboBoxItem Content="8.3" IsSelected="True" />
+                                        <ComboBoxItem Content="8.2" />
+                                        <ComboBoxItem Content="8.1" />
+                                    </ComboBox>
+
+                                    <TextBlock Text="LOCAL DATABASE ENGINE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                    <ComboBox SelectedItem="{Binding LaravelDatabase}" mah:ControlsHelper.CornerRadius="8" Height="36" Margin="0,0,0,12" VerticalContentAlignment="Center">
+                                        <ComboBoxItem Content="SQLite" IsSelected="True" />
+                                        <ComboBoxItem Content="MySQL" />
+                                    </ComboBox>
+
+                                    <TextBlock Text="TESTING FRAMEWORK" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                    <ComboBox SelectedItem="{Binding LaravelTestingFramework}" mah:ControlsHelper.CornerRadius="8" Height="36" Margin="0,0,0,16" VerticalContentAlignment="Center">
+                                        <ComboBoxItem Content="Pest" IsSelected="True" />
+                                        <ComboBoxItem Content="PHPUnit" />
+                                    </ComboBox>
+
+                                    <mah:ToggleSwitch Header="Authentication Starter Kit" IsOn="{Binding LaravelAuthEnabled}" 
+                                                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Margin="0,0,0,8" 
+                                                      OnContent="Laravel Breeze" OffContent="None" />
+                                                      
+                                    <mah:ToggleSwitch Header="Team Management Support" IsOn="{Binding LaravelTeamsEnabled}" 
+                                                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Margin="0,0,0,8" 
+                                                      OnContent="Jetstream Teams" OffContent="Standard Users" />
+                                </StackPanel>
+
+                                <!-- Flutter Panel -->
+                                <StackPanel Style="{StaticResource FlutterParamsVisibilityStyle}">
+                                    <TextBlock Text="FLUTTER CONFIGURATIONS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
+
+                                    <TextBlock Text="STATE MANAGEMENT" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                    <ComboBox SelectedItem="{Binding FlutterStateManagement}" mah:ControlsHelper.CornerRadius="8" Height="36" Margin="0,0,0,12" VerticalContentAlignment="Center">
+                                        <ComboBoxItem Content="Provider" IsSelected="True" />
+                                        <ComboBoxItem Content="Riverpod" />
+                                        <ComboBoxItem Content="Bloc" />
+                                        <ComboBoxItem Content="None" />
+                                    </ComboBox>
+
+                                    <TextBlock Text="TARGET PLATFORMS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8" />
+                                    <CheckBox Content="Android Support" IsChecked="{Binding FlutterAndroidSupport}" Margin="0,0,0,6" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <CheckBox Content="iOS Support" IsChecked="{Binding FlutterIosSupport}" Margin="0,0,0,6" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <CheckBox Content="Web Preview (Localhost)" IsChecked="{Binding FlutterWebSupport}" Margin="0,0,0,16" Foreground="{DynamicResource TextPrimaryBrush}" />
+
+                                    <mah:ToggleSwitch Header="Local Developer Documentation" IsOn="{Binding CreateDocsSite}" 
+                                                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Margin="0,0,0,8" 
+                                                      OnContent="Generate docs.zenvix" OffContent="No Docs" />
+                                </StackPanel>
+
+                                <!-- Default/Static/React Panel -->
+                                <StackPanel Style="{StaticResource DefaultParamsVisibilityStyle}">
+                                    <TextBlock Text="WORKSPACE SETTINGS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
+
+                                    <mah:ToggleSwitch Header="Local Developer Documentation" IsOn="{Binding CreateDocsSite}" 
+                                                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Margin="0,0,0,12" 
+                                                      OnContent="docs.zenvix enabled" OffContent="No Docs" />
+                                                      
+                                    <mah:ToggleSwitch Header="Git Repository Initialization" IsOn="{Binding GitInitEnabled}" 
+                                                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Margin="0,0,0,12" 
+                                                      OnContent="git init" OffContent="Manual Git" />
+
+                                    <mah:ToggleSwitch Header="Enable SSL (HTTPS)" IsOn="{Binding NewWebsiteSslEnabled}" 
+                                                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Margin="0,0,0,12" 
+                                                      OnContent="Secure HTTPS" OffContent="Insecure HTTP" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Footer Controls -->
+                    <Grid Grid.Row="2" Margin="0,24,0,0">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding NewWebsitePath}" IsReadOnly="True" 
-                                 mah:ControlsHelper.CornerRadius="8"
-                                 mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
-                                 mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
-                                 Background="{StaticResource SurfaceBrush}"
-                                 Foreground="Black"
-                                 BorderBrush="{StaticResource BorderBrush}"
-                                 Height="38" FontSize="12" VerticalContentAlignment="Center" Padding="10,0" />
-                        <Button Grid.Column="1" Command="{Binding BrowseFolderCommand}"
-                                Content="Browse" Style="{DynamicResource Hostix.Button}" 
-                                Height="38" Width="80" Margin="8,0,0,0" Padding="0" />
-                    </Grid>
-                    
-                    <Border Background="{DynamicResource BackgroundBrush}" Padding="10" CornerRadius="6" Margin="0,0,0,20">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Target Path: " FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" />
-                            <TextBlock Text="{Binding FullCreatedPathDisplay}" FontSize="10" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold" />
+                        <Button Grid.Column="0" Content="Back" Command="{Binding GoBackCommand}" 
+                                Width="90" Height="34" Padding="0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding WizardStep}" Value="1">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                            <Button Content="Cancel" Command="{Binding CancelAddWebsiteCommand}" 
+                                    Style="{DynamicResource Hostix.Button.Ghost}" Margin="0,0,12,0" Width="90" Height="34" />
+                            <Button Content="Next Step" Command="{Binding GoForwardCommand}" 
+                                    Width="120" Height="34">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Primary}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding WizardStep}" Value="3">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="Create Project" Command="{Binding CreateWebsiteCommand}" 
+                                    Width="140" Height="34" Background="{DynamicResource SuccessBrush}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Primary}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding WizardStep}" Value="3">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                         </StackPanel>
-                    </Border>
-
-                    <mah:ToggleSwitch Header="Enable SSL (HTTPS)" IsOn="{Binding NewWebsiteSslEnabled}" 
-                                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" Margin="0,0,0,24" 
-                                      OnContent="Secure" OffContent="HTTP Only" />
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Cancel" Command="{Binding CancelAddWebsiteCommand}" 
-                                Style="{DynamicResource Hostix.Button.Ghost}" Margin="0,0,12,0" Width="90" Height="34" />
-                        <Button Content="Provision" Command="{Binding CreateWebsiteCommand}" 
-                                Style="{DynamicResource Hostix.Button.Primary}" Width="120" Height="34" />
-                    </StackPanel>
-                </StackPanel>
+                    </Grid>
+                </Grid>
             </Border>
         </Border>
     </Grid>
