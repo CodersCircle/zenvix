@@ -26,3 +26,12 @@ This report tracks the step-by-step design, implementation, and deployment progr
 - [x] **ISOLATION GUARD:** All new wizard controls and generators are stored in modular, decoupled structures.
 - [x] **NO MASSIVE REFACTOR:** Implement step-by-step, validating compilation and running locally.
 - [x] **ONLY LOCAL TESTING:** Run on `development` branch without triggers for `.exe` production installers.
+
+---
+
+## 🎨 UI/UX Visual Polish & Refinements (Completed)
+- **ComboBox Color Customization:** Overrode WPF ComboBox styles to ensure background and border brushes strictly respect light theme, solving high-contrast dark theme inheritance issues inside the wizard dialog.
+- **Sleek Custom Track Switch:** Designed and implemented a modern custom track switch (`WizardToggleSwitch`) with light slate/indigo active transitions, perfectly visible on light background and providing clear grey status indicators for disabled states.
+- **Project Card Consolidation:** Automatically filter out the documentation subdomains (`docs.*`) from generating cluttered project cards. Instead, a tiny, elegant, and interactive purple **"docs"** badge with a book/document icon is rendered right next to the domain name. Clicking it launches the local documentation website directly.
+- **Workstation Layout Typography Tuning:** Scaled down title, badge, and button font sizes for a more cohesive, ultra-premium, compact grid layout, preventing wrapping and improving visual hierarchy.
+
