@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Hostix.Core.Models;
@@ -161,6 +164,20 @@ namespace Hostix.Runtime.Services
                     await _services.StartAsync(phpInstance.Id);
                 }
 
+                // 4.5 Ensure MySQL is running and auto-create the database for the project
+                var mysqlInstance = _services.Instances.FirstOrDefault(i => i.Type == RuntimeServiceType.MySQL || i.Type == RuntimeServiceType.MariaDB);
+                if (mysqlInstance != null)
+                {
+                    if (mysqlInstance.Status != ServiceStatus.Running)
+                    {
+                        Log.Information("[WebOrchestrator] Auto-starting MySQL service for project database connection...");
+                        await _services.StartAsync(mysqlInstance.Id);
+                    }
+                    
+                    var dbName = website.Name.ToLower().Replace(" ", "_").Replace("-", "_").Trim();
+                    await EnsureDatabaseCreatedAsync(dbName, mysqlInstance.Port);
+                }
+
                 // 5. Restart Nginx
                 var nginxInstance = _services.Instances.FirstOrDefault(i => i.Type == RuntimeServiceType.Nginx);
                 if (nginxInstance != null)
@@ -218,10 +235,11 @@ namespace Hostix.Runtime.Services
                     
                     var response = await client.GetAsync(website.DisplayUrl);
                     
-                    // 1. Verify HTTP Response Code (200, 404, 403 are "alive")
+                    // 1. Verify HTTP Response Code (200, 404, 403, 500 are "alive")
                     if (response.IsSuccessStatusCode || 
                         response.StatusCode == System.Net.HttpStatusCode.NotFound ||
-                        response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                        response.StatusCode == System.Net.HttpStatusCode.Forbidden ||
+                        response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
                     {
                         // 2. Verify PHP Execution (Response Body check)
                         var content = await response.Content.ReadAsStringAsync();
@@ -283,6 +301,50 @@ namespace Hostix.Runtime.Services
 
             await SaveAsync();
             return true;
+        }
+
+        private async Task EnsureDatabaseCreatedAsync(string databaseName, int mysqlPort)
+        {
+            var phpCgiPath = _services.GetBinaryPath(RuntimeServiceType.PhpFpm);
+            if (string.IsNullOrEmpty(phpCgiPath)) return;
+
+            var phpDir = Path.GetDirectoryName(phpCgiPath);
+            if (string.IsNullOrEmpty(phpDir)) return;
+
+            var phpExe = Path.Combine(phpDir, "php.exe");
+            if (!File.Exists(phpExe)) return;
+
+            var normalizedDb = databaseName.Replace("-", "_").Replace(" ", "_").Trim();
+
+            Log.Information("[WebOrchestrator] Attempting to auto-create MySQL database: {DbName} on port {Port}", normalizedDb, mysqlPort);
+
+            var code = $"try {{ $pdo = new PDO('mysql:host=127.0.0.1;port={mysqlPort}', 'root', ''); $pdo->exec('CREATE DATABASE IF NOT EXISTS `{normalizedDb}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'); echo 'SUCCESS'; }} catch (Exception $e) {{ echo $e->getMessage(); }}";
+            
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = phpExe,
+                    Arguments = $"-r \"{code.Replace("\"", "\\\"")}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using var proc = Process.Start(psi);
+                if (proc != null)
+                {
+                    await proc.WaitForExitAsync();
+                    var output = await proc.StandardOutput.ReadToEndAsync();
+                    var error = await proc.StandardError.ReadToEndAsync();
+                    Log.Information("[WebOrchestrator] Database creation result: {Out} | {Err}", output.Trim(), error.Trim());
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[WebOrchestrator] Failed to execute database creation command");
+            }
         }
 
         public async Task<bool> StopWebsiteAsync(Website website)

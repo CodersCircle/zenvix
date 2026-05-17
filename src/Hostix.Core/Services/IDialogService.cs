@@ -4,5 +4,7 @@ namespace Hostix.Core.Services
     {
         string? OpenFolderDialog(string? initialPath = null);
         bool ShowDeleteConfirmation(string websiteName);
+        bool ShowRemoveConfirmation(string websiteName);
+        void ShowMessage(string title, string message);
     }
 }

@@ -2,6 +2,16 @@ ZENVIX LOCAL HOSTING RUNTIME LICENSE AGREEMENT
 
 Copyright (c) 2026 ZENVIX - Developed By: MJ Ali - All rights reserved.
 
+ZENVIX is currently a newly released developer tool, so Windows may display a SmartScreen warning during installation.
+
+If prompted:
+
+Click “More info”
+Click “Run anyway”
+
+This happens because the installer is not yet digitally code-signed with a commercial certificate. ZENVIX is safe to install from the official source only.
+
+
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.

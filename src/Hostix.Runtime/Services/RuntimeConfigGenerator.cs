@@ -148,7 +148,12 @@ namespace Hostix.Runtime.Services
                 Log.Warning("[ConfigGenerator] SSL validation FAILED for {Domain}. FALLING BACK TO HTTP-ONLY.", website.Domain);
             }
 
-            sb.AppendLine($"    root \"{website.LocalPath.Replace("\\", "/")}\";");
+            var rootPath = website.LocalPath.Replace("\\", "/");
+            if (website.Type == ProjectType.Laravel)
+            {
+                rootPath = Path.Combine(website.LocalPath, "public").Replace("\\", "/");
+            }
+            sb.AppendLine($"    root \"{rootPath}\";");
             sb.AppendLine("    index index.php index.html;");
             sb.AppendLine("    location / { try_files $uri $uri/ /index.php?$query_string; }");
             sb.AppendLine("    location ~ \\.php$ {");
@@ -388,6 +393,12 @@ namespace Hostix.Runtime.Services
             sb.AppendLine("extension=fileinfo");
             sb.AppendLine("extension=gettext");
             sb.AppendLine("extension=gd");
+            sb.AppendLine("extension=sqlite3");
+            sb.AppendLine("extension=pdo_sqlite");
+            sb.AppendLine("extension=zip");
+            sb.AppendLine("extension=exif");
+            sb.AppendLine("extension=sodium");
+            sb.AppendLine("extension=intl");
             
             // Windows-specific explicit DLL loading (redundant but safe)
             sb.AppendLine("extension=php_mysqlnd.dll");
@@ -396,6 +407,12 @@ namespace Hostix.Runtime.Services
             sb.AppendLine("extension=php_openssl.dll");
             sb.AppendLine("extension=php_pdo_mysql.dll");
             sb.AppendLine("extension=php_mysqli.dll");
+            sb.AppendLine("extension=php_sqlite3.dll");
+            sb.AppendLine("extension=php_pdo_sqlite.dll");
+            sb.AppendLine("extension=php_zip.dll");
+            sb.AppendLine("extension=php_exif.dll");
+            sb.AppendLine("extension=php_sodium.dll");
+            sb.AppendLine("extension=php_intl.dll");
 
             return sb.ToString();
         }

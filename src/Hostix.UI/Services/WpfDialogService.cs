@@ -26,5 +26,17 @@ namespace Hostix.UI.Services
             var dialog = new Views.DeleteConfirmationWindow(websiteName);
             return dialog.ShowDialog() == true && dialog.Confirmed;
         }
+
+        public bool ShowRemoveConfirmation(string websiteName)
+        {
+            var dialog = new Views.RemoveConfirmationWindow(websiteName);
+            return dialog.ShowDialog() == true && dialog.Confirmed;
+        }
+
+        public void ShowMessage(string title, string message)
+        {
+            var dialog = new Views.CustomAlertWindow(title, message);
+            dialog.ShowDialog();
+        }
     }
 }
