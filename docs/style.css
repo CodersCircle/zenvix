@@ -1591,6 +1591,66 @@ a {
     }
 }
 
+/* Download Counter Styles */
+.download-cta-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.download-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-glass);
+    border-radius: 50px;
+    padding: 6px 14px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.download-stats:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(139, 92, 246, 0.3);
+    transform: translateY(-1.5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.pulse-green-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--accent-cyan);
+    border-radius: 50%;
+    position: relative;
+    display: inline-block;
+}
+
+.pulse-green-dot::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: var(--accent-cyan);
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: dotPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes dotPulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
     .features-grid {
