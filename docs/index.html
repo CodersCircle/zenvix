@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZENVIX | Premium Local Web Server & Hosting Suite for Windows</title>
+    <meta name="description" content="Zenvix is a professional multi-framework local web hosting OS and developer suite for Windows. Run Nginx, Apache, PHP, MySQL, phpMyAdmin, and Mailpit with zero config.">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Background Gradients -->
+    <div class="glow-bg">
+        <div class="glow-circle glow-violet"></div>
+        <div class="glow-circle glow-cyan"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="navbar" id="site-header">
+        <div class="nav-container">
+            <a href="#" class="brand-logo" id="logo-link">
+                <span class="logo-dot"></span>
+                ZENVIX
+            </a>
+            <nav class="nav-menu" id="main-navigation">
+                <a href="#features" class="nav-item">Features</a>
+                <a href="#guide" class="nav-item">Setup Guide</a>
+                <a href="#requirements" class="nav-item">Requirements</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" class="btn btn-primary btn-sm" id="nav-download-btn" download>
+                    <i data-lucide="download"></i> Download Setup
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+        <div class="hero-container">
+            <div class="hero-badge">
+                <span class="badge-dot"></span> Exclusively for Windows 10 & 11
+            </div>
+            <h1 class="hero-title">
+                The Next-Gen <span class="gradient-text">Local Web Server Suite</span> for Developers
+            </h1>
+            <p class="hero-subtitle">
+                A professional, state-of-the-art local hosting engine and dev environment orchestrator. Launch Nginx, Apache, PHP-FPM, Databases, and phpMyAdmin in a single click with absolute zero configuration.
+            </p>
+            <div class="hero-ctas">
+                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" class="btn btn-primary btn-lg btn-glow" id="hero-download-btn" download>
+                    <i data-lucide="download"></i> Download for Windows <span class="btn-meta">(42 MB)</span>
+                </a>
+                <a href="#features" class="btn btn-secondary btn-lg" id="hero-explore-btn">
+                    Explore Features <i data-lucide="arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Dashboard Mockup Window -->
+            <div class="mockup-wrapper">
+                <div class="mockup-window">
+                    <div class="window-header">
+                        <div class="header-dots">
+                            <span class="dot dot-close"></span>
+                            <span class="dot dot-minimize"></span>
+                            <span class="dot dot-maximize"></span>
+                        </div>
+                        <div class="window-title">ZENVIX Control Panel - Development Studio</div>
+                    </div>
+                    <div class="window-body">
+                        <!-- Sidebar Mockup -->
+                        <div class="mockup-sidebar">
+                            <div class="sidebar-item active"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+                            <div class="sidebar-item"><i data-lucide="globe"></i> Websites</div>
+                            <div class="sidebar-item"><i data-lucide="database"></i> Databases</div>
+                            <div class="sidebar-item"><i data-lucide="sliders"></i> Services</div>
+                            <div class="sidebar-item"><i data-lucide="terminal"></i> Shell</div>
+                        </div>
+                        <!-- Content Mockup -->
+                        <div class="mockup-content">
+                            <div class="mockup-topbar">
+                                <div class="topbar-status"><span class="status-indicator online"></span> System Running</div>
+                                <div class="topbar-user"><span class="user-avatar">CC</span> Coders Circle</div>
+                            </div>
+                            <div class="mockup-dashboard-cards">
+                                <div class="dashboard-card card-glow">
+                                    <div class="card-icon"><i data-lucide="cpu" class="text-violet"></i></div>
+                                    <div class="card-details">
+                                        <h4>NGINX Engine</h4>
+                                        <p>Port 80 • Active</p>
+                                    </div>
+                                    <span class="badge badge-success">Running</span>
+                                </div>
+                                <div class="dashboard-card card-glow">
+                                    <div class="card-icon"><i data-lucide="server" class="text-cyan"></i></div>
+                                    <div class="card-details">
+                                        <h4>PHP 8.3-FPM</h4>
+                                        <p>Global Dev Version</p>
+                                    </div>
+                                    <span class="badge badge-success">Running</span>
+                                </div>
+                                <div class="dashboard-card card-glow">
+                                    <div class="card-icon"><i data-lucide="database" class="text-indigo"></i></div>
+                                    <div class="card-details">
+                                        <h4>MySQL Engine</h4>
+                                        <p>Port 3306 • Secured</p>
+                                    </div>
+                                    <span class="badge badge-success">Running</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Engineered For Pure Performance</h2>
+                <p class="section-subtitle">Everything you need to build, test, and run modern PHP, Laravel, Node.js, and static websites locally.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card glass-card">
+                    <div class="feature-icon"><i data-lucide="globe"></i></div>
+                    <h3>Multi-Server Runtime</h3>
+                    <p>Instantly switch or simultaneously run high-performance Nginx and Apache servers configured with optimal local headers.</p>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="feature-icon"><i data-lucide="code-2"></i></div>
+                    <h3>PHP Version Manager</h3>
+                    <p>Switch seamlessly between multiple pre-configured PHP versions bundled directly with advanced FPM, OPcache, and extensions.</p>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="feature-icon"><i data-lucide="database"></i></div>
+                    <h3>Database & phpMyAdmin</h3>
+                    <p>Pre-packaged MySQL database engine and integrated phpMyAdmin accessible instantly at <code>http://localhost:8080/phpmyadmin/</code>.</p>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="feature-icon"><i data-lucide="mail"></i></div>
+                    <h3>Mailpit Integration</h3>
+                    <p>Never misconfigure real SMTP servers in testing. Captures all outgoing application emails locally with an intuitive web dashboard.</p>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="feature-icon"><i data-lucide="shield-check"></i></div>
+                    <h3>One-Click SSL & HTTPS</h3>
+                    <p>Auto-generate fully trusted local SSL certificates for all your local projects. Browse with secure HTTPS seamlessly.</p>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="feature-icon"><i data-lucide="zap"></i></div>
+                    <h3>Zero Configuration</h3>
+                    <p>No messy path variables, manually edited config files, or virtual host rules. Click install, click run, and start building.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Setup Guide / Walkthrough Section -->
+    <section class="section section-alt" id="guide">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Setup Walkthrough</h2>
+                <p class="section-subtitle">Get ZENVIX up and running on your local machine in three quick steps.</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content glass-card">
+                        <h3>Run the Wizard Installer</h3>
+                        <p>Download the standalone installer and run the wizard. It sets up files in a secured <code>C:\Zenvix</code> directory, creates desktop icons, and configures Windows Services automatically.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content glass-card">
+                        <h3>Launch and Start Services</h3>
+                        <p>Open the app control panel. Start NGINX/Apache, PHP, and MySQL from the UI. Runtimes will spin up instantly in secure, isolated sandbox environments.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content glass-card">
+                        <h3>Create Projects & Databases</h3>
+                        <p>Access phpMyAdmin directly at <a href="http://localhost:8080/phpmyadmin/" target="_blank" class="accent-link">localhost:8080/phpmyadmin/</a> to create tables. Map directories to automatic local domains instantly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Requirements Section -->
+    <section class="section" id="requirements">
+        <div class="container">
+            <div class="req-card glass-card">
+                <div class="req-content">
+                    <h2>Windows System Requirements</h2>
+                    <p>ZENVIX is built from the ground up strictly using native Win32 controls, NGINX core binaries, and .NET 8.0, guaranteeing extremely fast performance and near-zero memory footprint.</p>
+                    
+                    <ul class="req-list">
+                        <li><strong>OS Version:</strong> Windows 10 or Windows 11 (64-bit strictly supported)</li>
+                        <li><strong>Memory:</strong> 4GB RAM minimum (runs lightweight on less than 150MB total!)</li>
+                        <li><strong>Storage:</strong> 250MB free space (bundles PHP 8.3, Apache, Nginx, SQLite & databases)</li>
+                        <li><strong>Permissions:</strong> Administrator privileges are recommended during installation to auto-configure hosts files and Windows services.</li>
+                    </ul>
+                </div>
+                <div class="req-visual">
+                    <i data-lucide="monitor" class="req-monitor-icon"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section section-cta">
+        <div class="container text-center">
+            <h2>Ready to Elevate Your Local Workflow?</h2>
+            <p>Download ZENVIX now and say goodbye to complex Vagrant setups, heavy Docker containers, and outdated local stacks.</p>
+            <div class="cta-actions">
+                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" class="btn btn-primary btn-lg btn-glow" id="footer-download-btn" download>
+                    <i data-lucide="download"></i> Download Zenvix Setup for Windows
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <span class="logo-dot"></span> ZENVIX
+                <p>Premium Local Developer OS & Hosting Suite for Windows.</p>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2026 Zenvix and CodersCircle. Built with ❤️ for developers worldwide.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
