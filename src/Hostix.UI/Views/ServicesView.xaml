@@ -1,0 +1,332 @@
+<UserControl x:Class="Hostix.UI.Views.ServicesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:models="clr-namespace:Hostix.Core.Models;assembly=Hostix.Core"
+             xmlns:conv="clr-namespace:Hostix.UI.Converters"
+             mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="960">
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:BoolToVisibilityInvertedConverter x:Key="BoolToVisibilityInvertedConverter" />
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+        <conv:StatusToVisibilityConverter x:Key="StatusToVisibilityConverter" />
+        <!-- Reusable service row template -->
+        <DataTemplate x:Key="ServiceRowTemplate">
+            <Border Background="{DynamicResource CardBrush}" CornerRadius="12"
+                    Margin="0,0,0,10" Padding="18,14"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Icon badge -->
+                    <Border Grid.Column="0" Width="44" Height="44" CornerRadius="11"
+                            Background="{DynamicResource AccentBrush}" Margin="0,0,14,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Icon}" Foreground="White" FontSize="11"
+                                   FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <!-- Name / Meta -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <!-- Status dot -->
+                            <Border Width="8" Height="8" CornerRadius="4" VerticalAlignment="Center" Margin="0,0,8,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Running}">
+                                                <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Starting}">
+                                                <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Stopping}">
+                                                <Setter Property="Background" Value="#F97316" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Error}">
+                                                <Setter Property="Background" Value="#F97316" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="5" Padding="7,2" Margin="0,0,6,0">
+                                <TextBlock Text="{Binding Version, StringFormat='v{0}'}" FontSize="10"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                            </Border>
+                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="5" Padding="7,2" Margin="0,0,6,0">
+                                <TextBlock Text="{Binding Port, StringFormat=':{0}'}" FontSize="10"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                            </Border>
+                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="5" Padding="7,2" Margin="0,0,6,0"
+                                    Visibility="{Binding Type, Converter={StaticResource StatusToVisibilityConverter}, ConverterParameter=Mailpit}">
+                                <TextBlock Text="Web: 8025" FontSize="10"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                            </Border>
+                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="5" Padding="7,2" Margin="0,0,6,0">
+                                <TextBlock Text="{Binding RamUsage}" FontSize="10"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                            </Border>
+                            <TextBlock Text="{Binding UptimeDisplay}" FontSize="10"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <!-- Detailed error/diagnostic notes - copyable -->
+                        <TextBox Text="{Binding Notes, Mode=OneWay}"
+                                 FontSize="10" Foreground="{DynamicResource ErrorBrush}"
+                                 Background="Transparent" BorderThickness="0" 
+                                 IsReadOnly="True" TextWrapping="Wrap" Margin="0,4,0,0">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Error}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Stopped}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </StackPanel>
+
+                    <!-- Secondary actions: Config / Logs / Details -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                        <!-- Mailpit specific: Send Test Mail -->
+                        <Button Content="Send Test"
+                                Visibility="{Binding Type, Converter={StaticResource StatusToVisibilityConverter}, ConverterParameter=Mailpit}"
+                                IsEnabled="{Binding Status, Converter={StaticResource StatusToIsEnabledConverter}}"
+                                Command="{Binding DataContext.SendTestMailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                Style="{DynamicResource Hostix.Button.Ghost}" 
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                Height="30" Padding="10,0" FontSize="10" Margin="0,0,6,0" />
+
+                        <Button 
+                                Command="{Binding DataContext.OpenAdminPanelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                Height="30" Padding="10,0" FontSize="10" Margin="0,0,6,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Ghost}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Setter Property="Content" Value="Panel" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Running}" />
+                                                <Condition Binding="{Binding HasAdminPanel}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static models:RuntimeServiceType.Mailpit}">
+                                            <Setter Property="Content" Value="Open Inbox" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Content="Details"
+                                Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}, ConverterParameter=Error}"
+                                Command="{Binding DataContext.ShowDiagnosticsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Style="{DynamicResource Hostix.Button.Ghost}" Height="30" Padding="10,0" FontSize="10" Margin="0,0,6,0" Foreground="{DynamicResource ErrorBrush}" />
+                        <Button Content="Config"
+                                Command="{Binding DataContext.OpenConfigCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Style="{DynamicResource Hostix.Button.Ghost}" Height="30" Padding="10,0" FontSize="10" Margin="0,0,6,0" />
+                        <Button Content="Logs"
+                                Command="{Binding DataContext.OpenLogsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Style="{DynamicResource Hostix.Button.Ghost}" Height="30" Padding="10,0" FontSize="10" />
+                    </StackPanel>
+
+                    <!-- Primary action: Spinner + Start/Stop/Restart -->
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                        <mah:ProgressRing Width="18" Height="18" Margin="0,0,6,0"
+                                          Foreground="{DynamicResource AccentBrush}">
+                            <mah:ProgressRing.Style>
+                                <Style TargetType="mah:ProgressRing">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Starting}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Stopping}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </mah:ProgressRing.Style>
+                        </mah:ProgressRing>
+
+                        <!-- Restart (only when Running) -->
+                        <Button Command="{Binding DataContext.RestartServiceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Height="30" Padding="10,0" FontSize="10" Margin="0,0,6,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Ghost}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Setter Property="Content" Value="Restart" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Running}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <!-- Toggle Start/Stop -->
+                        <Button Command="{Binding DataContext.ToggleServiceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Padding="14,8" MinWidth="85">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Primary}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Starting}">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Stopping}">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Button.Content>
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="START" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Running}">
+                                                    <Setter Property="Text" Value="STOP" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Starting}">
+                                                    <Setter Property="Text" Value="STARTING" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Stopping}">
+                                                    <Setter Property="Text" Value="STOPPING" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ServiceStatus.Error}">
+                                                    <Setter Property="Text" Value="RETRY" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button.Content>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Background="Transparent">
+        <!-- Main Content -->
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled"
+                      Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityInvertedConverter}}">
+            <StackPanel Margin="0,0,16,24">
+                <!-- Header -->
+                <Grid Margin="0,0,0,24">
+                    <StackPanel>
+                        <TextBlock Text="Stack Infrastructure" Style="{DynamicResource Hostix.Title}" />
+                        <TextBlock Text="Manage all runtime services and orchestration engines."
+                                   Style="{DynamicResource Hostix.Subtitle}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Error State -->
+                <Border Background="#FEF2F2" BorderBrush="#FEE2E2" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,24"
+                        Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE783;" FontFamily="Segoe MDL2 Assets" Foreground="#B91C1C" FontSize="20" Margin="0,0,14,0" VerticalAlignment="Center" />
+                        <StackPanel>
+                            <TextBlock Text="Initialization Error" FontWeight="Bold" Foreground="#991B1B" />
+                            <TextBlock Text="{Binding ErrorMessage}" Foreground="#B91C1C" FontSize="12" Opacity="0.8" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Web Servers -->
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="16" Padding="22" Margin="0,0,0,16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <Border Background="{DynamicResource AccentBrush}" CornerRadius="6" Padding="8,3" Margin="0,0,10,0">
+                                <TextBlock Text="WEB SERVERS" FontSize="10" FontWeight="Bold" Foreground="White" />
+                            </Border>
+                            <TextBlock Text="Nginx · Apache" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding WebServers}" ItemTemplate="{StaticResource ServiceRowTemplate}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Runtime Services -->
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="16" Padding="22" Margin="0,0,0,16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <Border Background="#8B5CF6" CornerRadius="6" Padding="8,3" Margin="0,0,10,0">
+                                <TextBlock Text="RUNTIMES" FontSize="10" FontWeight="Bold" Foreground="White" />
+                            </Border>
+                            <TextBlock Text="PHP-FPM · Node.js · Vite" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding Runtimes}" ItemTemplate="{StaticResource ServiceRowTemplate}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Database Services -->
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="16" Padding="22" Margin="0,0,0,16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <Border Background="#0EA5E9" CornerRadius="6" Padding="8,3" Margin="0,0,10,0">
+                                <TextBlock Text="DATABASES" FontSize="10" FontWeight="Bold" Foreground="White" />
+                            </Border>
+                            <TextBlock Text="MariaDB · MySQL · PostgreSQL · MongoDB · Redis" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding Databases}" ItemTemplate="{StaticResource ServiceRowTemplate}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Developer Services -->
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="16" Padding="22">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                            <Border Background="#10B981" CornerRadius="6" Padding="8,3" Margin="0,0,10,0">
+                                <TextBlock Text="DEVELOPER" FontSize="10" FontWeight="Bold" Foreground="White" />
+                            </Border>
+                            <TextBlock Text="Mailpit · Queue Workers · Scheduler" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding DevServices}" ItemTemplate="{StaticResource ServiceRowTemplate}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Loading Overlay -->
+        <Border Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                Background="{DynamicResource BackgroundBrush}" Opacity="0.8">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <mah:ProgressRing Foreground="{DynamicResource AccentBrush}" Width="48" Height="48" Margin="0,0,0,16" />
+                <TextBlock Text="Mapping Stack Infrastructure..." FontSize="16" FontWeight="SemiBold" 
+                           Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                <TextBlock Text="Identifying local binaries and services" FontSize="12" 
+                           Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Opacity="0.6" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

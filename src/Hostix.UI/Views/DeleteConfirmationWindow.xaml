@@ -1,0 +1,72 @@
+<mah:MetroWindow x:Class="Hostix.UI.Views.DeleteConfirmationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        Title="CONFIRM PROJECT DELETION" Height="380" Width="520"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="{DynamicResource BackgroundBrush}"
+        BorderThickness="0" GlowBrush="{DynamicResource ErrorBrush}"
+        WindowTitleBrush="{DynamicResource AccentBrush}"
+        TitleForeground="White"
+        TitleCharacterCasing="Normal"
+        TitleAlignment="Center">
+    
+    <Grid>
+        <StackPanel Margin="32,24">
+            <!-- Warning Title -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets" FontSize="32" Foreground="#F59E0B" VerticalAlignment="Center" Margin="0,0,16,0" />
+                <TextBlock Text="Are you absolutely sure?" FontSize="20" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center" />
+            </StackPanel>
+            
+            <TextBlock TextWrapping="Wrap" FontSize="12" LineHeight="22" Foreground="#64748B" Margin="0,0,0,28">
+                This action <Run FontWeight="Medium" Foreground="#EF4444">CANNOT</Run> be undone. 
+                This will permanently remove <Run FontWeight="Medium" Foreground="#0F172A" Text="{Binding WebsiteName, Mode=OneWay}" /> 
+                and delete all files from your disk.
+            </TextBlock>
+
+            <!-- Confirmation Helper Box -->
+            <Border Background="#F1F5F9" Padding="20,16" CornerRadius="12" Margin="0,0,0,24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Text="Type name to confirm:" VerticalAlignment="Center" FontSize="13" FontWeight="Medium" Foreground="Black" />
+                    
+                    <Border Grid.Column="1" Background="White" Padding="14,6" CornerRadius="8" HorizontalAlignment="Left" Margin="16,0" Effect="{x:Null}">
+                        <TextBlock Text="{Binding WebsiteName}" FontWeight="Bold" FontSize="14" Foreground="#6366F1" />
+                    </Border>
+                    
+                    <Button Grid.Column="2" Content="COPY" Command="{Binding CopyNameCommand}" 
+                            Style="{DynamicResource Hostix.Button.Ghost}" Height="34" Padding="20,0" FontSize="12" FontWeight="Black" 
+                            Background="White" Foreground="Black" />
+                </Grid>
+            </Border>
+
+            <!-- Action Area (Input + Button) -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="160" />
+                </Grid.ColumnDefinitions>
+                
+                <TextBox x:Name="ConfirmBox" Text="{Binding ConfirmationInput, UpdateSourceTrigger=PropertyChanged}" 
+                         mah:TextBoxHelper.Watermark="Verify website name..." 
+                         mah:ControlsHelper.CornerRadius="10"
+                         mah:ControlsHelper.FocusBorderBrush="#EF4444"
+                         mah:ControlsHelper.MouseOverBorderBrush="#EF4444"
+                         Height="54" Padding="14,0" VerticalContentAlignment="Center" FontSize="16" Foreground="Black" Margin="0,0,12,0" 
+                         Background="White" BorderBrush="#EF4444" BorderThickness="1" FontWeight="SemiBold" />
+
+                <Button Grid.Column="1" Content="Delete" IsDefault="True" Command="{Binding ConfirmDeleteCommand}" 
+                        Style="{DynamicResource Hostix.Button.Danger}" Height="54" FontSize="20" FontWeight="SemiBold"
+                        IsEnabled="{Binding IsConfirmEnabled}" mah:ControlsHelper.CornerRadius="10" 
+                        Background="#FF6B6B" BorderThickness="0" Foreground="White" />
+            </Grid>
+            
+        </StackPanel>
+    </Grid>
+</mah:MetroWindow>

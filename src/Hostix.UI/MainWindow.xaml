@@ -1,0 +1,200 @@
+<mah:MetroWindow x:Class="Hostix.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:Hostix.UI"
+        xmlns:vm="clr-namespace:Hostix.ViewModels;assembly=Hostix.ViewModels"
+        xmlns:vm_work="clr-namespace:Hostix.ViewModels.Workstations;assembly=Hostix.ViewModels"
+        xmlns:views="clr-namespace:Hostix.UI.Views"
+        xmlns:views_work="clr-namespace:Hostix.UI.Views.Workstations"
+        xmlns:conv="clr-namespace:Hostix.UI.Converters"
+        mc:Ignorable="d"
+        Title="ZENVIX - Local Hosting OS" Height="800" Width="1300"
+        Icon="/Assets/Icons/zenvix.ico"
+        Background="{StaticResource BackgroundBrush}"
+        GlowBrush="{StaticResource BorderBrush}"
+        WindowStartupLocation="CenterScreen"
+        WindowTitleBrush="#4F46E5"
+        TitleForeground="#fdfdfdff"
+        ShowTitleBar="True">
+
+    <Window.Resources>
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:WebsitesViewModel}">
+            <views:WebsitesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm_work:WorkstationsViewModel}">
+            <views_work:WorkstationsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DatabasesViewModel}">
+            <views:DatabasesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ServicesViewModel}">
+            <views:ServicesView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- SIDEBAR -->
+        <Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="5,10,0,40">
+                    <TextBlock Text="ZENVIX" Style="{DynamicResource Hostix.Title}" />
+                    <TextBlock Text="v1.0.0" Style="{DynamicResource Hostix.Subtitle}" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1">
+                    <RadioButton Content="Dashboard" IsChecked="True" Command="{Binding NavigateCommand}" CommandParameter="Dashboard" Style="{StaticResource Hostix.NavButton}" />
+                    <RadioButton Content="Websites" Command="{Binding NavigateCommand}" CommandParameter="Websites" Style="{StaticResource Hostix.NavButton}" />
+                    <RadioButton Content="Workstations" Command="{Binding NavigateCommand}" CommandParameter="Workstations" Style="{StaticResource Hostix.NavButton}" />
+                    <RadioButton Content="Databases" Command="{Binding NavigateCommand}" CommandParameter="Databases" Style="{StaticResource Hostix.NavButton}" />
+                    <RadioButton Content="Services" Command="{Binding NavigateCommand}" CommandParameter="Services" Style="{StaticResource Hostix.NavButton}" />
+                    <RadioButton Content="Logs" Command="{Binding NavigateCommand}" CommandParameter="Logs" Style="{StaticResource Hostix.NavButton}" />
+                    <RadioButton Content="Settings" Command="{Binding NavigateCommand}" CommandParameter="Settings" Style="{StaticResource Hostix.NavButton}" />
+                </StackPanel>
+
+                <Border Grid.Row="2" Background="{DynamicResource CardBrush}" CornerRadius="12" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="ENGINE STATUS" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <Ellipse Width="8" Height="8" Fill="{DynamicResource SuccessBrush}" Margin="0,0,8,0" />
+                            <TextBlock Text="Orchestrator Active" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- MAIN AREA -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="80" /> <!-- Topbar -->
+                <RowDefinition Height="*" />  <!-- Content -->
+                <RowDefinition Height="Auto" /> <!-- Resizable Log Panel -->
+            </Grid.RowDefinitions>
+
+            <!-- TOPBAR -->
+            <Grid Grid.Row="0" Margin="40,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox MaxWidth="450" MinWidth="320" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                         Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                         mah:TextBoxHelper.Watermark="Search projects or run command..."
+                         mah:TextBoxHelper.ClearTextButton="True"
+                         mah:TextBoxHelper.SelectAllOnFocus="True"
+                         mah:TextBoxHelper.ButtonContent=""
+                         mah:TextBoxHelper.ButtonFontFamily="Segoe MDL2 Assets"
+                         mah:TextBoxHelper.ButtonWidth="35"
+                         mah:ControlsHelper.CornerRadius="14"
+                         mah:ControlsHelper.FocusBorderBrush="{StaticResource AccentBrush}"
+                         mah:ControlsHelper.MouseOverBorderBrush="{StaticResource AccentBrush}"
+                         Background="{StaticResource SurfaceBrush}" 
+                         Foreground="{StaticResource TextPrimaryBrush}" 
+                         BorderThickness="1" 
+                         BorderBrush="{StaticResource BorderBrush}" 
+                         FontSize="14"
+                         VerticalContentAlignment="Center"
+                         Height="42" Padding="15,0,10,0" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel Margin="20,0">
+                        <TextBlock Text="CPU" HorizontalAlignment="Right" Style="{DynamicResource Hostix.Subtitle}" FontSize="10" />
+                        <TextBlock Text="12.4%" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
+                    </StackPanel>
+                    <StackPanel Margin="20,0">
+                        <TextBlock Text="MEMORY" HorizontalAlignment="Right" Style="{DynamicResource Hostix.Subtitle}" FontSize="10" />
+                        <TextBlock Text="1.8 GB" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
+                    </StackPanel>
+                    <Border Width="45" Height="45" CornerRadius="22" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2">
+                        <TextBlock Text="{Binding Settings.AvatarText}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <!-- CONTENT HOST -->
+            <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}" Margin="40,10,40,40" />
+
+            <!-- LOG PANEL -->
+            <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
+                <Expander Header="RUNTIME TERMINAL" ExpandDirection="Up" IsExpanded="False" Foreground="{StaticResource TextSecondaryBrush}" BorderThickness="0">
+                    <Border Height="250" Background="#0F172A" Padding="25">
+                        <ScrollViewer>
+                            <TextBlock FontFamily="Consolas" FontSize="13" Foreground="#94A3B8" LineHeight="20">
+                                <Run Foreground="{StaticResource AccentBrush}" FontWeight="Bold">[19:16:10]</Run> Orchestrator: System ready.<LineBreak/>
+                                <Run Foreground="{StaticResource SuccessBrush}" FontWeight="Bold">[19:16:11]</Run> Engine: All hooks initialized.
+                            </TextBlock>
+                        </ScrollViewer>
+                    </Border>
+                </Expander>
+            </Border>
+        </Grid>
+    </Grid>
+    <mah:MetroWindow.Flyouts>
+        <mah:FlyoutsControl>
+            <mah:Flyout x:Name="DiagnosticFlyout" Header="RUNTIME DIAGNOSTICS" 
+                        Position="Right" Width="600" 
+                        IsOpen="{Binding IsDiagnosticFlyoutOpen}"
+                        Background="{StaticResource SurfaceBrush}"
+                        Foreground="{StaticResource TextPrimaryBrush}"
+                        Theme="Dark">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                        <TextBlock Text="{Binding SelectedServiceName, StringFormat='Diagnostics for \{0\}'}" 
+                                   FontSize="18" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock Text="Detailed startup logs, environment checks, and crash reports." 
+                                   Style="{StaticResource Hostix.Subtitle}" Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <Border Grid.Row="1" Background="#0F172A" CornerRadius="8" Padding="15">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <TextBox Text="{Binding SelectedDiagnosticLogs}" 
+                                     IsReadOnly="True" 
+                                     TextWrapping="Wrap" 
+                                     AcceptsReturn="True"
+                                     Background="Transparent" 
+                                     Foreground="#94A3B8" 
+                                     BorderThickness="0" 
+                                     FontFamily="Consolas" 
+                                     FontSize="12" />
+                        </ScrollViewer>
+                    </Border>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                        <Button Content="Copy Logs" Command="{Binding CopyDiagnosticsCommand}"
+                                Style="{StaticResource Hostix.Button.Ghost}" Margin="0,0,10,0" Width="120" />
+                        <Button Content="Export to File" Command="{Binding ExportDiagnosticsCommand}"
+                                Style="{StaticResource Hostix.Button.Primary}" Width="140" />
+                    </StackPanel>
+                </Grid>
+            </mah:Flyout>
+        </mah:FlyoutsControl>
+    </mah:MetroWindow.Flyouts>
+</mah:MetroWindow>

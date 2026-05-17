@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hostix.Core\Hostix.Core.csproj" />
+    <ProjectReference Include="..\Hostix.Shared\Hostix.Shared.csproj" />
+    <ProjectReference Include="..\Hostix.Events\Hostix.Events.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

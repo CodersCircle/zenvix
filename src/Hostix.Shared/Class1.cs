@@ -1,0 +1,6 @@
+﻿namespace Hostix.Shared;
+
+public class Class1
+{
+
+}

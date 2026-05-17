@@ -1,0 +1,252 @@
+<UserControl x:Class="Hostix.UI.Views.DatabasesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:models="clr-namespace:Hostix.Core.Models;assembly=Hostix.Core"
+             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="960">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,0,24">
+
+            <!-- ── Header ── -->
+            <Grid Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="Database Manager" Style="{DynamicResource Hostix.Title}" />
+                    <TextBlock Text="Manage local database instances and runtimes."
+                               Style="{DynamicResource Hostix.Subtitle}" Margin="0,4,0,0" />
+                </StackPanel>
+                <Button Content="+ Add Instance"
+                        Command="{Binding ShowAddInstanceCommand}"
+                        Style="{DynamicResource Hostix.Button.Primary}"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Padding="20,10" />
+            </Grid>
+
+            <!-- ── Add Instance Form ── -->
+            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="16" Padding="24"
+                    Margin="0,0,0,20"
+                    Visibility="{Binding IsAddingInstance, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel>
+                    <TextBlock Text="NEW DATABASE INSTANCE" FontSize="11" FontWeight="Bold"
+                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,16" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="120" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                            <TextBlock Text="Instance Name" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                            <TextBox Text="{Binding NewInstanceName, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{DynamicResource MahApps.Styles.TextBox}"
+                                     Padding="10,8" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                            <TextBlock Text="Engine" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                            <ComboBox ItemsSource="{Binding AvailableEngines}"
+                                      SelectedItem="{Binding NewInstanceEngine}"
+                                      Padding="10,8" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Port" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                            <TextBox Text="{Binding NewInstancePort, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{DynamicResource MahApps.Styles.TextBox}"
+                                     Padding="10,8" />
+                        </StackPanel>
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                        <Button Content="Cancel" Command="{Binding CancelAddInstanceCommand}"
+                                Style="{DynamicResource Hostix.Button.Ghost}" Margin="0,0,10,0" Padding="16,8" />
+                        <Button Content="Create Instance" Command="{Binding ConfirmAddInstanceCommand}"
+                                Style="{DynamicResource Hostix.Button.Primary}" Padding="16,8" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ── Instance List ── -->
+            <ItemsControl ItemsSource="{Binding Instances}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="16"
+                                Margin="0,0,0,14" Padding="24">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Engine Icon Badge -->
+                                <Border Grid.Column="0" Width="52" Height="52" CornerRadius="14"
+                                        Background="{DynamicResource AccentBrush}"
+                                        Margin="0,0,18,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Icon}" Foreground="White"
+                                               FontSize="13" FontWeight="Bold"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+
+                                <!-- Info -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                        <!-- Status dot -->
+                                        <Border Width="9" Height="9" CornerRadius="5" VerticalAlignment="Center" Margin="0,0,8,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Running}">
+                                                            <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Starting}">
+                                                            <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Stopping}">
+                                                            <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Error}">
+                                                            <Setter Property="Background" Value="#F97316" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="15"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    </StackPanel>
+
+                                    <!-- Meta row -->
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Background="{DynamicResource CardBrush}" CornerRadius="6" Padding="8,3" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding EngineLabel}" FontSize="10" FontWeight="Bold"
+                                                       Foreground="{DynamicResource AccentBrush}" />
+                                        </Border>
+                                        <Border Background="{DynamicResource CardBrush}" CornerRadius="6" Padding="8,3" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Version, StringFormat='v{0}'}" FontSize="10"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                                        </Border>
+                                        <Border Background="{DynamicResource CardBrush}" CornerRadius="6" Padding="8,3" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Port, StringFormat='Port {0}'}" FontSize="10"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding Status}" FontSize="11"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Action Buttons -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+
+                                    <!-- Spinner during transitions -->
+                                    <mah:ProgressRing Width="20" Height="20" Margin="0,0,8,0"
+                                                      Foreground="{DynamicResource AccentBrush}">
+                                        <mah:ProgressRing.Style>
+                                            <Style TargetType="mah:ProgressRing">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Starting}">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Stopping}">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </mah:ProgressRing.Style>
+                                    </mah:ProgressRing>
+
+                                    <!-- Start/Stop toggle -->
+                                    <Button Command="{Binding DataContext.ToggleInstanceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Padding="14,8" Margin="0,0,8,0" MinWidth="80">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Primary}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Starting}">
+                                                        <Setter Property="IsEnabled" Value="False" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Stopping}">
+                                                        <Setter Property="IsEnabled" Value="False" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <Button.Content>
+                                            <TextBlock>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="START" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Running}">
+                                                                <Setter Property="Text" Value="STOP" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Starting}">
+                                                                <Setter Property="Text" Value="STARTING" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Stopping}">
+                                                                <Setter Property="Text" Value="STOPPING" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static models:DbInstanceStatus.Error}">
+                                                                <Setter Property="Text" Value="RETRY" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Button.Content>
+                                    </Button>
+
+                                    <!-- Open Panel -->
+                                    <Button Content="{Binding PanelLabel}"
+                                            Command="{Binding DataContext.OpenPanelCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{DynamicResource Hostix.Button.Ghost}"
+                                            Padding="14,8" Margin="0,0,8,0" />
+
+                                    <!-- Config -->
+                                    <Button Content="Config"
+                                            Command="{Binding DataContext.OpenConfigCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{DynamicResource Hostix.Button.Ghost}"
+                                            Padding="14,8" Margin="0,0,8,0" />
+
+                                    <!-- Logs -->
+                                    <Button Content="Logs"
+                                            Command="{Binding DataContext.OpenLogsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{DynamicResource Hostix.Button.Ghost}"
+                                            Padding="14,8" Margin="0,0,8,0" />
+
+                                    <!-- Remove -->
+                                    <Button Content="Remove"
+                                            Command="{Binding DataContext.RemoveInstanceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{DynamicResource Hostix.Button.Danger}"
+                                            Padding="14,8" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- ── Empty State ── -->
+            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="16" Padding="60"
+                    Visibility="{Binding Instances.Count, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="No Database Instances" FontSize="20" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                    <TextBlock Text="Click + Add Instance to create your first database runtime."
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Margin="0,10,0,24" HorizontalAlignment="Center" />
+                    <Button Content="+ Add Instance" Command="{Binding ShowAddInstanceCommand}"
+                            Style="{DynamicResource Hostix.Button.Primary}" HorizontalAlignment="Center"
+                            Padding="20,10" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

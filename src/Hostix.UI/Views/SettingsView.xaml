@@ -1,0 +1,132 @@
+<UserControl x:Class="Hostix.UI.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:local="clr-namespace:Hostix.UI.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000">
+
+    <!-- Dead Center Form Container -->
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        
+        <!-- COMPACT PROFILE CARD -->
+        <Border Width="500" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="30">
+            <StackPanel>
+                
+                <!-- HEADER WITH ACCENT BADGE -->
+                <Grid Margin="0,0,0,25">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Width="50" Height="50" CornerRadius="25" Background="#1E1B4B" BorderBrush="#4F46E5" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="👤" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Developer Profile" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="18" FontWeight="Bold" />
+                        <TextBlock Text="Configure your workstation identity and avatar." Style="{DynamicResource Hostix.Subtitle}" FontSize="12" />
+                    </StackPanel>
+                </Grid>
+
+                <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,25" />
+
+                <!-- FORM CONTROLS -->
+                <StackPanel Margin="0,0,0,10">
+                    
+                    <!-- USERNAME (SINGLE FIELD IN A ROW) -->
+                    <TextBlock Text="USERNAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
+                    <TextBox Text="{Binding DraftUsername, UpdateSourceTrigger=PropertyChanged}" 
+                             mah:TextBoxHelper.Watermark="e.g. dev_admin" 
+                             mah:ControlsHelper.CornerRadius="8"
+                             mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
+                             mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
+                             Background="{DynamicResource SurfaceBrush}"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"
+                             CaretBrush="{DynamicResource AccentBrush}"
+                             Height="38" Margin="0,0,0,20" Padding="10,0" VerticalContentAlignment="Center" />
+
+                    <!-- FIRST & LAST NAME (2 IN A SINGLE ROW) -->
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="15" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- FIRST NAME -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="FIRST NAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
+                            <TextBox Text="{Binding DraftFirstName, UpdateSourceTrigger=PropertyChanged}" 
+                                     mah:TextBoxHelper.Watermark="First name" 
+                                     mah:ControlsHelper.CornerRadius="8"
+                                     mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
+                                     mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
+                                     Background="{DynamicResource SurfaceBrush}"
+                                     Foreground="{DynamicResource TextPrimaryBrush}"
+                                     BorderBrush="{DynamicResource BorderBrush}"
+                                     CaretBrush="{DynamicResource AccentBrush}"
+                                     Height="38" Padding="10,0" VerticalContentAlignment="Center" />
+                        </StackPanel>
+
+                        <!-- LAST NAME -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="LAST NAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
+                            <TextBox Text="{Binding DraftLastName, UpdateSourceTrigger=PropertyChanged}" 
+                                     mah:TextBoxHelper.Watermark="Last name (optional)" 
+                                     mah:ControlsHelper.CornerRadius="8"
+                                     mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
+                                     mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
+                                     Background="{DynamicResource SurfaceBrush}"
+                                     Foreground="{DynamicResource TextPrimaryBrush}"
+                                     BorderBrush="{DynamicResource BorderBrush}"
+                                     CaretBrush="{DynamicResource AccentBrush}"
+                                     Height="38" Padding="10,0" VerticalContentAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                    
+                </StackPanel>
+
+                <!-- SAVE BUTTON (PRIMARY APP STYLE WITH HAND HOVER CURSOR) -->
+                <Button Content="Save Profile" 
+                        Command="{Binding SaveCommand}"
+                        Style="{StaticResource Hostix.Button.Primary}"
+                        Width="140"
+                        Height="36"
+                        Cursor="Hand"
+                        Margin="0,0,0,20"
+                        HorizontalAlignment="Right" />
+
+                <!-- LIVE AVATAR PREVIEW (COHESIVE BOTTOM BOX - HIGH VISIBILITY COLORS) -->
+                <Border Background="#101323" CornerRadius="10" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Avatar Preview" Foreground="#F8FAFC" FontSize="14" FontWeight="Bold" />
+                            <TextBlock Text="Live changes before saving" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="45" Height="45" CornerRadius="22.5" Background="#1E1B4B" BorderBrush="#4F46E5" BorderThickness="1.5" Margin="0,0,12,0">
+                                <TextBlock Text="{Binding DraftAvatarText}" Foreground="#F8FAFC" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding DraftFirstName}" Foreground="#F8FAFC" FontWeight="Bold" FontSize="14" />
+                                <TextBlock Text="{Binding DraftUsername}" Foreground="#94A3B8" FontSize="11" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,27 @@
+<Application x:Class="Hostix.UI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Hostix.UI"
+             xmlns:conv="clr-namespace:Hostix.UI.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Purple.xaml" />
+                <ResourceDictionary Source="/Styles/ModernTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <conv:StatusToColorConverter x:Key="StatusToColorConverter" />
+            <conv:StatusToButtonTextConverter x:Key="StatusToButtonTextConverter" />
+            <conv:StatusToIsEnabledConverter x:Key="StatusToIsEnabledConverter" />
+            <conv:StatusToSpinnerVisibilityConverter x:Key="StatusToSpinnerVisibilityConverter" />
+            <conv:StatusToLabelVisibilityConverter x:Key="StatusToLabelVisibilityConverter" />
+            <conv:StatusToVisibilityConverter x:Key="StatusToVisibilityConverter" />
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,20 @@
+# Build and Publish Outputs
+bin/
+obj/
+dist/
+temp/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE and Editors
+.vs/
+.vscode/
+*.swp
+*.swo
+
+# OS temporary files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
