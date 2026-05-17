@@ -1420,6 +1420,97 @@ a {
     color: var(--text-secondary);
 }
 
+/* Motivational Developer Quote Popup Modal styling */
+.quote-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 7, 16, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 11000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.quote-modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.quote-modal-window {
+    width: 90%;
+    max-width: 500px;
+    background: rgba(13, 18, 35, 0.95);
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7), 0 0 30px rgba(139, 92, 246, 0.15);
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+.quote-modal-overlay.show .quote-modal-window {
+    transform: translateY(0) scale(1);
+}
+
+.quote-modal-header-box {
+    margin-bottom: 20px;
+}
+
+.quote-modal-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    color: var(--accent-violet);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px auto;
+}
+
+.quote-modal-icon i {
+    width: 18px;
+    height: 18px;
+}
+
+.quote-modal-header-box h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: var(--font-primary);
+}
+
+.quote-modal-body {
+    margin: 24px 0;
+}
+
+.quote-text {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    font-style: italic;
+    color: #fff;
+    font-family: var(--font-secondary);
+    background: linear-gradient(135deg, #fff 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.quote-modal-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
     .features-grid {

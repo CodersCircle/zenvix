@@ -74,7 +74,7 @@
                         <div class="window-controls">
                             <span class="control-btn control-minimize"><i data-lucide="minus"></i></span>
                             <span class="control-btn control-maximize"><i data-lucide="square"></i></span>
-                            <span class="control-btn control-close"><i data-lucide="x"></i></span>
+                            <span class="control-btn control-close" id="main-window-close"><i data-lucide="x"></i></span>
                         </div>
                     </div>
                     <div class="window-body">
@@ -523,6 +523,26 @@
         </div>
     </div>
 
+    <!-- Motivational Developer Quote Popup Modal -->
+    <div class="quote-modal-overlay" id="quote-modal">
+        <div class="quote-modal-window card-glow">
+            <div class="quote-modal-header-box">
+                <div class="quote-modal-icon"><i data-lucide="sparkles"></i></div>
+                <h3>ZENVIX Code Inspiration</h3>
+            </div>
+            <div class="quote-modal-body">
+                <div class="quote-text" id="quote-text">
+                    "First, solve the problem. Then, write the code.<br>Your logic is your superpower."
+                </div>
+            </div>
+            <div class="quote-modal-footer">
+                <button class="btn btn-primary btn-sm btn-glow" id="quote-close-btn">
+                    <i data-lucide="zap"></i> Keep Building!
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Initialize Lucide Icons & Interactive Features -->
     <script>
         lucide.createIcons();
@@ -723,6 +743,57 @@
         browserModal.addEventListener('click', (e) => {
             if (e.target === browserModal) {
                 browserModal.classList.remove('show');
+            }
+        });
+
+        // 5. Developer Quote Popup Modal Logic
+        const mainWindowClose = document.getElementById('main-window-close');
+        const quoteModal = document.getElementById('quote-modal');
+        const quoteCloseBtn = document.getElementById('quote-close-btn');
+        const quoteText = document.getElementById('quote-text');
+
+        const developerQuotes = [
+            '"Code is like humor. When you have to explain it, it’s bad.<br>Build so well that the world can\'t ignore your creations."',
+            '"Code likho aisa jo shor machaye,<br>Mehnat itni karo ki har system chal jaye."',
+            '"Every great software starts with a single line of code.<br>Keep writing, keep building, keep dreaming."',
+            '"Bug se darna nahi, unhe harana seekho,<br>Ek behtareen developer ban kar duniya ko dikhao."',
+            '"The best way to predict the future is to invent it.<br>Write the future, one function at a time."',
+            '"Mushkilein toh aayengi coding ke is safar mein,<br>Par jo rukta nahi, wahi kamaal karta hai."',
+            '"First, solve the problem. Then, write the code.<br>Your logic is your superpower."',
+            '"Sirf software nahi, ek vishwas banao,<br>Har line mein apni lagan aur kshamta dikhao."',
+            '"Make it work, make it right, make it fast.<br>You are a digital architect building the tomorrow."',
+            '"Keyboard ki har ek hit mein ek kahani hai,<br>Tu ruk mat, teri mehnat hi sabse badi nishani hai."',
+            '"Software is a great combination of artistry and engineering.<br>Paint your digital masterpiece with pride."',
+            '"Har ek compiler error ek naya sabak hai,<br>Tumhare andar ka developer sabse alag hai."',
+            '"Great developers are not born. They are made through sleepless nights,<br>relentless debugging, and an unyielding passion."',
+            '"Jo sapne tumne dekhe hain unhe code mein dhalo,<br>Mehnat ki is aag mein thoda aur khud ko jhalo."'
+        ];
+
+        if (mainWindowClose) {
+            mainWindowClose.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Get random quote
+                const randomIndex = Math.floor(Math.random() * developerQuotes.length);
+                quoteText.innerHTML = developerQuotes[randomIndex];
+                
+                // Show quote modal
+                quoteModal.classList.add('show');
+                lucide.createIcons();
+            });
+        }
+
+        if (quoteCloseBtn) {
+            quoteCloseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                quoteModal.classList.remove('show');
+            });
+        }
+
+        quoteModal.addEventListener('click', (e) => {
+            if (e.target === quoteModal) {
+                quoteModal.classList.remove('show');
             }
         });
     </script>
