@@ -133,6 +133,7 @@ a {
     cursor: pointer;
     transition: var(--transition-smooth);
     border: none;
+    white-space: nowrap;
 }
 
 .btn-primary {
@@ -1724,6 +1725,70 @@ a {
     }
 }
 
+/* Mobile Download Warnings and Inline Dots */
+.nav-download-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.hero-download-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.footer-download-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.os-warning {
+    display: none;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #ff4a4a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 8px rgba(255, 74, 74, 0.6);
+    margin-top: 4px;
+    text-align: center;
+    animation: pulse-red 2s infinite ease-in-out;
+}
+
+.india-flag-dots-inline {
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+.india-flag-dots-inline .india-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+@keyframes pulse-red {
+    0%, 100% {
+        opacity: 0.85;
+        text-shadow: 0 0 4px rgba(255, 74, 74, 0.4);
+    }
+    50% {
+        opacity: 1;
+        text-shadow: 0 0 12px rgba(255, 74, 74, 0.8), 0 0 20px rgba(255, 74, 74, 0.4);
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
     .features-grid {
@@ -1736,6 +1801,34 @@ a {
 }
 
 @media (max-width: 768px) {
+    .nav-container {
+        padding: 12px 16px;
+    }
+    
+    .navbar .brand-logo .india-badge {
+        display: none !important;
+    }
+    
+    .os-warning {
+        display: inline-block;
+    }
+    
+    .btn-sm {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+        border-radius: 8px;
+    }
+    
+    .btn-lg {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        border-radius: 10px;
+    }
+    
+    .hero-ctas {
+        gap: 12px;
+    }
+
     .nav-menu {
         display: none;
     }
