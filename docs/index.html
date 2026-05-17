@@ -102,7 +102,10 @@
                                             <h4>NGINX Engine</h4>
                                             <p>Port 80 • Active</p>
                                         </div>
-                                        <span class="badge badge-success">Running</span>
+                                        <div class="item-controls">
+                                            <span class="badge badge-success">Running</span>
+                                            <span class="toggle-btn active"><span class="toggle-dot"></span></span>
+                                        </div>
                                     </div>
                                     <div class="dashboard-card card-glow">
                                         <div class="card-icon"><i data-lucide="server" class="text-cyan"></i></div>
@@ -110,7 +113,10 @@
                                             <h4>PHP 8.3-FPM</h4>
                                             <p>Global Dev Version</p>
                                         </div>
-                                        <span class="badge badge-success">Running</span>
+                                        <div class="item-controls">
+                                            <span class="badge badge-success">Running</span>
+                                            <span class="toggle-btn active"><span class="toggle-dot"></span></span>
+                                        </div>
                                     </div>
                                     <div class="dashboard-card card-glow">
                                         <div class="card-icon"><i data-lucide="database" class="text-indigo"></i></div>
@@ -118,7 +124,10 @@
                                             <h4>MySQL Engine</h4>
                                             <p>Port 3306 • Secured</p>
                                         </div>
-                                        <span class="badge badge-success">Running</span>
+                                        <div class="item-controls">
+                                            <span class="badge badge-success">Running</span>
+                                            <span class="toggle-btn active"><span class="toggle-dot"></span></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -249,62 +258,6 @@
                                 </div>
                             </div>
 
-                            <!-- PAGE: BROWSER PREVIEW (MATERIAL 3 DASHBOARD) -->
-                            <div class="mockup-page" id="page-browser-preview" style="display: none;">
-                                <div class="browser-address-bar">
-                                    <span class="browser-back-btn" id="browser-back"><i data-lucide="arrow-left"></i> Back</span>
-                                    <div class="browser-url">
-                                        <i data-lucide="lock" class="text-green"></i> 
-                                        <span id="browser-url-text">https://react-dashboard.test/dashboard</span>
-                                    </div>
-                                    <span class="browser-refresh-btn"><i data-lucide="rotate-cw"></i></span>
-                                </div>
-                                <div class="browser-viewport">
-                                    <div class="m3-dashboard">
-                                        <div class="m3-header">
-                                            <div>
-                                                <h2 id="m3-site-title">Material 3 Studio</h2>
-                                                <p id="m3-site-subtitle">Production Environment Node.js App</p>
-                                            </div>
-                                            <span class="m3-chip"><span class="chip-dot"></span> Live Syncing</span>
-                                        </div>
-                                        <div class="m3-grid">
-                                            <div class="m3-card m3-card-purple">
-                                                <span class="m3-card-title">Monthly Revenue</span>
-                                                <span class="m3-card-value" id="m3-val-1">$24,890</span>
-                                                <span class="m3-card-meta text-green">+12.4% this week</span>
-                                            </div>
-                                            <div class="m3-card m3-card-cyan">
-                                                <span class="m3-card-title">Active Requests</span>
-                                                <span class="m3-card-value" id="m3-val-2">1,402 /s</span>
-                                                <span class="m3-card-meta text-green">Stable Latency 14ms</span>
-                                            </div>
-                                            <div class="m3-card m3-card-indigo">
-                                                <span class="m3-card-title">Memory Allocation</span>
-                                                <span class="m3-card-value" id="m3-val-3">184 MB</span>
-                                                <span class="m3-card-meta">Garbage collection optimized</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="m3-chart-container">
-                                            <div class="m3-chart-header">
-                                                <h4>Real-time Server Traffic</h4>
-                                                <span class="badge badge-success">Online</span>
-                                            </div>
-                                            <!-- Sleek CSS bar chart -->
-                                            <div class="m3-bar-chart">
-                                                <div class="chart-bar" style="height: 35%;"></div>
-                                                <div class="chart-bar" style="height: 48px; height: 50%;"></div>
-                                                <div class="chart-bar" style="height: 25%;"></div>
-                                                <div class="chart-bar" style="height: 65%;"></div>
-                                                <div class="chart-bar" style="height: 85%;"></div>
-                                                <div class="chart-bar" style="height: 70%;"></div>
-                                                <div class="chart-bar animate-pulse" style="height: 95%;"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <!-- Premium Toast Notification -->
                             <div class="mockup-toast" id="mockup-toast">
@@ -450,6 +403,123 @@
         </div>
     </footer>
 
+    <!-- Real-Looking Browser Popup Modal -->
+    <div class="browser-modal-overlay" id="browser-modal">
+        <div class="browser-modal-window">
+            <div class="browser-modal-header">
+                <div class="browser-modal-dots">
+                    <span class="modal-dot modal-dot-close" id="modal-close-btn"></span>
+                    <span class="modal-dot modal-dot-minimize"></span>
+                    <span class="modal-dot modal-dot-maximize"></span>
+                </div>
+                <div class="browser-modal-title" id="browser-modal-title">react-dashboard.test - Zenvix Browser Preview</div>
+            </div>
+            <div class="browser-address-bar">
+                <span class="browser-back-btn" id="modal-browser-back"><i data-lucide="arrow-left"></i> Back</span>
+                <div class="browser-url">
+                    <i data-lucide="lock" class="text-green"></i> 
+                    <span id="modal-browser-url-text">https://react-dashboard.test/dashboard</span>
+                </div>
+                <span class="browser-refresh-btn"><i data-lucide="rotate-cw"></i></span>
+            </div>
+            <div class="browser-viewport">
+                <!-- High-Fidelity Website Dashboard Content -->
+                <div class="m3-dashboard">
+                    <div class="m3-sidebar">
+                        <div class="m3-sidebar-brand"><span class="logo-dot"></span> Studio Pro</div>
+                        <div class="m3-sidebar-item active"><i data-lucide="layout-dashboard"></i> Overview</div>
+                        <div class="m3-sidebar-item"><i data-lucide="users"></i> Audience</div>
+                        <div class="m3-sidebar-item"><i data-lucide="bar-chart-2"></i> Analytics</div>
+                        <div class="m3-sidebar-item"><i data-lucide="settings"></i> Settings</div>
+                    </div>
+                    <div class="m3-main-content">
+                        <div class="m3-header">
+                            <div>
+                                <h2 id="m3-site-title">Material 3 Studio</h2>
+                                <p id="m3-site-subtitle">Production Environment Node.js App</p>
+                            </div>
+                            <span class="m3-chip"><span class="chip-dot"></span> Live Syncing</span>
+                        </div>
+                        <div class="m3-grid">
+                            <div class="m3-card m3-card-purple">
+                                <span class="m3-card-title">Monthly Revenue</span>
+                                <span class="m3-card-value" id="m3-val-1">$24,890</span>
+                                <div class="m3-sparkline">
+                                    <div class="spark-point" style="height: 30%"></div>
+                                    <div class="spark-point" style="height: 50%"></div>
+                                    <div class="spark-point" style="height: 40%"></div>
+                                    <div class="spark-point" style="height: 70%"></div>
+                                    <div class="spark-point" style="height: 90%"></div>
+                                </div>
+                                <span class="m3-card-meta text-green">+12.4% this week</span>
+                            </div>
+                            <div class="m3-card m3-card-cyan">
+                                <span class="m3-card-title">Active Requests</span>
+                                <span class="m3-card-value" id="m3-val-2">1,402 /s</span>
+                                <div class="m3-sparkline">
+                                    <div class="spark-point" style="height: 70%"></div>
+                                    <div class="spark-point" style="height: 60%"></div>
+                                    <div class="spark-point" style="height: 80%"></div>
+                                    <div class="spark-point" style="height: 75%"></div>
+                                    <div class="spark-point animate-pulse" style="height: 95%"></div>
+                                </div>
+                                <span class="m3-card-meta text-green">Stable Latency 14ms</span>
+                            </div>
+                            <div class="m3-card m3-card-indigo">
+                                <span class="m3-card-title">Memory Allocation</span>
+                                <span class="m3-card-value" id="m3-val-3">184 MB</span>
+                                <div class="m3-sparkline">
+                                    <div class="spark-point" style="height: 40%"></div>
+                                    <div class="spark-point" style="height: 42%"></div>
+                                    <div class="spark-point" style="height: 38%"></div>
+                                    <div class="spark-point" style="height: 45%"></div>
+                                    <div class="spark-point" style="height: 43%"></div>
+                                </div>
+                                <span class="m3-card-meta">Garbage collection optimized</span>
+                            </div>
+                        </div>
+                        
+                        <div class="m3-chart-row">
+                            <div class="m3-chart-container main-chart">
+                                <div class="m3-chart-header">
+                                    <h4>Real-time Server Traffic</h4>
+                                    <span class="badge badge-success">Online</span>
+                                </div>
+                                <!-- Sleek CSS bar chart -->
+                                <div class="m3-bar-chart">
+                                    <div class="chart-bar" style="height: 35%;"></div>
+                                    <div class="chart-bar" style="height: 50%;"></div>
+                                    <div class="chart-bar" style="height: 25%;"></div>
+                                    <div class="chart-bar" style="height: 65%;"></div>
+                                    <div class="chart-bar" style="height: 85%;"></div>
+                                    <div class="chart-bar" style="height: 70%;"></div>
+                                    <div class="chart-bar animate-pulse" style="height: 95%;"></div>
+                                </div>
+                            </div>
+                            <div class="m3-recent-activity">
+                                <h4>Active Sessions</h4>
+                                <div class="activity-list">
+                                    <div class="activity-item">
+                                        <span class="activity-badge badge-green">GET</span>
+                                        <span class="activity-text">/api/v1/users (200 OK)</span>
+                                    </div>
+                                    <div class="activity-item">
+                                        <span class="activity-badge badge-green">POST</span>
+                                        <span class="activity-text">/api/v1/auth/login (201 OK)</span>
+                                    </div>
+                                    <div class="activity-item">
+                                        <span class="activity-badge badge-orange">PUT</span>
+                                        <span class="activity-text">/api/v1/settings (304)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Initialize Lucide Icons & Interactive Features -->
     <script>
         lucide.createIcons();
@@ -526,8 +596,8 @@
             });
         });
 
-        // 3. Services Toggle Button UI/UX Toggling & Toast Notification
-        const serviceToggleBtns = document.querySelectorAll('#page-services .toggle-btn');
+        // 3. Services & Dashboard Engine Toggle Button UI/UX Toggling & Toast Notification
+        const serviceToggleBtns = document.querySelectorAll('#page-services .toggle-btn, #page-dashboard .toggle-btn');
         const toast = document.getElementById('mockup-toast');
         const toastTitle = document.getElementById('toast-title');
         const toastMsg = document.getElementById('toast-msg');
@@ -536,8 +606,8 @@
 
         serviceToggleBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                const listItem = this.closest('.list-item.mini');
-                const serviceName = listItem.querySelector('.item-title').innerText;
+                const listItem = this.closest('.list-item.mini') || this.closest('.dashboard-card');
+                const serviceName = listItem.querySelector('.item-title, h4').innerText;
                 const statusBadge = listItem.querySelector('.badge');
                 
                 // Toggle active state
@@ -547,11 +617,11 @@
                 if (isActive) {
                     statusBadge.innerText = 'Running';
                     statusBadge.className = 'badge badge-success';
-                    showToast('Service Started', `${serviceName} is now active and listening.`, 'success');
+                    showToast('Engine Started', `${serviceName} has launched successfully!`, 'success');
                 } else {
                     statusBadge.innerText = 'Stopped';
                     statusBadge.className = 'badge badge-muted';
-                    showToast('Service Stopped', `${serviceName} has been shut down.`, 'warning');
+                    showToast('Engine Stopped', `${serviceName} has been powered off.`, 'warning');
                 }
             });
         });
@@ -584,11 +654,13 @@
             }, 2000);
         }
 
-        // 4. Browser Preview Interactivity
+        // 4. Browser Preview Popup Modal Interactivity
         const viewSiteBtns = document.querySelectorAll('.btn-view-site');
-        const browserPreviewPage = document.getElementById('page-browser-preview');
-        const browserBackBtn = document.getElementById('browser-back');
-        const browserUrlText = document.getElementById('browser-url-text');
+        const browserModal = document.getElementById('browser-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalBrowserBack = document.getElementById('modal-browser-back');
+        const modalBrowserUrlText = document.getElementById('modal-browser-url-text');
+        const browserModalTitle = document.getElementById('browser-modal-title');
         const m3SiteTitle = document.getElementById('m3-site-title');
         const m3SiteSubtitle = document.getElementById('m3-site-subtitle');
         const m3Val1 = document.getElementById('m3-val-1');
@@ -600,36 +672,29 @@
                 e.stopPropagation();
                 const site = this.getAttribute('data-site');
                 
-                // Hide all sidebar active selections
-                sidebarItems.forEach(i => i.classList.remove('active'));
-                
-                // Hide all pages
-                mockupPages.forEach(page => {
-                    page.style.display = 'none';
-                    page.classList.remove('active');
-                });
-
-                // Show browser preview page
-                browserPreviewPage.style.display = 'block';
-                browserPreviewPage.classList.add('active');
+                // Open browser modal popup
+                browserModal.classList.add('show');
 
                 // Update contents dynamically based on the site clicked!
                 if (site === 'react-dashboard.test') {
-                    browserUrlText.innerText = 'https://react-dashboard.test/dashboard';
+                    modalBrowserUrlText.innerText = 'https://react-dashboard.test/dashboard';
+                    browserModalTitle.innerText = 'react-dashboard.test - Zenvix Browser Preview';
                     m3SiteTitle.innerText = 'Material 3 Studio';
                     m3SiteSubtitle.innerText = 'Production Environment Node.js App';
                     m3Val1.innerText = '$24,890';
                     m3Val2.innerText = '1,402 /s';
                     m3Val3.innerText = '184 MB';
                 } else if (site === 'laravel-blog.test') {
-                    browserUrlText.innerText = 'https://laravel-blog.test/admin';
+                    modalBrowserUrlText.innerText = 'https://laravel-blog.test/admin';
+                    browserModalTitle.innerText = 'laravel-blog.test - Zenvix Browser Preview';
                     m3SiteTitle.innerText = 'Laravel Control Panel';
                     m3SiteSubtitle.innerText = 'Artisan Engine v10.4';
                     m3Val1.innerText = '8,412 Views';
                     m3Val2.innerText = '42 Active';
                     m3Val3.innerText = '64 MB';
                 } else {
-                    browserUrlText.innerText = 'https://wordpress-store.test/dashboard';
+                    modalBrowserUrlText.innerText = 'https://wordpress-store.test/dashboard';
+                    browserModalTitle.innerText = 'wordpress-store.test - Zenvix Browser Preview';
                     m3SiteTitle.innerText = 'WordPress Storefront';
                     m3SiteSubtitle.innerText = 'WooCommerce Cloud Engine';
                     m3Val1.innerText = '14 Orders';
@@ -641,26 +706,13 @@
             });
         });
 
-        // Browser Back Button to return to websites tab
-        browserBackBtn.addEventListener('click', () => {
-            // Find sidebar website item and set active
-            sidebarItems.forEach(i => {
-                if (i.getAttribute('data-target') === 'websites') {
-                    i.classList.add('active');
-                }
-            });
-
-            // Hide all pages
-            mockupPages.forEach(page => {
-                page.style.display = 'none';
-                page.classList.remove('active');
-            });
-
-            // Show Websites page
-            const websitesPage = document.getElementById('page-websites');
-            websitesPage.style.display = 'block';
-            websitesPage.classList.add('active');
-            lucide.createIcons();
+        // Close modal when close button or back button is clicked
+        [modalCloseBtn, modalBrowserBack].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    browserModal.classList.remove('show');
+                });
+            }
         });
     </script>
 </body>

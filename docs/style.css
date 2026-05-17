@@ -1029,16 +1029,87 @@ a {
 }
 
 /* Simulated Browser address bar and Material 3 Dashboard */
+.browser-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 7, 16, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.browser-modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.browser-modal-window {
+    width: 92%;
+    max-width: 1100px;
+    height: 82vh;
+    background: #070a13;
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8), 0 0 40px rgba(139, 92, 246, 0.1);
+    transform: translateY(30px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.browser-modal-overlay.show .browser-modal-window {
+    transform: translateY(0) scale(1);
+}
+
+.browser-modal-header {
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border-glass);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.browser-modal-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.modal-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.modal-dot-close { background: #EF4444; }
+.modal-dot-minimize { background: #F59E0B; }
+.modal-dot-maximize { background: #10B981; }
+
+.browser-modal-title {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
 .browser-address-bar {
     background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-glass);
-    border-radius: 8px;
-    padding: 6px 12px;
+    border-bottom: 1px solid var(--border-glass);
+    padding: 8px 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 16px;
 }
 
 .browser-back-btn {
@@ -1049,7 +1120,7 @@ a {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 4px 8px;
+    padding: 5px 10px;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border-glass);
@@ -1071,7 +1142,7 @@ a {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 6px;
-    padding: 4px 12px;
+    padding: 5px 12px;
     font-size: 0.75rem;
     color: var(--text-secondary);
     display: flex;
@@ -1095,24 +1166,77 @@ a {
 }
 
 .browser-viewport {
+    flex: 1;
     background: #080a14;
-    border: 1px solid var(--border-glass);
-    border-radius: 8px;
-    padding: 16px;
-    height: 250px;
-    overflow-y: auto;
-    scrollbar-width: thin;
+    overflow: hidden;
 }
 
 .m3-dashboard {
+    display: flex;
+    height: 100%;
     animation: mockupFadeIn 0.4s ease-out;
+}
+
+.m3-sidebar {
+    width: 180px;
+    background: rgba(0, 0, 0, 0.25);
+    border-right: 1px solid var(--border-glass);
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.m3-sidebar-brand {
+    font-family: var(--font-primary);
+    font-weight: 800;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.m3-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.m3-sidebar-item.active, .m3-sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.m3-sidebar-item i {
+    width: 14px;
+    height: 14px;
+}
+
+.m3-main-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 .m3-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
 }
 
 .m3-header h2 {
@@ -1151,8 +1275,7 @@ a {
 .m3-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 12px;
 }
 
 .m3-card {
@@ -1199,6 +1322,30 @@ a {
     color: var(--text-muted);
 }
 
+.m3-sparkline {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 24px;
+    margin: 4px 0;
+}
+
+.spark-point {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.m3-card-purple .spark-point { background: rgba(139, 92, 246, 0.4); }
+.m3-card-cyan .spark-point { background: rgba(6, 182, 212, 0.4); }
+.m3-card-indigo .spark-point { background: rgba(99, 102, 241, 0.4); }
+
+.m3-chart-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 16px;
+}
+
 .m3-chart-container {
     background: rgba(255, 255, 255, 0.01);
     border: 1px solid var(--border-glass);
@@ -1239,6 +1386,59 @@ a {
 
 .chart-bar:nth-child(even) {
     background: linear-gradient(180deg, var(--accent-cyan) 0%, rgba(6, 182, 212, 0.2) 100%);
+}
+
+.m3-recent-activity {
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.m3-recent-activity h4 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+
+.activity-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.badge-green {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+.badge-orange {
+    background: rgba(245, 158, 11, 0.15);
+    color: #F59E0B;
+}
+
+.activity-text {
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: var(--text-secondary);
 }
 
 /* Responsive adjustments */
