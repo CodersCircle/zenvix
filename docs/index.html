@@ -48,14 +48,14 @@
                 <a href="#requirements" class="nav-item">Requirements</a>
             </nav>
             <div class="nav-actions">
-                <div class="download-stats compact-stats" id="download-stats-container">
-                    <span class="pulse-green-dot"></span>
-                    <span class="stats-text"><strong id="download-counter">14,837</strong> downloads</span>
-                </div>
                 <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe"
                     class="btn btn-primary btn-sm" id="nav-download-btn" download>
                     <i data-lucide="download"></i> Download Setup
                 </a>
+                <div class="download-stats compact-stats" id="download-stats-container">
+                    <span class="pulse-green-dot"></span>
+                    <span class="stats-text"><strong id="download-counter">14,837</strong> downloads</span>
+                </div>
             </div>
         </div>
     </header>
@@ -898,7 +898,7 @@
                 if (response.ok) {
                     const releases = await response.json();
                     let apiDownloads = 0;
-                    
+
                     // Sum up all asset download counts across all releases
                     releases.forEach(release => {
                         if (release.assets) {

@@ -201,6 +201,12 @@ a {
     justify-content: space-between;
 }
 
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .brand-logo {
     display: flex;
     align-items: center;
@@ -1617,7 +1623,7 @@ a {
     padding: 5px 12px;
     background: rgba(139, 92, 246, 0.04);
     border-color: rgba(139, 92, 246, 0.15);
-    margin-right: 6px;
+    margin-left: 6px;
 }
 
 .download-stats.compact-stats:hover {
