@@ -988,66 +988,33 @@
         const legalContent = document.getElementById('legal-modal-content');
         const legalCloseBtn = document.getElementById('legal-modal-close-btn');
 
-        const legalDocuments = {
-            privacy: {
-                title: "Privacy Policy",
-                html: `
-                    <p><strong>Effective Date: May 17, 2026</strong></p>
-                    <p>Your privacy is of utmost importance to the Zenvix Development Group. This Privacy Policy governs how Zenvix handles developer information on our local environment platform.</p>
-                    <h4>1. Zero Data Collection Architecture</h4>
-                    <p>Zenvix operates entirely as a local-first system. All configurations, project database files, paths, and server states are stored directly on your physical drive (typically under <code>C:\\Zenvix</code>). We do not transmit, sync, or replicate your local code repositories or database structures to external cloud environments.</p>
-                    <h4>2. Development Telemetry</h4>
-                    <p>Zenvix does not include tracking systems or usage monitors. The package works completely offline, with no persistent network connection required. Update notifications are checked manually or via official secure GitHub release endpoints.</p>
-                    <h4>3. Third-Party Web Services</h4>
-                    <p>When running local servers (e.g., Apache, Nginx, PHP, or phpMyAdmin), all traffic is restricted strictly to your local machine (<code>127.0.0.1</code> / <code>localhost</code>). Any port exposure, firewall rules, or DNS proxies are managed purely within your local operating system constraints.</p>
-                    <h4>4. Updates & Modifications</h4>
-                    <p>We reserve the right to modify this local privacy commitment as the tool expands. Updates are always delivered transparently via our repository.</p>
-                `
-            },
-            terms: {
-                title: "Terms of Service",
-                html: `
-                    <p><strong>Effective Date: May 17, 2026</strong></p>
-                    <p>By using Zenvix, you agree to comply with the terms set forth below. Please read these terms carefully before running the Windows setup wizard.</p>
-                    <h4>1. License Grant</h4>
-                    <p>Zenvix is provided to developer communities as an open-source local-hosting suite. You are free to download, run, debug, modify, and distribute custom builds of the software in accordance with our repository licenses.</p>
-                    <h4>2. Local Operating System Risks</h4>
-                    <p>Because Zenvix interacts with Windows Services, Local Loopback interfaces, Host Files, and Firewall settings, you acknowledge that you are responsible for maintaining safe configuration rules. The development suite makes secure path configurations under <code>C:\\Zenvix</code> to prevent interference with system-critical directories.</p>
-                    <h4>3. Disclaimer of Warranty</h4>
-                    <p>Zenvix is provided "as is" without any warranty of any kind, either expressed or implied, including but not limited to the implied warranties of merchantability and fitness for a particular developer workflow. The entire risk as to the quality and performance of local project configurations is with you.</p>
-                    <h4>4. Limitation of Liability</h4>
-                    <p>In no event shall Zenvix, CodersCircle, or its contributors be liable to you for damages, including any general, special, incidental, or consequential damages arising out of the use or inability to use the server stack orchestrator.</p>
-                `
-            },
-            agreement: {
-                title: "User Agreement",
-                html: `
-                    <p><strong>Effective Date: May 17, 2026</strong></p>
-                    <p>This User Agreement is a binding agreement between you (the individual developer or organization) and the Zenvix platform.</p>
-                    <h4>1. Scope of Use</h4>
-                    <p>Zenvix is designed exclusively as a local system development environment. It is not intended for deployment as a primary production-facing gateway, public database server, or general public web server directly from local residential Windows devices.</p>
-                    <h4>2. Development Integrity</h4>
-                    <p>You agree not to utilize Zenvix for the distribution, development, or local hosting of malicious software, network scanning tools, or services that violate regional digital safety frameworks.</p>
-                    <h4>3. Local Security Frameworks</h4>
-                    <p>Ensure that databases, database passwords (e.g., MySQL root access), and server reverse proxy endpoints created during development follow basic safety guidelines to avoid external vulnerability access over shared local area networks (LAN).</p>
-                    <h4>4. Termination</h4>
-                    <p>This agreement remains active until terminated. You may terminate it at any time by uninstalling the application and removing the local directory at <code>C:\\Zenvix</code>.</p>
-                `
-            }
+        const legalTitles = {
+            privacy: "Privacy Policy",
+            terms: "Terms of Service",
+            agreement: "User Agreement"
         };
 
         document.querySelectorAll('.legal-link').forEach(link => {
-            link.addEventListener('click', (e) => {
+            link.addEventListener('click', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
 
                 const docType = link.getAttribute('data-doc');
-                const doc = legalDocuments[docType];
+                const title = legalTitles[docType] || "Legal Document";
 
-                if (doc) {
-                    legalTitle.innerText = doc.title;
-                    legalContent.innerHTML = doc.html;
-                    legalModal.classList.add('show');
+                try {
+                    // Fetch the separate standalone HTML document contents asynchronously
+                    const response = await fetch(`legal/${docType}.html`);
+                    if (response.ok) {
+                        const htmlContent = await response.text();
+                        legalTitle.innerText = title;
+                        legalContent.innerHTML = htmlContent;
+                        legalModal.classList.add('show');
+                    } else {
+                        console.error("Failed to load legal document content:", response.statusText);
+                    }
+                } catch (err) {
+                    console.error("Network error fetching legal document:", err);
                 }
             });
         });
