@@ -1072,29 +1072,8 @@ a {
 }
 
 .browser-modal-header {
-    background: rgba(255, 255, 255, 0.02);
-    border-bottom: 1px solid var(--border-glass);
-    padding: 12px 18px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    /* Automatically inherits Windows styling from .window-header */
 }
-
-.browser-modal-dots {
-    display: flex;
-    gap: 8px;
-}
-
-.modal-dot {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.modal-dot-close { background: #EF4444; }
-.modal-dot-minimize { background: #F59E0B; }
-.modal-dot-maximize { background: #10B981; }
 
 .browser-modal-title {
     font-size: 0.8rem;
