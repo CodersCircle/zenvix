@@ -19,7 +19,7 @@ namespace Hostix.Modules.Services
             var envPath = Path.Combine(projectPath, ".env");
             if (!File.Exists(envPath)) return;
 
-            var backupDir = Path.Combine(projectPath, ".hostix", "backups");
+            var backupDir = Path.Combine(projectPath, ".zenvix", "backups");
             if (!Directory.Exists(backupDir)) Directory.CreateDirectory(backupDir);
 
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
@@ -31,7 +31,7 @@ namespace Hostix.Modules.Services
 
         public void RestoreEnv(string projectPath, string backupName)
         {
-            var backupPath = Path.Combine(projectPath, ".hostix", "backups", backupName);
+            var backupPath = Path.Combine(projectPath, ".zenvix", "backups", backupName);
             var envPath = Path.Combine(projectPath, ".env");
 
             if (File.Exists(backupPath))

@@ -228,7 +228,7 @@ namespace Hostix.Runtime.Services
 
                         // If it's a new site, we expect our "Welcome" message.
                         // If it's an existing site, we just want it to NOT be an empty Nginx error page.
-                        if (content.Contains("Welcome to Hostix") || content.Contains("PHP") || content.Length > 20)
+                        if (content.Contains("Welcome to Zenvix") || content.Contains("PHP") || content.Length > 20)
                         {
                             Log.Information("[WebOrchestrator] Health-check PASSED for {Domain} (Status: {Code}).", website.Domain, response.StatusCode);
                             return true;

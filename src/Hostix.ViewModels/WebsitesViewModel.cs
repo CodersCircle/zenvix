@@ -33,9 +33,9 @@ namespace Hostix.ViewModels
         private string _newWebsiteDomain = "";
 
         [ObservableProperty]
-        private string _selectedSuffix = ".hostix";
+        private string _selectedSuffix = ".zenvix";
 
-        public ObservableCollection<string> Suffixes { get; } = new() { ".hostix", ".test", ".local" };
+        public ObservableCollection<string> Suffixes { get; } = new() { ".zenvix", ".test", ".local" };
 
         [ObservableProperty]
         private bool _newWebsiteSslEnabled = true;
@@ -143,7 +143,7 @@ namespace Hostix.ViewModels
                 }
 
                 // 2. Validate Write Permissions
-                var testFile = Path.Combine(targetPath, ".hostix_test");
+                var testFile = Path.Combine(targetPath, ".zenvix_test");
                 File.WriteAllText(testFile, "test");
                 File.Delete(testFile);
 
@@ -151,7 +151,7 @@ namespace Hostix.ViewModels
                 if (!Directory.EnumerateFileSystemEntries(targetPath).Any())
                 {
                     var starterFile = Path.Combine(targetPath, "index.php");
-                    File.WriteAllText(starterFile, "<?php\n\necho \"<center><h1>Welcome to Hostix!</h1></center>\";\necho \"<center><p>Your project <b>" + NewWebsiteName + "</b> is ready.</p></center>\";");
+                    File.WriteAllText(starterFile, "<?php\n\necho \"<center><h1>Welcome to Zenvix!</h1></center>\";\necho \"<center><p>Your project <b>\" + NewWebsiteName + \"</b> is ready.</p></center>\";");
                 }
 
                 // 4. Resolve Domain                                                                    
