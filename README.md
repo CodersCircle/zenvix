@@ -11,7 +11,7 @@
 
 Get the official ZENVIX Setup installer instantly in a single click:
 
-[📥 DOWNLOAD ZENVIX SETUP FOR WINDOWS (62 MB)](https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe)
+[📥 DOWNLOAD ZENVIX SETUP FOR WINDOWS (42 MB)](https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe)
 
 *(Note: ZENVIX is designed and built exclusively for Windows 10 & 11 64-bit systems).*
 
