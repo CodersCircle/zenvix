@@ -1528,13 +1528,41 @@ a {
     letter-spacing: 0.3px;
 }
 
-.india-flag-svg {
+.india-flag-dots {
+    display: inline-flex;
+    gap: 3px;
+    margin-right: 6px;
+    align-items: center;
+    vertical-align: middle;
     flex-shrink: 0;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.india-badge:hover .india-flag-svg {
-    transform: scale(1.12);
+.india-badge:hover .india-flag-dots {
+    transform: scale(1.15);
+}
+
+.india-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.india-dot.saffron {
+    background: #FF9933;
+    box-shadow: 0 0 6px rgba(255, 153, 51, 0.7);
+}
+
+.india-dot.white {
+    background: #FFFFFF;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+}
+
+.india-dot.green {
+    background: #128807;
+    box-shadow: 0 0 6px rgba(18, 136, 7, 0.7);
 }
 
 /* Responsive adjustments */
