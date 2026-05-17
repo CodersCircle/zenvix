@@ -19,9 +19,14 @@ temp/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-agent.md
-phaseonerset.md
-planning.md
-progress.md
+
+# Ignore all root .md files except README and DEVELOPER-NOTES
+/*.md
+!README.md
+!DEVELOPER-NOTES.md
+
+# Project scratch/config files
 runtime-manifest.json
 zenvix.iss
+run_log.txt
+app_exit.txt
