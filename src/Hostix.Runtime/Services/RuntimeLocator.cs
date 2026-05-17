@@ -47,10 +47,19 @@ namespace Hostix.Runtime.Services
         public async Task<RuntimeMetadata?> FindBestAsync(RuntimeServiceType type)
         {
             var all = await DiscoverAllAsync();
-            var best = all.FirstOrDefault(r => r.Type == type);
+            var best = all.Where(r => r.Type == type)
+                          .OrderBy(r => GetPriority(r.InstallSource))
+                          .ThenByDescending(r => {
+                              if (Version.TryParse(r.Version, out var pv)) return pv;
+                              // Try to match partial versions like "8.3" -> "8.3.0"
+                              var clean = System.Text.RegularExpressions.Regex.Replace(r.Version, @"[^\d\.]", "");
+                              if (Version.TryParse(clean, out var pv2)) return pv2;
+                              return new Version(0, 0);
+                          })
+                          .FirstOrDefault();
             
             if (best != null)
-                LogDiscovery($"[SELECTED] Found best {type}: {best.ExecutablePath} (Source: {best.InstallSource})");
+                LogDiscovery($"[SELECTED] Found best {type} (Version: {best.Version}): {best.ExecutablePath} (Source: {best.InstallSource})");
             else
                 LogDiscovery($"[MISSING] No runtime found for {type}");
 

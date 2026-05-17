@@ -71,6 +71,8 @@ namespace Hostix.Core.Models
         }
 
         // Derived UI helpers
+        public bool IsDocsSite => Domain.StartsWith("docs.", StringComparison.OrdinalIgnoreCase) || Name.Contains("(Docs)");
+
         public string Icon
         {
             get

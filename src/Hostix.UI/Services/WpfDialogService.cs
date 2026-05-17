@@ -7,16 +7,15 @@ namespace Hostix.UI.Services
     {
         public string? OpenFolderDialog(string? initialPath = null)
         {
-            using var dialog = new FolderBrowserDialog
+            var dialog = new Microsoft.Win32.OpenFolderDialog
             {
-                Description = "Select parent directory for your project",
-                UseDescriptionForTitle = true,
-                SelectedPath = initialPath ?? string.Empty
+                Title = "Select parent directory for your project",
+                InitialDirectory = initialPath ?? string.Empty
             };
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == true)
             {
-                return dialog.SelectedPath;
+                return dialog.FolderName;
             }
 
             return null;
@@ -26,6 +25,18 @@ namespace Hostix.UI.Services
         {
             var dialog = new Views.DeleteConfirmationWindow(websiteName);
             return dialog.ShowDialog() == true && dialog.Confirmed;
+        }
+
+        public bool ShowRemoveConfirmation(string websiteName)
+        {
+            var dialog = new Views.RemoveConfirmationWindow(websiteName);
+            return dialog.ShowDialog() == true && dialog.Confirmed;
+        }
+
+        public void ShowMessage(string title, string message)
+        {
+            var dialog = new Views.CustomAlertWindow(title, message);
+            dialog.ShowDialog();
         }
     }
 }

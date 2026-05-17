@@ -189,4 +189,83 @@ namespace Hostix.UI.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();
     }
+
+    /// <summary>Maps a technology name or ProjectType to its dynamic branding SVG DrawingImage.</summary>
+    public class TechIconConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value == null) return System.Windows.DependencyProperty.UnsetValue;
+
+            string? techName = null;
+            if (value is string str)
+            {
+                techName = str;
+            }
+            else if (value is Hostix.Core.Models.ProjectType type)
+            {
+                techName = type switch
+                {
+                    Hostix.Core.Models.ProjectType.Laravel => "Laravel",
+                    Hostix.Core.Models.ProjectType.WordPress => "WordPress",
+                    Hostix.Core.Models.ProjectType.PHP => "PHP",
+                    Hostix.Core.Models.ProjectType.React => "React",
+                    Hostix.Core.Models.ProjectType.Vue => "Vue",
+                    Hostix.Core.Models.ProjectType.NodeJS => "Next.js",
+                    Hostix.Core.Models.ProjectType.Static => "HTML/CSS",
+                    Hostix.Core.Models.ProjectType.Vite => "Tailwind",
+                    _ => "PHP"
+                };
+            }
+            else if (value is Hostix.Core.Models.DbEngineType engineType)
+            {
+                techName = engineType switch
+                {
+                    Hostix.Core.Models.DbEngineType.MariaDB => "MariaDB",
+                    Hostix.Core.Models.DbEngineType.MySQL => "MySQL",
+                    Hostix.Core.Models.DbEngineType.PostgreSQL => "PostgreSQL",
+                    Hostix.Core.Models.DbEngineType.SQLite => "SQLite",
+                    Hostix.Core.Models.DbEngineType.MongoDB => "MongoDB",
+                    Hostix.Core.Models.DbEngineType.Redis => "Redis",
+                    Hostix.Core.Models.DbEngineType.Meilisearch => "Meilisearch",
+                    Hostix.Core.Models.DbEngineType.Supabase => "Supabase",
+                    Hostix.Core.Models.DbEngineType.Firebase => "Firebase",
+                    Hostix.Core.Models.DbEngineType.PlanetScale => "PlanetScale",
+                    Hostix.Core.Models.DbEngineType.Neon => "Neon",
+                    _ => "MySQL"
+                };
+            }
+            else if (value is Hostix.Core.Models.RuntimeServiceType serviceType)
+            {
+                techName = serviceType switch
+                {
+                    Hostix.Core.Models.RuntimeServiceType.Nginx => "Nginx",
+                    Hostix.Core.Models.RuntimeServiceType.Apache => "Apache",
+                    Hostix.Core.Models.RuntimeServiceType.PhpFpm => "PHP",
+                    Hostix.Core.Models.RuntimeServiceType.NodeRuntime => "NodeJS",
+                    Hostix.Core.Models.RuntimeServiceType.ViteRuntime => "Vite",
+                    Hostix.Core.Models.RuntimeServiceType.MariaDB => "MariaDB",
+                    Hostix.Core.Models.RuntimeServiceType.MySQL => "MySQL",
+                    Hostix.Core.Models.RuntimeServiceType.PostgreSQL => "PostgreSQL",
+                    Hostix.Core.Models.RuntimeServiceType.MongoDB => "MongoDB",
+                    Hostix.Core.Models.RuntimeServiceType.Redis => "Redis",
+                    Hostix.Core.Models.RuntimeServiceType.Mailpit => "Mailpit",
+                    Hostix.Core.Models.RuntimeServiceType.QueueWorker => "Laravel",
+                    Hostix.Core.Models.RuntimeServiceType.Scheduler => "Laravel",
+                    Hostix.Core.Models.RuntimeServiceType.SSL => "SSL",
+                    _ => "Nginx"
+                };
+            }
+
+            if (!string.IsNullOrEmpty(techName))
+            {
+                var icon = Hostix.UI.Services.TechIconService.GetIcon(techName);
+                if (icon != null) return icon;
+            }
+            return System.Windows.DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
 }
