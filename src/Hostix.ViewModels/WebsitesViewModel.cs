@@ -101,6 +101,10 @@ namespace Hostix.ViewModels
             get
             {
                 if (string.IsNullOrWhiteSpace(NewWebsitePath)) return "None selected";
+                if (SelectedCategory != null && SelectedCategory.Equals("Import Project", StringComparison.OrdinalIgnoreCase))
+                {
+                    return NewWebsitePath;
+                }
                 var slug = NewWebsiteName.ToLower().Replace(" ", "-").Trim();
                 return Path.Combine(NewWebsitePath, slug);
             }
@@ -188,6 +192,12 @@ namespace Hostix.ViewModels
                     Frameworks.Add("Plain HTML/CSS");
                     Frameworks.Add("Tailwind Starter");
                     break;
+                case "Import Project":
+                    Frameworks.Add("Existing Laravel");
+                    Frameworks.Add("Existing PHP/HTML");
+                    Frameworks.Add("Existing WordPress");
+                    Frameworks.Add("Existing React/Vue");
+                    break;
                 default:
                     Frameworks.Add("Custom/Empty");
                     break;
@@ -255,6 +265,20 @@ namespace Hostix.ViewModels
             if (!string.IsNullOrEmpty(selected))
             {
                 NewWebsitePath = selected;
+                
+                // Auto-fill project name from folder name if importing
+                if (SelectedCategory != null && SelectedCategory.Equals("Import Project", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        var folderName = Path.GetFileName(selected);
+                        if (!string.IsNullOrEmpty(folderName))
+                        {
+                            NewWebsiteName = folderName;
+                        }
+                    }
+                    catch { }
+                }
             }
         }
 
@@ -275,8 +299,9 @@ namespace Hostix.ViewModels
         {
             if (string.IsNullOrWhiteSpace(NewWebsiteName) || string.IsNullOrWhiteSpace(NewWebsitePath)) return;
 
+            var isImport = SelectedCategory != null && SelectedCategory.Equals("Import Project", StringComparison.OrdinalIgnoreCase);
             var projectSlug = NewWebsiteName.ToLower().Replace(" ", "-").Trim();
-            var targetPath = Path.Combine(NewWebsitePath, projectSlug);
+            var targetPath = isImport ? NewWebsitePath : Path.Combine(NewWebsitePath, projectSlug);
 
             try
             {
@@ -304,13 +329,16 @@ namespace Hostix.ViewModels
                 }
 
                 // 5. Bootstrap dynamic template
-                var framework = string.IsNullOrEmpty(SelectedFramework) ? "Tailwind Starter" : SelectedFramework;
-                BootstrapProjectTemplates(targetPath, framework);
-
-                // 6. Generate Docs Site if enabled
-                if (CreateDocsSite)
+                if (!isImport)
                 {
-                    GenerateDocsSite(targetPath, domain, framework);
+                    var framework = string.IsNullOrEmpty(SelectedFramework) ? "Tailwind Starter" : SelectedFramework;
+                    BootstrapProjectTemplates(targetPath, framework);
+
+                    // 6. Generate Docs Site if enabled
+                    if (CreateDocsSite)
+                    {
+                        GenerateDocsSite(targetPath, domain, framework);
+                    }
                 }
 
                 var website = new Website
@@ -325,7 +353,7 @@ namespace Hostix.ViewModels
                 await _orchestrator.DeployWebsiteAsync(website);
 
                 // 7. Automatically Deploy Docs site if enabled
-                if (CreateDocsSite)
+                if (CreateDocsSite && !isImport)
                 {
                     var docsDomain = $"docs.{domain}";
                     if (!Websites.Any(w => w.Domain.Equals(docsDomain, StringComparison.OrdinalIgnoreCase)))
@@ -343,7 +371,9 @@ namespace Hostix.ViewModels
                 }
 
                 CancelAddWebsite();
-                _stateManager.AddEvent($"Success: Created project workspace at {targetPath}");
+                _stateManager.AddEvent(isImport 
+                    ? $"Success: Imported existing project workspace at {targetPath}"
+                    : $"Success: Created project workspace at {targetPath}");
             }
             catch (Exception ex)
             {
