@@ -67,21 +67,24 @@
             <div class="mockup-wrapper">
                 <div class="mockup-window">
                     <div class="window-header">
-                        <div class="header-dots">
-                            <span class="dot dot-close"></span>
-                            <span class="dot dot-minimize"></span>
-                            <span class="dot dot-maximize"></span>
+                        <div class="header-left">
+                            <span class="window-icon"><span class="logo-dot small"></span></span>
+                            <span class="window-title">ZENVIX Control Panel - Development Studio</span>
                         </div>
-                        <div class="window-title">ZENVIX Control Panel - Development Studio</div>
+                        <div class="window-controls">
+                            <span class="control-btn control-minimize"><i data-lucide="minus"></i></span>
+                            <span class="control-btn control-maximize"><i data-lucide="square"></i></span>
+                            <span class="control-btn control-close"><i data-lucide="x"></i></span>
+                        </div>
                     </div>
                     <div class="window-body">
                         <!-- Sidebar Mockup -->
                         <div class="mockup-sidebar">
-                            <div class="sidebar-item active"><i data-lucide="layout-dashboard"></i> Dashboard</div>
-                            <div class="sidebar-item"><i data-lucide="globe"></i> Websites</div>
-                            <div class="sidebar-item"><i data-lucide="database"></i> Databases</div>
-                            <div class="sidebar-item"><i data-lucide="sliders"></i> Services</div>
-                            <div class="sidebar-item"><i data-lucide="terminal"></i> Shell</div>
+                            <div class="sidebar-item active" data-target="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+                            <div class="sidebar-item" data-target="websites"><i data-lucide="globe"></i> Websites</div>
+                            <div class="sidebar-item" data-target="databases"><i data-lucide="database"></i> Databases</div>
+                            <div class="sidebar-item" data-target="services"><i data-lucide="sliders"></i> Services</div>
+                            <div class="sidebar-item" data-target="shell"><i data-lucide="terminal"></i> Shell</div>
                         </div>
                         <!-- Content Mockup -->
                         <div class="mockup-content">
@@ -89,32 +92,154 @@
                                 <div class="topbar-status"><span class="status-indicator online"></span> System Running</div>
                                 <div class="topbar-user"><span class="user-avatar">CC</span> Coders Circle</div>
                             </div>
-                            <div class="mockup-dashboard-cards">
-                                <div class="dashboard-card card-glow">
-                                    <div class="card-icon"><i data-lucide="cpu" class="text-violet"></i></div>
-                                    <div class="card-details">
-                                        <h4>NGINX Engine</h4>
-                                        <p>Port 80 • Active</p>
+                            
+                            <!-- PAGE: DASHBOARD -->
+                            <div class="mockup-page active" id="page-dashboard">
+                                <div class="mockup-dashboard-cards">
+                                    <div class="dashboard-card card-glow">
+                                        <div class="card-icon"><i data-lucide="cpu" class="text-violet"></i></div>
+                                        <div class="card-details">
+                                            <h4>NGINX Engine</h4>
+                                            <p>Port 80 • Active</p>
+                                        </div>
+                                        <span class="badge badge-success">Running</span>
                                     </div>
-                                    <span class="badge badge-success">Running</span>
-                                </div>
-                                <div class="dashboard-card card-glow">
-                                    <div class="card-icon"><i data-lucide="server" class="text-cyan"></i></div>
-                                    <div class="card-details">
-                                        <h4>PHP 8.3-FPM</h4>
-                                        <p>Global Dev Version</p>
+                                    <div class="dashboard-card card-glow">
+                                        <div class="card-icon"><i data-lucide="server" class="text-cyan"></i></div>
+                                        <div class="card-details">
+                                            <h4>PHP 8.3-FPM</h4>
+                                            <p>Global Dev Version</p>
+                                        </div>
+                                        <span class="badge badge-success">Running</span>
                                     </div>
-                                    <span class="badge badge-success">Running</span>
-                                </div>
-                                <div class="dashboard-card card-glow">
-                                    <div class="card-icon"><i data-lucide="database" class="text-indigo"></i></div>
-                                    <div class="card-details">
-                                        <h4>MySQL Engine</h4>
-                                        <p>Port 3306 • Secured</p>
+                                    <div class="dashboard-card card-glow">
+                                        <div class="card-icon"><i data-lucide="database" class="text-indigo"></i></div>
+                                        <div class="card-details">
+                                            <h4>MySQL Engine</h4>
+                                            <p>Port 3306 • Secured</p>
+                                        </div>
+                                        <span class="badge badge-success">Running</span>
                                     </div>
-                                    <span class="badge badge-success">Running</span>
                                 </div>
                             </div>
+
+                            <!-- PAGE: WEBSITES -->
+                            <div class="mockup-page" id="page-websites" style="display: none;">
+                                <div class="page-header">
+                                    <h3>Active Workstations</h3>
+                                    <span class="btn btn-primary btn-xs"><i data-lucide="plus"></i> Add Site</span>
+                                </div>
+                                <div class="mockup-list">
+                                    <div class="list-item">
+                                        <div class="item-info">
+                                            <div class="item-title">laravel-blog.test</div>
+                                            <div class="item-subtitle">C:\Zenvix\projects\laravel-blog</div>
+                                        </div>
+                                        <span class="badge badge-success">HTTPS Active</span>
+                                    </div>
+                                    <div class="list-item">
+                                        <div class="item-info">
+                                            <div class="item-title">react-dashboard.test</div>
+                                            <div class="item-subtitle">Port 3000 • Proxy -> Node.js</div>
+                                        </div>
+                                        <span class="badge badge-success">Online</span>
+                                    </div>
+                                    <div class="list-item">
+                                        <div class="item-info">
+                                            <div class="item-title">wordpress-store.test</div>
+                                            <div class="item-subtitle">Apache Server • PHP 8.2</div>
+                                        </div>
+                                        <span class="badge badge-success">HTTPS Active</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PAGE: DATABASES -->
+                            <div class="mockup-page" id="page-databases" style="display: none;">
+                                <div class="page-header">
+                                    <h3>Database Engines</h3>
+                                    <span class="btn btn-secondary btn-xs"><i data-lucide="external-link"></i> phpMyAdmin</span>
+                                </div>
+                                <div class="mockup-list">
+                                    <div class="list-item">
+                                        <div class="item-info">
+                                            <div class="item-title">mysql_core_db</div>
+                                            <div class="item-subtitle">MySQL 8.0 • 3 Tables • 4.2 MB</div>
+                                        </div>
+                                        <span class="badge badge-success">Running</span>
+                                    </div>
+                                    <div class="list-item">
+                                        <div class="item-info">
+                                            <div class="item-title">laravel_blog_db</div>
+                                            <div class="item-subtitle">MySQL 8.0 • 18 Tables • 12.8 MB</div>
+                                        </div>
+                                        <span class="badge badge-success">Running</span>
+                                    </div>
+                                    <div class="list-item">
+                                        <div class="item-info">
+                                            <div class="item-title">local_sqlite.db</div>
+                                            <div class="item-subtitle">SQLite 3 • Embedded File • 512 KB</div>
+                                        </div>
+                                        <span class="badge badge-success">Connected</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PAGE: SERVICES -->
+                            <div class="mockup-page" id="page-services" style="display: none;">
+                                <div class="page-header">
+                                    <h3>Background Services</h3>
+                                </div>
+                                <div class="mockup-list mini-list">
+                                    <div class="list-item mini">
+                                        <div class="item-title">NGINX Web Server</div>
+                                        <div class="item-controls">
+                                            <span class="badge badge-success">Running</span>
+                                            <span class="toggle-btn active"><span class="toggle-dot"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="list-item mini">
+                                        <div class="item-title">Apache Web Server</div>
+                                        <div class="item-controls">
+                                            <span class="badge badge-muted">Stopped</span>
+                                            <span class="toggle-btn"><span class="toggle-dot"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="list-item mini">
+                                        <div class="item-title">PHP 8.3 FastCGI</div>
+                                        <div class="item-controls">
+                                            <span class="badge badge-success">Running</span>
+                                            <span class="toggle-btn active"><span class="toggle-dot"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="list-item mini">
+                                        <div class="item-title">Mailpit Capture Engine</div>
+                                        <div class="item-controls">
+                                            <span class="badge badge-success">Running</span>
+                                            <span class="toggle-btn active"><span class="toggle-dot"></span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PAGE: SHELL -->
+                            <div class="mockup-page" id="page-shell" style="display: none;">
+                                <div class="mockup-terminal">
+                                    <div class="terminal-body">
+                                        <p class="text-muted">Zenvix CLI Developer Console [Version 1.0.4]</p>
+                                        <p class="text-muted">(c) 2026 CodersCircle. All rights reserved.</p>
+                                        <br>
+                                        <p><span class="text-cyan">zenvix &gt;</span> zenvix start</p>
+                                        <p class="text-green">[✓] Nginx web server started on port 80</p>
+                                        <p class="text-green">[✓] PHP-FPM process pool started</p>
+                                        <p class="text-green">[✓] MySQL database engine started</p>
+                                        <p class="text-green">[✓] Mailpit SMTP relay captures ready</p>
+                                        <br>
+                                        <p><span class="text-cyan">zenvix &gt;</span> <span class="terminal-cursor">_</span></p>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -248,9 +373,81 @@
         </div>
     </footer>
 
-    <!-- Initialize Lucide Icons -->
+    <!-- Initialize Lucide Icons & Interactive Features -->
     <script>
         lucide.createIcons();
+
+        // 1. Sidebar Tab Switching
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        const mockupPages = document.querySelectorAll('.mockup-page');
+
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from all items
+                sidebarItems.forEach(i => i.classList.remove('active'));
+                // Add active class to clicked item
+                item.classList.add('active');
+
+                // Get target page ID
+                const target = item.getAttribute('data-target');
+                
+                // Hide all pages
+                mockupPages.forEach(page => {
+                    page.style.display = 'none';
+                    page.classList.remove('active');
+                });
+
+                // Show target page
+                const activePage = document.getElementById('page-' + target);
+                if (activePage) {
+                    activePage.style.display = 'block';
+                    // Re-render lucide icons inside page if any
+                    lucide.createIcons();
+                }
+            });
+        });
+
+        // 2. Download Button Spinner Logic
+        const downloadButtons = [
+            document.getElementById('nav-download-btn'),
+            document.getElementById('hero-download-btn'),
+            document.getElementById('footer-download-btn')
+        ];
+
+        downloadButtons.forEach(btn => {
+            if (!btn) return;
+            btn.addEventListener('click', function(e) {
+                // Prevent immediate download
+                e.preventDefault();
+                const downloadUrl = this.getAttribute('href');
+                
+                if (this.classList.contains('loading')) return;
+                this.classList.add('loading');
+
+                // Store original HTML
+                const originalHtml = this.innerHTML;
+                
+                // Show Spinner inside button
+                this.innerHTML = `<svg class="spinner" viewBox="0 0 50 50" style="width:18px; height:18px; fill:none; stroke:#fff; stroke-width:5; stroke-linecap:round; display:inline-block; vertical-align:middle; margin-right:8px;"><circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.2)" fill="none"/><circle cx="25" cy="25" r="20" stroke="#fff" stroke-dasharray="80, 200" stroke-dashoffset="0" fill="none"/></svg> Starting Download...`;
+
+                setTimeout(() => {
+                    // Create dynamic download action
+                    const tempLink = document.createElement('a');
+                    tempLink.href = downloadUrl;
+                    tempLink.setAttribute('download', '');
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+
+                    // Revert UI after some extra time to let download start
+                    setTimeout(() => {
+                        this.innerHTML = originalHtml;
+                        this.classList.remove('loading');
+                        lucide.createIcons();
+                    }, 1200);
+                }, 1000);
+            });
+        });
     </script>
 </body>
 </html>
