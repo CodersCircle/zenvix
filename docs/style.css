@@ -1511,6 +1511,33 @@ a {
     margin-top: 12px;
 }
 
+/* Made in India Badge styling */
+.india-badge {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-glass);
+    border-radius: 50px;
+    padding: 3px 8px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.3px;
+}
+
+.india-flag-dot {
+    width: 5px;
+    height: 5px;
+    background: #FF9933; /* Saffron */
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 6px 0 0 #FFFFFF, 12px 0 0 #128807; /* Orange, White, Green dots */
+    margin-right: 14px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
     .features-grid {
