@@ -2,6 +2,7 @@
 bin/
 obj/
 dist/
+publish/
 temp/
 *.user
 *.suo
@@ -18,3 +19,9 @@ temp/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+agent.md
+phaseonerset.md
+planning.md
+progress.md
+runtime-manifest.json
+zenvix.iss
