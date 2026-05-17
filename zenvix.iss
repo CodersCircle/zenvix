@@ -5,7 +5,8 @@
 [Setup]
 AppName=Zenvix
 AppVersion=1.0.4
-AppPublisher=Zenvix Development Team
+AppPublisher=CodersCircle
+AppPublisherURL=https://github.com/CodersCircle/zenvix
 DefaultDirName=C:\Zenvix
 DefaultGroupName=Zenvix
 UninstallDisplayIcon={app}\Zenvix.exe

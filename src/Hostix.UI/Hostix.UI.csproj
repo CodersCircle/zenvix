@@ -22,6 +22,13 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Assets\Icons\zenvix.ico</ApplicationIcon>
+    <Company>CodersCircle</Company>
+    <Authors>CodersCircle</Authors>
+    <Product>Zenvix</Product>
+    <Description>ZENVIX Developer Workstation &amp; Local Hosting Engine</Description>
+    <Copyright>Copyright © 2026 CodersCircle</Copyright>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
   </PropertyGroup>
 
 </Project>
