@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZENVIX | Premium Local Web Server & Hosting Suite for Windows</title>
-    <meta name="description" content="Zenvix is a professional multi-framework local web hosting OS and developer suite for Windows. Run Nginx, Apache, PHP, MySQL, phpMyAdmin, and Mailpit with zero config.">
+    <meta name="description"
+        content="Zenvix is a professional multi-framework local web hosting OS and developer suite for Windows. Run Nginx, Apache, PHP, MySQL, phpMyAdmin, and Mailpit with zero config.">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <!-- Background Gradients -->
@@ -28,7 +33,15 @@
             <a href="#" class="brand-logo" id="logo-link">
                 <span class="logo-dot"></span>
                 ZENVIX
-                <span class="india-badge"><span class="india-flag-dot"></span>Made in India</span>
+                <span class="india-badge">
+                    <svg class="india-flag-svg" viewBox="0 0 30 20" style="width: 14px; height: 10px; border-radius: 1px; display: inline-block; vertical-align: middle; margin-right: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.15);">
+                        <rect width="30" height="20" fill="#128807"/>
+                        <rect width="30" height="13.33" fill="#FFFFFF"/>
+                        <rect width="30" height="6.67" fill="#FF9933"/>
+                        <circle cx="15" cy="10" r="2" fill="#000080"/>
+                    </svg>
+                    Made in India
+                </span>
             </a>
             <nav class="nav-menu" id="main-navigation">
                 <a href="#features" class="nav-item">Features</a>
@@ -36,7 +49,8 @@
                 <a href="#requirements" class="nav-item">Requirements</a>
             </nav>
             <div class="nav-actions">
-                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" class="btn btn-primary btn-sm" id="nav-download-btn" download>
+                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe"
+                    class="btn btn-primary btn-sm" id="nav-download-btn" download>
                     <i data-lucide="download"></i> Download Setup
                 </a>
             </div>
@@ -47,16 +61,24 @@
     <section class="hero-section" id="hero">
         <div class="hero-container">
             <div class="hero-badge">
-                <span class="badge-dot"></span> Exclusively for Windows 10 & 11 • Made in India 🇮🇳
+                <span class="badge-dot"></span> Exclusively for Windows 10 & 11 • Made in India 
+                <svg class="india-flag-svg" viewBox="0 0 30 20" style="width: 14px; height: 10px; border-radius: 1px; display: inline-block; vertical-align: middle; margin-left: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.15);">
+                    <rect width="30" height="20" fill="#128807"/>
+                    <rect width="30" height="13.33" fill="#FFFFFF"/>
+                    <rect width="30" height="6.67" fill="#FF9933"/>
+                    <circle cx="15" cy="10" r="2" fill="#000080"/>
+                </svg>
             </div>
             <h1 class="hero-title">
                 The Next-Gen <span class="gradient-text">Local Web Server Suite</span> for Developers
             </h1>
             <p class="hero-subtitle">
-                A professional, state-of-the-art local hosting engine and dev environment orchestrator. Launch Nginx, Apache, PHP-FPM, Databases, and phpMyAdmin in a single click with absolute zero configuration.
+                A professional, state-of-the-art local hosting engine and dev environment orchestrator. Launch Nginx,
+                Apache, PHP-FPM, Databases, and phpMyAdmin in a single click with absolute zero configuration.
             </p>
             <div class="hero-ctas">
-                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" class="btn btn-primary btn-lg btn-glow" id="hero-download-btn" download>
+                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe"
+                    class="btn btn-primary btn-lg btn-glow" id="hero-download-btn" download>
                     <i data-lucide="download"></i> Download for Windows <span class="btn-meta">(42 MB)</span>
                 </a>
                 <a href="#features" class="btn btn-secondary btn-lg" id="hero-explore-btn">
@@ -75,25 +97,30 @@
                         <div class="window-controls">
                             <span class="control-btn control-minimize"><i data-lucide="minus"></i></span>
                             <span class="control-btn control-maximize"><i data-lucide="square"></i></span>
-                            <span class="control-btn control-close" id="main-window-close"><i data-lucide="x"></i></span>
+                            <span class="control-btn control-close" id="main-window-close"><i
+                                    data-lucide="x"></i></span>
                         </div>
                     </div>
                     <div class="window-body">
                         <!-- Sidebar Mockup -->
                         <div class="mockup-sidebar">
-                            <div class="sidebar-item active" data-target="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</div>
+                            <div class="sidebar-item active" data-target="dashboard"><i
+                                    data-lucide="layout-dashboard"></i> Dashboard</div>
                             <div class="sidebar-item" data-target="websites"><i data-lucide="globe"></i> Websites</div>
-                            <div class="sidebar-item" data-target="databases"><i data-lucide="database"></i> Databases</div>
-                            <div class="sidebar-item" data-target="services"><i data-lucide="sliders"></i> Services</div>
+                            <div class="sidebar-item" data-target="databases"><i data-lucide="database"></i> Databases
+                            </div>
+                            <div class="sidebar-item" data-target="services"><i data-lucide="sliders"></i> Services
+                            </div>
                             <div class="sidebar-item" data-target="shell"><i data-lucide="terminal"></i> Shell</div>
                         </div>
                         <!-- Content Mockup -->
                         <div class="mockup-content">
                             <div class="mockup-topbar">
-                                <div class="topbar-status"><span class="status-indicator online"></span> System Running</div>
+                                <div class="topbar-status"><span class="status-indicator online"></span> System Running
+                                </div>
                                 <div class="topbar-user"><span class="user-avatar">CC</span> Coders Circle</div>
                             </div>
-                            
+
                             <!-- PAGE: DASHBOARD -->
                             <div class="mockup-page active" id="page-dashboard">
                                 <div class="mockup-dashboard-cards">
@@ -146,7 +173,10 @@
                                             <div class="item-subtitle">C:\Zenvix\projects\laravel-blog</div>
                                         </div>
                                         <div class="item-controls">
-                                            <button class="btn btn-secondary btn-xs btn-view-site" data-site="laravel-blog.test"><i data-lucide="eye" style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i> View</button>
+                                            <button class="btn btn-secondary btn-xs btn-view-site"
+                                                data-site="laravel-blog.test"><i data-lucide="eye"
+                                                    style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i>
+                                                View</button>
                                             <span class="badge badge-success">HTTPS Active</span>
                                         </div>
                                     </div>
@@ -156,7 +186,10 @@
                                             <div class="item-subtitle">Port 3000 • Proxy -> Node.js</div>
                                         </div>
                                         <div class="item-controls">
-                                            <button class="btn btn-secondary btn-xs btn-view-site" data-site="react-dashboard.test"><i data-lucide="eye" style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i> View</button>
+                                            <button class="btn btn-secondary btn-xs btn-view-site"
+                                                data-site="react-dashboard.test"><i data-lucide="eye"
+                                                    style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i>
+                                                View</button>
                                             <span class="badge badge-success">Online</span>
                                         </div>
                                     </div>
@@ -166,7 +199,10 @@
                                             <div class="item-subtitle">Apache Server • PHP 8.2</div>
                                         </div>
                                         <div class="item-controls">
-                                            <button class="btn btn-secondary btn-xs btn-view-site" data-site="wordpress-store.test"><i data-lucide="eye" style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i> View</button>
+                                            <button class="btn btn-secondary btn-xs btn-view-site"
+                                                data-site="wordpress-store.test"><i data-lucide="eye"
+                                                    style="width:12px; height:12px; margin-right:4px; vertical-align:middle; display:inline-block;"></i>
+                                                View</button>
                                             <span class="badge badge-success">HTTPS Active</span>
                                         </div>
                                     </div>
@@ -177,7 +213,8 @@
                             <div class="mockup-page" id="page-databases" style="display: none;">
                                 <div class="page-header">
                                     <h3>Database Engines</h3>
-                                    <span class="btn btn-secondary btn-xs"><i data-lucide="external-link"></i> phpMyAdmin</span>
+                                    <span class="btn btn-secondary btn-xs"><i data-lucide="external-link"></i>
+                                        phpMyAdmin</span>
                                 </div>
                                 <div class="mockup-list">
                                     <div class="list-item">
@@ -254,7 +291,8 @@
                                         <p class="text-green">[✓] MySQL database engine started</p>
                                         <p class="text-green">[✓] Mailpit SMTP relay captures ready</p>
                                         <br>
-                                        <p><span class="text-cyan">zenvix &gt;</span> <span class="terminal-cursor">_</span></p>
+                                        <p><span class="text-cyan">zenvix &gt;</span> <span
+                                                class="terminal-cursor">_</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -284,39 +322,46 @@
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Engineered For Pure Performance</h2>
-                <p class="section-subtitle">Everything you need to build, test, and run modern PHP, Laravel, Node.js, and static websites locally.</p>
+                <p class="section-subtitle">Everything you need to build, test, and run modern PHP, Laravel, Node.js,
+                    and static websites locally.</p>
             </div>
-            
+
             <div class="features-grid">
                 <div class="feature-card glass-card">
                     <div class="feature-icon"><i data-lucide="globe"></i></div>
                     <h3>Multi-Server Runtime</h3>
-                    <p>Instantly switch or simultaneously run high-performance Nginx and Apache servers configured with optimal local headers.</p>
+                    <p>Instantly switch or simultaneously run high-performance Nginx and Apache servers configured with
+                        optimal local headers.</p>
                 </div>
                 <div class="feature-card glass-card">
                     <div class="feature-icon"><i data-lucide="code-2"></i></div>
                     <h3>PHP Version Manager</h3>
-                    <p>Switch seamlessly between multiple pre-configured PHP versions bundled directly with advanced FPM, OPcache, and extensions.</p>
+                    <p>Switch seamlessly between multiple pre-configured PHP versions bundled directly with advanced
+                        FPM, OPcache, and extensions.</p>
                 </div>
                 <div class="feature-card glass-card">
                     <div class="feature-icon"><i data-lucide="database"></i></div>
                     <h3>Database & phpMyAdmin</h3>
-                    <p>Pre-packaged MySQL database engine and integrated phpMyAdmin accessible instantly at <code>http://localhost:8080/phpmyadmin/</code>.</p>
+                    <p>Pre-packaged MySQL database engine and integrated phpMyAdmin accessible instantly at
+                        <code>http://localhost:8080/phpmyadmin/</code>.</p>
                 </div>
                 <div class="feature-card glass-card">
                     <div class="feature-icon"><i data-lucide="mail"></i></div>
                     <h3>Mailpit Integration</h3>
-                    <p>Never misconfigure real SMTP servers in testing. Captures all outgoing application emails locally with an intuitive web dashboard.</p>
+                    <p>Never misconfigure real SMTP servers in testing. Captures all outgoing application emails locally
+                        with an intuitive web dashboard.</p>
                 </div>
                 <div class="feature-card glass-card">
                     <div class="feature-icon"><i data-lucide="shield-check"></i></div>
                     <h3>One-Click SSL & HTTPS</h3>
-                    <p>Auto-generate fully trusted local SSL certificates for all your local projects. Browse with secure HTTPS seamlessly.</p>
+                    <p>Auto-generate fully trusted local SSL certificates for all your local projects. Browse with
+                        secure HTTPS seamlessly.</p>
                 </div>
                 <div class="feature-card glass-card">
                     <div class="feature-icon"><i data-lucide="zap"></i></div>
                     <h3>Zero Configuration</h3>
-                    <p>No messy path variables, manually edited config files, or virtual host rules. Click install, click run, and start building.</p>
+                    <p>No messy path variables, manually edited config files, or virtual host rules. Click install,
+                        click run, and start building.</p>
                 </div>
             </div>
         </div>
@@ -335,21 +380,26 @@
                     <div class="step-number">1</div>
                     <div class="step-content glass-card">
                         <h3>Run the Wizard Installer</h3>
-                        <p>Download the standalone installer and run the wizard. It sets up files in a secured <code>C:\Zenvix</code> directory, creates desktop icons, and configures Windows Services automatically.</p>
+                        <p>Download the standalone installer and run the wizard. It sets up files in a secured
+                            <code>C:\Zenvix</code> directory, creates desktop icons, and configures Windows Services
+                            automatically.</p>
                     </div>
                 </div>
                 <div class="step-item">
                     <div class="step-number">2</div>
                     <div class="step-content glass-card">
                         <h3>Launch and Start Services</h3>
-                        <p>Open the app control panel. Start NGINX/Apache, PHP, and MySQL from the UI. Runtimes will spin up instantly in secure, isolated sandbox environments.</p>
+                        <p>Open the app control panel. Start NGINX/Apache, PHP, and MySQL from the UI. Runtimes will
+                            spin up instantly in secure, isolated sandbox environments.</p>
                     </div>
                 </div>
                 <div class="step-item">
                     <div class="step-number">3</div>
                     <div class="step-content glass-card">
                         <h3>Create Projects & Databases</h3>
-                        <p>Access phpMyAdmin directly at <a href="http://localhost:8080/phpmyadmin/" target="_blank" class="accent-link">localhost:8080/phpmyadmin/</a> to create tables. Map directories to automatic local domains instantly.</p>
+                        <p>Access phpMyAdmin directly at <a href="http://localhost:8080/phpmyadmin/" target="_blank"
+                                class="accent-link">localhost:8080/phpmyadmin/</a> to create tables. Map directories to
+                            automatic local domains instantly.</p>
                     </div>
                 </div>
             </div>
@@ -362,13 +412,16 @@
             <div class="req-card glass-card">
                 <div class="req-content">
                     <h2>Windows System Requirements</h2>
-                    <p>ZENVIX is built from the ground up strictly using native Win32 controls, NGINX core binaries, and .NET 8.0, guaranteeing extremely fast performance and near-zero memory footprint.</p>
-                    
+                    <p>ZENVIX is built from the ground up strictly using native Win32 controls, NGINX core binaries, and
+                        .NET 8.0, guaranteeing extremely fast performance and near-zero memory footprint.</p>
+
                     <ul class="req-list">
                         <li><strong>OS Version:</strong> Windows 10 or Windows 11 (64-bit strictly supported)</li>
                         <li><strong>Memory:</strong> 4GB RAM minimum (runs lightweight on less than 150MB total!)</li>
-                        <li><strong>Storage:</strong> 250MB free space (bundles PHP 8.3, Apache, Nginx, SQLite & databases)</li>
-                        <li><strong>Permissions:</strong> Administrator privileges are recommended during installation to auto-configure hosts files and Windows services.</li>
+                        <li><strong>Storage:</strong> 250MB free space (bundles PHP 8.3, Apache, Nginx, SQLite &
+                            databases)</li>
+                        <li><strong>Permissions:</strong> Administrator privileges are recommended during installation
+                            to auto-configure hosts files and Windows services.</li>
                     </ul>
                 </div>
                 <div class="req-visual">
@@ -382,9 +435,11 @@
     <section class="section section-cta">
         <div class="container text-center">
             <h2>Ready to Elevate Your Local Workflow?</h2>
-            <p>Download ZENVIX now and say goodbye to complex Vagrant setups, heavy Docker containers, and outdated local stacks.</p>
+            <p>Download ZENVIX now and say goodbye to complex Vagrant setups, heavy Docker containers, and outdated
+                local stacks.</p>
             <div class="cta-actions">
-                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" class="btn btn-primary btn-lg btn-glow" id="footer-download-btn" download>
+                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe"
+                    class="btn btn-primary btn-lg btn-glow" id="footer-download-btn" download>
                     <i data-lucide="download"></i> Download Zenvix Setup for Windows
                 </a>
             </div>
@@ -395,11 +450,26 @@
     <footer class="footer">
         <div class="container footer-container">
             <div class="footer-brand">
-                <span class="logo-dot"></span> ZENVIX <span class="india-badge" style="font-size: 0.65rem; padding: 2px 6px; margin-left: 6px;"><span class="india-flag-dot"></span>Made in India</span>
+                <span class="logo-dot"></span> ZENVIX <span class="india-badge" style="font-size: 0.65rem; padding: 2px 6px; margin-left: 6px;">
+                    <svg class="india-flag-svg" viewBox="0 0 30 20" style="width: 12px; height: 8px; border-radius: 1px; display: inline-block; vertical-align: middle; margin-right: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.15);">
+                        <rect width="30" height="20" fill="#128807"/>
+                        <rect width="30" height="13.33" fill="#FFFFFF"/>
+                        <rect width="30" height="6.67" fill="#FF9933"/>
+                        <circle cx="15" cy="10" r="2" fill="#000080"/>
+                    </svg>
+                    Made in India
+                </span>
                 <p>Premium Local Developer OS & Hosting Suite for Windows.</p>
             </div>
             <div class="footer-copyright">
-                &copy; 2026 Zenvix and CodersCircle. Built with ❤️ in India 🇮🇳 for developers worldwide.
+                &copy; 2026 Zenvix and CodersCircle. Built with ❤️ in India 
+                <svg class="india-flag-svg" viewBox="0 0 30 20" style="width: 14px; height: 10px; border-radius: 1px; display: inline-block; vertical-align: middle; margin: 0 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.15);">
+                    <rect width="30" height="20" fill="#128807"/>
+                    <rect width="30" height="13.33" fill="#FFFFFF"/>
+                    <rect width="30" height="6.67" fill="#FF9933"/>
+                    <circle cx="15" cy="10" r="2" fill="#000080"/>
+                </svg>
+                for developers worldwide.
             </div>
         </div>
     </footer>
@@ -409,8 +479,10 @@
         <div class="browser-modal-window">
             <div class="browser-modal-header window-header">
                 <div class="header-left">
-                    <span class="window-icon"><i data-lucide="chrome" class="text-violet" style="width:14px; height:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i></span>
-                    <span class="browser-modal-title window-title" id="browser-modal-title">react-dashboard.test - Zenvix Browser Preview</span>
+                    <span class="window-icon"><i data-lucide="chrome" class="text-violet"
+                            style="width:14px; height:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i></span>
+                    <span class="browser-modal-title window-title" id="browser-modal-title">react-dashboard.test -
+                        Zenvix Browser Preview</span>
                 </div>
                 <div class="window-controls">
                     <span class="control-btn control-minimize"><i data-lucide="minus"></i></span>
@@ -421,7 +493,7 @@
             <div class="browser-address-bar">
                 <span class="browser-back-btn" id="modal-browser-back"><i data-lucide="arrow-left"></i> Back</span>
                 <div class="browser-url">
-                    <i data-lucide="lock" class="text-green"></i> 
+                    <i data-lucide="lock" class="text-green"></i>
                     <span id="modal-browser-url-text">https://react-dashboard.test/dashboard</span>
                 </div>
                 <span class="browser-refresh-btn"><i data-lucide="rotate-cw"></i></span>
@@ -482,7 +554,7 @@
                                 <span class="m3-card-meta">Garbage collection optimized</span>
                             </div>
                         </div>
-                        
+
                         <div class="m3-chart-row">
                             <div class="m3-chart-container main-chart">
                                 <div class="m3-chart-header">
@@ -546,6 +618,12 @@
 
     <!-- Initialize Lucide Icons & Interactive Features -->
     <script>
+        // Force scroll to top (Homepage) on reload/refresh
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
         lucide.createIcons();
 
         // 1. Sidebar Tab Switching
@@ -561,7 +639,7 @@
 
                 // Get target page ID
                 const target = item.getAttribute('data-target');
-                
+
                 // Hide all pages
                 mockupPages.forEach(page => {
                     page.style.display = 'none';
@@ -587,17 +665,17 @@
 
         downloadButtons.forEach(btn => {
             if (!btn) return;
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 // Prevent immediate download
                 e.preventDefault();
                 const downloadUrl = this.getAttribute('href');
-                
+
                 if (this.classList.contains('loading')) return;
                 this.classList.add('loading');
 
                 // Store original HTML
                 const originalHtml = this.innerHTML;
-                
+
                 // Show Spinner inside button
                 this.innerHTML = `<svg class="spinner" viewBox="0 0 50 50" style="width:18px; height:18px; fill:none; stroke:#fff; stroke-width:5; stroke-linecap:round; display:inline-block; vertical-align:middle; margin-right:8px;"><circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.2)" fill="none"/><circle cx="25" cy="25" r="20" stroke="#fff" stroke-dasharray="80, 200" stroke-dashoffset="0" fill="none"/></svg> Starting Download...`;
 
@@ -629,14 +707,14 @@
         let toastTimeout = null;
 
         serviceToggleBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 const listItem = this.closest('.list-item.mini') || this.closest('.dashboard-card');
                 const serviceName = listItem.querySelector('.item-title, h4').innerText;
                 const statusBadge = listItem.querySelector('.badge');
-                
+
                 // Toggle active state
                 const isActive = this.classList.toggle('active');
-                
+
                 // Update badge and trigger Toast
                 if (isActive) {
                     statusBadge.innerText = 'Running';
@@ -659,7 +737,7 @@
             // Set content
             toastTitle.innerText = title;
             toastMsg.innerText = message;
-            
+
             // Set styles and icons based on type
             if (type === 'success') {
                 toast.className = 'mockup-toast show success';
@@ -668,7 +746,7 @@
                 toast.className = 'mockup-toast show warning';
                 toastIconBox.innerHTML = '<i data-lucide="alert-circle"></i>';
             }
-            
+
             // Refresh lucide icon
             lucide.createIcons();
 
@@ -692,10 +770,10 @@
         const m3Val3 = document.getElementById('m3-val-3');
 
         viewSiteBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const site = this.getAttribute('data-site');
-                
+
                 // Open browser modal popup
                 browserModal.classList.add('show');
 
@@ -774,11 +852,11 @@
             mainWindowClose.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 // Get random quote
                 const randomIndex = Math.floor(Math.random() * developerQuotes.length);
                 quoteText.innerHTML = developerQuotes[randomIndex];
-                
+
                 // Show quote modal
                 quoteModal.classList.add('show');
                 lucide.createIcons();
@@ -799,4 +877,5 @@
         });
     </script>
 </body>
+
 </html>

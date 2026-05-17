@@ -1528,14 +1528,13 @@ a {
     letter-spacing: 0.3px;
 }
 
-.india-flag-dot {
-    width: 5px;
-    height: 5px;
-    background: #FF9933; /* Saffron */
-    border-radius: 50%;
-    display: inline-block;
-    box-shadow: 6px 0 0 #FFFFFF, 12px 0 0 #128807; /* Orange, White, Green dots */
-    margin-right: 14px;
+.india-flag-svg {
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.india-badge:hover .india-flag-svg {
+    transform: scale(1.12);
 }
 
 /* Responsive adjustments */
