@@ -1565,6 +1565,40 @@ a {
     box-shadow: 0 0 6px rgba(18, 136, 7, 0.7);
 }
 
+/* Smooth Sequential Floating Wave Animation on Hover */
+.india-badge:hover .india-dot,
+.hero-badge:hover .india-dot,
+.footer-copyright:hover .india-dot {
+    animation: indiaDotWave 1.4s ease-in-out infinite;
+}
+
+.india-badge:hover .india-dot.saffron,
+.hero-badge:hover .india-dot.saffron,
+.footer-copyright:hover .india-dot.saffron {
+    animation-delay: 0s;
+}
+
+.india-badge:hover .india-dot.white,
+.hero-badge:hover .india-dot.white,
+.footer-copyright:hover .india-dot.white {
+    animation-delay: 0.15s;
+}
+
+.india-badge:hover .india-dot.green,
+.hero-badge:hover .india-dot.green,
+.footer-copyright:hover .india-dot.green {
+    animation-delay: 0.3s;
+}
+
+@keyframes indiaDotWave {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
     .features-grid {
