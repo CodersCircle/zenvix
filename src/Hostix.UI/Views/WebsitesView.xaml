@@ -560,6 +560,15 @@
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Import Project" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="📂" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Import Project" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <TextBlock Text="Host existing local folder on our platform" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Button>
                                 </UniformGrid>
                             </Grid>
                         </StackPanel>
@@ -632,27 +641,49 @@
                                               Height="36" VerticalContentAlignment="Center" />
                                 </Grid>
 
-                                <TextBlock Text="WORKSPACE PARENT DIRECTORY" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox Text="{Binding NewWebsitePath}" IsReadOnly="True" 
-                                             mah:ControlsHelper.CornerRadius="8"
-                                             Background="{StaticResource SurfaceBrush}" Foreground="Black" BorderBrush="{StaticResource BorderBrush}"
-                                             Height="36" FontSize="11" VerticalContentAlignment="Center" Padding="10,0" />
-                                    <Button Grid.Column="1" Command="{Binding BrowseFolderCommand}"
-                                            Content="Browse" Style="{DynamicResource Hostix.Button}" 
-                                            Height="36" Width="70" Margin="6,0,0,0" Padding="0" />
-                                </Grid>
+                                 <TextBlock FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6">
+                                     <TextBlock.Style>
+                                         <Style TargetType="TextBlock">
+                                             <Setter Property="Text" Value="WORKSPACE PARENT DIRECTORY" />
+                                             <Style.Triggers>
+                                                 <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                                     <Setter Property="Text" Value="EXISTING PROJECT DIRECTORY" />
+                                                 </DataTrigger>
+                                             </Style.Triggers>
+                                         </Style>
+                                     </TextBlock.Style>
+                                 </TextBlock>
+                                 <Grid Margin="0,0,0,12">
+                                     <Grid.ColumnDefinitions>
+                                         <ColumnDefinition Width="*" />
+                                         <ColumnDefinition Width="Auto" />
+                                     </Grid.ColumnDefinitions>
+                                     <TextBox Text="{Binding NewWebsitePath}" IsReadOnly="True" 
+                                              mah:ControlsHelper.CornerRadius="8"
+                                              Background="{StaticResource SurfaceBrush}" Foreground="Black" BorderBrush="{StaticResource BorderBrush}"
+                                              Height="36" FontSize="11" VerticalContentAlignment="Center" Padding="10,0" />
+                                     <Button Grid.Column="1" Command="{Binding BrowseFolderCommand}"
+                                             Content="Browse" Style="{DynamicResource Hostix.Button}" 
+                                             Height="36" Width="70" Margin="6,0,0,0" Padding="0" />
+                                 </Grid>
 
-                                <Border Background="{DynamicResource BackgroundBrush}" Padding="8" CornerRadius="6" Margin="0,0,0,12">
-                                    <StackPanel>
-                                        <TextBlock Text="Full Workspace Target Path:" FontSize="9" Foreground="{DynamicResource TextSecondaryBrush}" />
-                                        <TextBlock Text="{Binding FullCreatedPathDisplay}" FontSize="10" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Border>
+                                 <Border Background="{DynamicResource BackgroundBrush}" Padding="8" CornerRadius="6" Margin="0,0,0,12">
+                                     <StackPanel>
+                                         <TextBlock FontSize="9" Foreground="{DynamicResource TextSecondaryBrush}">
+                                             <TextBlock.Style>
+                                                 <Style TargetType="TextBlock">
+                                                     <Setter Property="Text" Value="Full Workspace Target Path:" />
+                                                     <Style.Triggers>
+                                                         <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                                             <Setter Property="Text" Value="Imported Project Source Path:" />
+                                                         </DataTrigger>
+                                                     </Style.Triggers>
+                                                 </Style>
+                                             </TextBlock.Style>
+                                         </TextBlock>
+                                         <TextBlock Text="{Binding FullCreatedPathDisplay}" FontSize="10" Foreground="{DynamicResource AccentBrush}" FontWeight="Bold" TextWrapping="Wrap" />
+                                     </StackPanel>
+                                 </Border>
                             </StackPanel>
 
                             <!-- Divider -->
