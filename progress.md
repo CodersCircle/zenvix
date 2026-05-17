@@ -16,11 +16,12 @@
 - [x] Build `DomainManager` & `HostsManager` (DNS Automation)
 - [x] Implement `SSLManager` (Internal CA & Trust logic)
 - [x] Setup `EnvironmentManager` (.env profiles & backups)
-- [x] Implement Multi-Version Runtime Mapping (PHP/Node)
+- [x] Implement Multi-Version Runtime Mapping (PHP/Node) and Dynamic Version Upgrade Engine
 
 ## Phase 4: AI & Template Layer
 - [x] **[NEW]** Setup AI-Agent Diagnostic Layer (JSON status reports)
-- [x] **[NEW]** Build Template Generator (SaaS, API, WP skeletons)
+- [x] **[NEW]** Build Template Generator (Real-time background CLI scaffolding, Laravel, React, Vue, Next.js, WordPress download/extraction)
+- [x] **[NEW]** Implement background "Cooking..." project generator engine with live output logs
 - [x] Implement `CommunityToolkit.Mvvm` state tracking and UI sync
 
 ## Phase 5: Enterprise Quality & CI/CD

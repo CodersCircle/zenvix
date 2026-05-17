@@ -78,14 +78,13 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Engine Icon Badge -->
-                                <Border Grid.Column="0" Width="52" Height="52" CornerRadius="14"
-                                        Background="{DynamicResource AccentBrush}"
-                                        Margin="0,0,18,0" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Icon}" Foreground="White"
-                                               FontSize="13" FontWeight="Bold"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
+                                 <!-- Engine Icon Badge -->
+                                 <Border Grid.Column="0" Width="52" Height="52" CornerRadius="14"
+                                         Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                         Margin="0,0,18,0" VerticalAlignment="Center">
+                                     <Image Source="{Binding Engine, Converter={StaticResource TechIconConverter}}" 
+                                            Width="28" Height="28" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                 </Border>
 
                                 <!-- Info -->
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">

@@ -6,6 +6,7 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:models="clr-namespace:Hostix.Core.Models;assembly=Hostix.Core"
              xmlns:conv="clr-namespace:Hostix.UI.Converters"
+             xmlns:ds="clr-namespace:Zenvix.DesignSystem"
              mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="960">
 
     <UserControl.Resources>
@@ -15,9 +16,7 @@
         <conv:StatusToVisibilityConverter x:Key="StatusToVisibilityConverter" />
         <!-- Reusable service row template -->
         <DataTemplate x:Key="ServiceRowTemplate">
-            <Border Background="{DynamicResource CardBrush}" CornerRadius="12"
-                    Margin="0,0,0,10" Padding="18,14"
-                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <ds:ZenvixRuntimeCard Margin="0,0,0,10">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -233,7 +232,7 @@
                         </Button>
                     </StackPanel>
                 </Grid>
-            </Border>
+            </ds:ZenvixRuntimeCard>
         </DataTemplate>
     </UserControl.Resources>
 

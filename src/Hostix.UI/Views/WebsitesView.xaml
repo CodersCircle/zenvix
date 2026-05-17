@@ -6,6 +6,7 @@
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:models="clr-namespace:Hostix.Core.Models;assembly=Hostix.Core"
     xmlns:conv="clr-namespace:Hostix.UI.Converters"
+    xmlns:ds="clr-namespace:Zenvix.DesignSystem"
     mc:Ignorable="d"
     d:DesignHeight="800" d:DesignWidth="1100">
 
@@ -148,11 +149,9 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="290" Margin="0,0,16,16" Background="{DynamicResource CardBrush}" 
-                                CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}"
-                                SnapsToDevicePixels="True" Effect="{DynamicResource Hostix.Shadow.Small}">
-                            <Border.Style>
-                                <Style TargetType="Border">
+                        <ds:ZenvixProjectCard Width="290" Margin="0,0,16,16" SnapsToDevicePixels="True">
+                            <ds:ZenvixProjectCard.Style>
+                                <Style TargetType="ds:ZenvixProjectCard" BasedOn="{StaticResource ZenvixProjectCard}">
                                     <Setter Property="Visibility" Value="Visible" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsDocsSite}" Value="True">
@@ -160,7 +159,7 @@
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </Border.Style>
+                            </ds:ZenvixProjectCard.Style>
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" /> <!-- Header -->
@@ -170,41 +169,41 @@
                                 </Grid.RowDefinitions>
 
                                 <!-- 1. Status & Meta Row -->
-                                <Border Grid.Row="0" Padding="16,16,16,8">
+                                <Border Grid.Row="0" Padding="14,14,14,8">
                                     <Grid>
                                         <StackPanel Orientation="Horizontal">
                                             <!-- Status Badge -->
-                                            <Border Padding="8,4" CornerRadius="12">
+                                            <Border Padding="6,2" CornerRadius="6" VerticalAlignment="Center">
                                                 <Border.Style>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="Background" Value="#F1F5F9" />
+                                                    <Style TargetType="Border" BasedOn="{StaticResource ZenvixBadge}">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding Status}" Value="Running">
-                                                                <Setter Property="Background" Value="#F0FDF4" />
+                                                                <Setter Property="Background" Value="{StaticResource Zenvix.SuccessBg}" />
+                                                                <Setter Property="BorderBrush" Value="{StaticResource Zenvix.Success}" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0">
+                                                    <Ellipse Width="6" Height="6" VerticalAlignment="Center" Margin="0,0,5,0">
                                                         <Ellipse.Style>
                                                             <Style TargetType="Ellipse">
-                                                                <Setter Property="Fill" Value="#94A3B8" />
+                                                                <Setter Property="Fill" Value="{StaticResource Zenvix.TextMuted}" />
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding Status}" Value="Running">
-                                                                        <Setter Property="Fill" Value="#22C55E" />
+                                                                        <Setter Property="Fill" Value="{StaticResource Zenvix.Success}" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Ellipse.Style>
                                                     </Ellipse>
-                                                    <TextBlock Text="{Binding Status}" FontSize="10" FontWeight="Bold" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Status}" FontSize="9" FontWeight="Medium" VerticalAlignment="Center">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
-                                                                <Setter Property="Foreground" Value="#64748B" />
+                                                                <Setter Property="Foreground" Value="{StaticResource Zenvix.TextSecondary}" />
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding Status}" Value="Running">
-                                                                        <Setter Property="Foreground" Value="#15803D" />
+                                                                        <Setter Property="Foreground" Value="{StaticResource Zenvix.Success}" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -213,47 +212,47 @@
                                                 </StackPanel>
                                             </Border>
 
-                                            <!-- SSL Toggle -->
+                                            <!-- SSL Toggle Switch -->
                                             <mah:ToggleSwitch Style="{StaticResource Hostix.ToggleSwitch.Compact}"
                                                               IsOn="{Binding SslEnabled}" 
                                                               Command="{Binding DataContext.ToggleSslCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                               CommandParameter="{Binding}"
                                                               OnContent="SSL" OffContent="SSL"
-                                                              FontSize="9" FontWeight="Bold" VerticalAlignment="Center" Margin="12,0,0,0" />
+                                                              FontSize="9" FontWeight="Medium" VerticalAlignment="Center" Margin="10,0,0,0" />
                                         </StackPanel>
 
                                         <!-- PHP Version Badge -->
-                                        <Border HorizontalAlignment="Right" Background="#F8FAFC" Padding="8,4" CornerRadius="8">
-                                            <TextBlock Text="{Binding PhpVersion, StringFormat='PHP {0}'}" FontSize="9" FontWeight="Bold" Foreground="#6366F1" />
+                                        <Border HorizontalAlignment="Right" Background="{StaticResource Zenvix.Card}" BorderBrush="{StaticResource Zenvix.Border}" BorderThickness="1" Padding="6,2" CornerRadius="6" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding PhpVersion, StringFormat='PHP {0}'}" FontSize="9" FontWeight="Medium" Foreground="{StaticResource Zenvix.Accent}" />
                                         </Border>
                                     </Grid>
                                 </Border>
 
                                 <!-- 2. Project Identity -->
-                                <Border Grid.Row="1" Padding="16,0,16,16">
+                                <Border Grid.Row="1" Padding="14,4,14,14">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Squircle Icon -->
-                                        <Border Width="50" Height="50" CornerRadius="12" Background="{DynamicResource BackgroundBrush}" Margin="0,0,14,0">
-                                            <TextBlock Text="{Binding Icon}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" 
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        </Border>
+                                         <!-- Squircle Icon Container -->
+                                         <Border Width="40" Height="40" CornerRadius="10" Background="{StaticResource Zenvix.Background}" BorderBrush="{StaticResource Zenvix.Border}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
+                                             <Image Source="{Binding Type, Converter={StaticResource TechIconConverter}}" 
+                                                    Width="22" Height="22" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                         </Border>
 
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" MaxWidth="160" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" FontSize="10" Margin="6,0,0,0" VerticalAlignment="Center" ToolTip="SSL Secure">
+                                                <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource Zenvix.TextPrimary}" MaxWidth="150" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                                <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" FontSize="9" Margin="6,0,0,0" VerticalAlignment="Center" ToolTip="SSL Secure">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
-                                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-                                                            <Setter Property="Opacity" Value="0.2" />
+                                                            <Setter Property="Foreground" Value="{StaticResource Zenvix.TextMuted}" />
+                                                            <Setter Property="Opacity" Value="0.4" />
                                                             <Style.Triggers>
                                                                  <DataTrigger Binding="{Binding SslEnabled}" Value="True">
-                                                                     <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                                     <Setter Property="Foreground" Value="{StaticResource Zenvix.Success}" />
                                                                      <Setter Property="Opacity" Value="1.0" />
                                                                  </DataTrigger>
                                                             </Style.Triggers>
@@ -262,21 +261,22 @@
                                                 </TextBlock>
                                             </StackPanel>
                                             
-                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                                <TextBlock Text="{Binding Domain}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,1,0,0">
+                                                <TextBlock Text="{Binding Domain}" FontSize="10.5" Foreground="{StaticResource Zenvix.TextSecondary}" VerticalAlignment="Center" />
+                                                
                                                 <!-- Sleek Docs Badge -->
                                                 <Button Command="{Binding DataContext.OpenDocsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                         CommandParameter="{Binding}"
-                                                        Margin="6,0,0,0" Padding="0" Height="18" Cursor="Hand" VerticalAlignment="Center" ToolTip="Open Developer Docs">
+                                                        Margin="6,0,0,0" Padding="0" Height="16" Cursor="Hand" VerticalAlignment="Center" ToolTip="Open Developer Docs">
                                                     <Button.Style>
                                                         <Style TargetType="Button" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                                                             <Setter Property="Template">
                                                                 <Setter.Value>
                                                                     <ControlTemplate TargetType="Button">
-                                                                        <Border Background="#EEF2F6" CornerRadius="4" Padding="5,1">
+                                                                        <Border Background="{StaticResource Zenvix.Background}" BorderBrush="{StaticResource Zenvix.Border}" BorderThickness="1" CornerRadius="4" Padding="5,1">
                                                                             <StackPanel Orientation="Horizontal">
-                                                                                <TextBlock Text="&#xEBAA;" FontFamily="Segoe MDL2 Assets" FontSize="9" Foreground="#6366F1" Margin="0,0,3,0" VerticalAlignment="Center" />
-                                                                                <TextBlock Text="docs" FontSize="9" FontWeight="Bold" Foreground="#6366F1" VerticalAlignment="Center" />
+                                                                                <TextBlock Text="&#xEBAA;" FontFamily="Segoe MDL2 Assets" FontSize="8" Foreground="{StaticResource Zenvix.Accent}" Margin="0,0,3,0" VerticalAlignment="Center" />
+                                                                                <TextBlock Text="docs" FontSize="8" FontWeight="SemiBold" Foreground="{StaticResource Zenvix.Accent}" VerticalAlignment="Center" />
                                                                             </StackPanel>
                                                                         </Border>
                                                                     </ControlTemplate>
@@ -290,25 +290,25 @@
                                     </Grid>
                                 </Border>
 
-                                <!-- 3. Quick Tool Actions -->
-                                <Border Grid.Row="2" Background="#05000000" BorderThickness="0,1" BorderBrush="{DynamicResource BorderBrush}" Padding="8,6">
+                                <!-- 3. Quick Tool Actions (Sleek Hero Line Icons) -->
+                                <Border Grid.Row="2" Background="{StaticResource Zenvix.Background}" BorderThickness="0,1" BorderBrush="{StaticResource Zenvix.Border}" Padding="6,3">
                                     <UniformGrid Columns="4">
                                         <Button Command="{Binding DataContext.OpenFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                                CommandParameter="{Binding}" ToolTip="Open Folder" Style="{DynamicResource Hostix.Button.Ghost}" Height="30" Padding="0">
-                                            <TextBlock Text="&#xED25;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
+                                                CommandParameter="{Binding}" ToolTip="Open Folder" Style="{StaticResource ZenvixButton.Ghost}" Height="28" Padding="0">
+                                            <Path Data="{StaticResource HeroIcon.Folder}" Stroke="#4F46E5" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                         <Button Command="{Binding DataContext.OpenCodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                                CommandParameter="{Binding}" ToolTip="Open in VS Code" Style="{DynamicResource Hostix.Button.Ghost}" Height="30" Padding="0">
-                                            <TextBlock Text="&#xE799;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
+                                                CommandParameter="{Binding}" ToolTip="Open in VS Code" Style="{StaticResource ZenvixButton.Ghost}" Height="28" Padding="0">
+                                            <Path Data="{StaticResource TechIcon.PHP}" Stroke="#8B5CF6" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                         <Button Command="{Binding DataContext.OpenTerminalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                                CommandParameter="{Binding}" ToolTip="Open Terminal" Style="{DynamicResource Hostix.Button.Ghost}" Height="30" Padding="0">
-                                            <TextBlock Text="&#xE756;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
+                                                CommandParameter="{Binding}" ToolTip="Open Terminal" Style="{StaticResource ZenvixButton.Ghost}" Height="28" Padding="0">
+                                            <Path Data="{StaticResource HeroIcon.Terminal}" Stroke="#10B981" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                         <Button Command="{Binding DataContext.OpenSiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                                CommandParameter="{Binding}" ToolTip="Open Website" Height="30" Padding="0" Cursor="Hand">
+                                                CommandParameter="{Binding}" ToolTip="Open Website" Height="28" Padding="0" Cursor="Hand">
                                             <Button.Style>
-                                                <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Ghost}">
+                                                <Style TargetType="Button" BasedOn="{StaticResource ZenvixButton.Ghost}">
                                                     <Setter Property="IsEnabled" Value="False" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Status}" Value="Running">
@@ -317,47 +317,49 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
-                                            <TextBlock Text="&#xE890;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
+                                            <Path Data="{StaticResource HeroIcon.Website}" Stroke="#06B6D4" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                     </UniformGrid>
                                 </Border>
 
-                                <!-- 4. Primary Actions -->
-                                <Border Grid.Row="3" Padding="16,10">
+                                <!-- 4. Primary Actions (Dynamic Zenvix Buttons) -->
+                                <Border Grid.Row="3" Padding="14,10">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="10*" />
-                                            <ColumnDefinition Width="8*" />
+                                            <ColumnDefinition Width="1.1*" />
+                                            <ColumnDefinition Width="0.9*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
 
                                         <!-- Run/Stop Button -->
                                         <Button Grid.Column="0" Command="{Binding DataContext.ToggleWebsiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}" IsEnabled="{Binding Status, Converter={StaticResource StatusToIsEnabledConverter}}"
-                                                Height="34" Margin="0,0,6,0" Style="{StaticResource Hostix.Button.Blue}">
+                                                Height="32" Margin="0,0,6,0" Style="{StaticResource ZenvixButton.Primary}">
                                             <StackPanel Orientation="Horizontal">
-                                                <mah:ProgressRing Width="12" Height="12" Margin="0,0,6,0" Foreground="White" 
+                                                <mah:ProgressRing Width="10" Height="10" Margin="0,0,6,0" Foreground="White" 
                                                                   Visibility="{Binding Status, Converter={StaticResource StatusToSpinnerVisibilityConverter}}" />
                                                 <TextBlock Text="{Binding Status, Converter={StaticResource StatusToButtonTextConverter}}" 
-                                                           FontSize="11" FontWeight="Bold" VerticalAlignment="Center" />
+                                                           FontSize="11" FontWeight="Medium" Foreground="White" VerticalAlignment="Center" />
                                             </StackPanel>
                                         </Button>
 
                                         <!-- Remove (Panel) Button -->
-                                        <Button Grid.Column="1" Command="{Binding DataContext.DeleteWebsiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                                CommandParameter="{Binding}" Content="Remove" Style="{StaticResource Hostix.Button.Orange}" 
-                                                Height="34" Margin="4,0,6,0" FontSize="11" />
+                                        <Button Grid.Column="1" Command="{Binding DataContext.RemoveWebsiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                CommandParameter="{Binding}" Style="{StaticResource ZenvixButton}" 
+                                                Height="32" Margin="2,0,6,0">
+                                            <TextBlock Text="Remove" FontSize="11" FontWeight="Medium" Foreground="{StaticResource Zenvix.TextPrimary}" VerticalAlignment="Center" />
+                                        </Button>
 
                                         <!-- Delete (Disk) Button -->
                                         <Button Grid.Column="2" Command="{Binding DataContext.DeleteWebsiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                                CommandParameter="{Binding}" ToolTip="Permanent Delete" Style="{DynamicResource Hostix.Button.Ghost}" 
-                                                Width="34" Height="34" Padding="0">
-                                            <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="{DynamicResource ErrorBrush}" />
+                                                CommandParameter="{Binding}" ToolTip="Delete from Disk (Permanent)" Style="{StaticResource ZenvixButton.Ghost}" 
+                                                Width="32" Height="32" Padding="0">
+                                            <Path Data="{StaticResource HeroIcon.Trash}" Stroke="{StaticResource Zenvix.Danger}" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                     </Grid>
                                 </Border>
                             </Grid>
-                        </Border>
+                        </ds:ZenvixProjectCard>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -415,47 +417,98 @@
                         <Style x:Key="FlutterParamsVisibilityStyle" TargetType="StackPanel">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Flutter">
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedFramework}" Value="Flutter" />
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Website" />
+                                    </MultiDataTrigger.Conditions>
                                     <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="React Native">
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedFramework}" Value="React Native" />
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Website" />
+                                    </MultiDataTrigger.Conditions>
                                     <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Ionic">
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedFramework}" Value="Ionic" />
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Website" />
+                                    </MultiDataTrigger.Conditions>
                                     <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
+                                </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>
 
                         <Style x:Key="DefaultParamsVisibilityStyle" TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Laravel">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                    <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="FilamentPHP">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Laravel API">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Flutter">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="React Native">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding SelectedFramework}" Value="Ionic">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Website" />
+                                        <Condition Binding="{Binding SelectedFramework}" Value="React" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Website" />
+                                        <Condition Binding="{Binding SelectedFramework}" Value="Vue" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Website" />
+                                        <Condition Binding="{Binding SelectedFramework}" Value="Next.js" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Website" />
+                                        <Condition Binding="{Binding SelectedFramework}" Value="Tailwind Starter" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+
+                        <Style x:Key="ReactAdminParamsVisibilityStyle" TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Admin Panel" />
+                                        <Condition Binding="{Binding SelectedFramework}" Value="React Admin" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+
+                        <Style x:Key="VueAdminParamsVisibilityStyle" TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedCategory}" Value="Admin Panel" />
+                                        <Condition Binding="{Binding SelectedFramework}" Value="Vue Admin" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>
 
                         <!-- Wizard Card Button Style -->
                         <Style x:Key="WizardCardButton" TargetType="Button" BasedOn="{StaticResource Hostix.Button}">
-                            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
-                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                            <Setter Property="Background" Value="{StaticResource Zenvix.Card}" />
+                            <Setter Property="BorderBrush" Value="{StaticResource Zenvix.Border}" />
+                            <Setter Property="Foreground" Value="{StaticResource Zenvix.TextPrimary}" />
                             <Setter Property="BorderThickness" Value="1" />
                             <Setter Property="Padding" Value="16" />
                             <Setter Property="Template">
@@ -464,16 +517,16 @@
                                         <Border x:Name="cardBorder" Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                                CornerRadius="12" Padding="{TemplateBinding Padding}">
                                             <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Stretch" />
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="cardBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                                <Setter TargetName="cardBorder" Property="Background" Value="{DynamicResource SurfaceBrush}" />
+                                                <Setter TargetName="cardBorder" Property="BorderBrush" Value="{StaticResource Zenvix.Accent}" />
+                                                <Setter TargetName="cardBorder" Property="Background" Value="{StaticResource Zenvix.Surface}" />
                                                 <Setter Property="Effect">
                                                     <Setter.Value>
-                                                        <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.08" Color="Black" />
+                                                        <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.06" Color="#000000" />
                                                     </Setter.Value>
                                                 </Setter>
                                             </Trigger>
@@ -488,20 +541,43 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <!-- Header -->
                     <Grid Grid.Row="0" Margin="0,0,0,24">
                         <StackPanel>
                             <Grid>
-                                <TextBlock Text="Create New Zenvix Project" Style="{DynamicResource Hostix.Title}" VerticalAlignment="Center" />
+                                <TextBlock VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource Hostix.Title}">
+                                            <Setter Property="Text" Value="Create New Zenvix Project" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                                    <Setter Property="Text" Value="Open Existing Project" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                     <Border Background="{DynamicResource AccentBrush}" Padding="8,4" CornerRadius="6" Margin="0,0,8,0">
                                         <TextBlock Text="{Binding WizardStep, StringFormat='Step {0} of 3'}" FontSize="11" FontWeight="Bold" Foreground="White" />
                                     </Border>
                                 </StackPanel>
                             </Grid>
-                            <TextBlock Text="Smart Project Wizard &amp; Dynamic Environment Generator" Style="{DynamicResource Hostix.Subtitle}" Margin="0,4,0,0" />
+                            <TextBlock Margin="0,4,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource Hostix.Subtitle}">
+                                        <Setter Property="Text" Value="Smart Project Wizard &amp; Dynamic Environment Generator" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                                <Setter Property="Text" Value="Map and host your pre-existing projects securely in Zenvix" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                             <Separator Background="{DynamicResource BorderBrush}" Margin="0,12,0,0" />
                         </StackPanel>
                     </Grid>
@@ -509,63 +585,74 @@
                     <!-- STEP 1: Category Selection -->
                     <Grid Grid.Row="1" Style="{StaticResource Step1VisibilityStyle}">
                         <StackPanel>
-                            <TextBlock Text="Select Project Category" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,16" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <TextBlock Text="Select Project Category" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,16" Foreground="{StaticResource Zenvix.TextPrimary}" />
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <UniformGrid Columns="2">
-                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Website" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Website" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="🌐" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <!-- SVG Hero Line Icon for Website -->
+                                            <Path Data="{StaticResource HeroIcon.Website}" Stroke="#3B82F6" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="Website" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                                <TextBlock Text="Laravel, WordPress, React, Vue, PHP" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                                <TextBlock Text="Website" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
+                                                <TextBlock Text="Laravel, WordPress, React, Vue, PHP" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Mobile App" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                    
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Mobile App" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="📱" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <!-- SVG Hero Line Icon for Mobile App -->
+                                            <Path Data="{StaticResource HeroIcon.Mobile}" Stroke="#EC4899" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="Mobile App" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                                <TextBlock Text="Flutter, React Native, Ionic previews" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                                <TextBlock Text="Mobile App" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
+                                                <TextBlock Text="Flutter, React Native, Ionic previews" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Admin Panel" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                    
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Admin Panel" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="📊" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <!-- SVG Hero Line Icon for Admin Panel -->
+                                            <Path Data="{StaticResource HeroIcon.Admin}" Stroke="#F59E0B" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="Admin Panel" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                                <TextBlock Text="FilamentPHP, React or Vue admin portals" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                                <TextBlock Text="Admin Panel" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
+                                                <TextBlock Text="FilamentPHP, React or Vue admin portals" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="API Backend" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                    
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="API Backend" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="⚡" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <!-- SVG Hero Line Icon for API Backend -->
+                                            <Path Data="{StaticResource HeroIcon.Bolt}" Stroke="#EAB308" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="API Backend" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                                <TextBlock Text="Laravel API, Node.js Express, pure APIs" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                                <TextBlock Text="API Backend" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
+                                                <TextBlock Text="Laravel API, Node.js Express, pure APIs" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Static Site" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                    
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Static Site" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="📄" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <!-- SVG Hero Line Icon for Static Site -->
+                                            <Path Data="{StaticResource HeroIcon.Document}" Stroke="#10B981" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="Static Site" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                                <TextBlock Text="Plain HTML/CSS, Tailwind starter kits" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                                <TextBlock Text="Static Site" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
+                                                <TextBlock Text="Plain HTML/CSS, Tailwind starter kits" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
-                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Import Project" Style="{StaticResource WizardCardButton}" Height="95" Margin="6">
+                                    
+                                    <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Import Project" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="📂" FontSize="32" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                            <!-- SVG Hero Line Icon for Import Project -->
+                                            <Path Data="{StaticResource HeroIcon.Folder}" Stroke="#06B6D4" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="Import Project" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                                <TextBlock Text="Host existing local folder on our platform" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" MaxWidth="220" />
+                                                <TextBlock Text="Import Project" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
+                                                <TextBlock Text="Host existing local folder on our platform" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
@@ -590,11 +677,148 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Button Content="{Binding}" 
-                                                    Command="{Binding DataContext.SelectFrameworkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            <Button Command="{Binding DataContext.SelectFrameworkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Style="{StaticResource WizardCardButton}" 
-                                                    Width="170" Height="70" Margin="6" FontSize="13" FontWeight="Bold" />
+                                                    Width="156" Height="56" Margin="8" Cursor="Hand">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="FrameworkCardBorder" 
+                                                                BorderThickness="1" 
+                                                                CornerRadius="14" 
+                                                                Padding="14,10">
+                                                            <Border.Effect>
+                                                                <DropShadowEffect BlurRadius="8" ShadowDepth="1.5" Opacity="0.04" Color="#000000" />
+                                                            </Border.Effect>
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                <!-- Dynamic high-quality branded SVG icon -->
+                                                                <Image Source="{Binding Converter={StaticResource TechIconConverter}}" 
+                                                                       Width="22" Height="22" Stretch="Uniform" 
+                                                                       VerticalAlignment="Center" Margin="0,0,10,0" />
+                                                                
+                                                                <TextBlock Text="{Binding}" 
+                                                                           VerticalAlignment="Center" 
+                                                                           FontSize="12" 
+                                                                           FontWeight="SemiBold" 
+                                                                           Foreground="{StaticResource Zenvix.TextPrimary}" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                        
+                                                        <ControlTemplate.Triggers>
+                                                            <!-- Default triggers for colors mapped by framework -->
+                                                            <DataTrigger Binding="{Binding}" Value="Laravel">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#FFF5F5" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#FCA5A5" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="Core PHP">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#EEF2F6" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#C7D2FE" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="Plain PHP">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#EEF2F6" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#C7D2FE" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="WordPress">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#F0F9FF" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#BAE6FD" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="React">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#ECFEFF" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#A5F3FC" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="Vue">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#F0FDF4" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#BBF7D0" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="Next.js">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#FAFAFA" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#E4E4E7" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="HTML/CSS">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#FFF7ED" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#FED7AA" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="Tailwind">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#F0FDFA" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#99F6E4" />
+                                                            </DataTrigger>
+
+                                                            <!-- Hover Glow triggers -->
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="Laravel" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#EF4444" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#FEE2E2" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="Core PHP" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#6366F1" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#E0E7FF" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="Plain PHP" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#6366F1" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#E0E7FF" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="WordPress" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#21759B" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#E0F2FE" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="React" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#06B6D4" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#CFFAFE" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="Vue" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#42B883" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#DCFCE7" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="Next.js" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#000000" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#F4F4F5" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="HTML/CSS" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#E34F26" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#FFEDD5" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding}" Value="Tailwind" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#0D9488" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#CCFBF1" />
+                                                            </MultiDataTrigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
@@ -605,6 +829,16 @@
                     <!-- STEP 3: Parameter Configuration -->
                     <Grid Grid.Row="1" Style="{StaticResource Step3VisibilityStyle}">
                         <Grid>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCooking}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1.2*" />
                                 <ColumnDefinition Width="Auto" />
@@ -696,11 +930,38 @@
                                     <TextBlock Text="LARAVEL CONFIGURATIONS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
 
                                     <TextBlock Text="PHP VERSION" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
-                                    <ComboBox SelectedItem="{Binding LaravelPhpVersion}" Style="{StaticResource WizardComboBox}" Height="36" Margin="0,0,0,12" VerticalContentAlignment="Center">
-                                        <ComboBoxItem Content="8.3" IsSelected="True" />
-                                        <ComboBoxItem Content="8.2" />
-                                        <ComboBoxItem Content="8.1" />
-                                    </ComboBox>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox SelectedItem="{Binding LaravelPhpVersion}" 
+                                                  ItemsSource="{Binding PhpVersions}"
+                                                  Style="{StaticResource WizardComboBox}" 
+                                                  Height="36" VerticalContentAlignment="Center" />
+                                        <Button Grid.Column="1" Command="{Binding UpdatePhpVersionCommand}"
+                                                Content="Update PHP" Style="{DynamicResource Hostix.Button}" 
+                                                Height="36" Margin="6,0,0,0" Padding="12,0" />
+                                    </Grid>
+
+                                    <!-- Filament Version Selector (Only visible for FilamentPHP) -->
+                                    <StackPanel Margin="0,0,0,12">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedFramework}" Value="FilamentPHP">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock Text="FILAMENT VERSION" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                        <ComboBox SelectedItem="{Binding FilamentVersion}" 
+                                                  ItemsSource="{Binding FilamentVersions}"
+                                                  Style="{StaticResource WizardComboBox}" 
+                                                  Height="36" VerticalContentAlignment="Center" />
+                                    </StackPanel>
 
                                     <TextBlock Text="LOCAL DATABASE ENGINE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
                                     <ComboBox SelectedItem="{Binding LaravelDatabase}" Style="{StaticResource WizardComboBox}" Height="36" Margin="0,0,0,12" VerticalContentAlignment="Center">
@@ -714,11 +975,18 @@
                                         <ComboBoxItem Content="PHPUnit" />
                                     </ComboBox>
 
-                                    <mah:ToggleSwitch Style="{StaticResource WizardToggleSwitch}" Header="Authentication Starter Kit" IsOn="{Binding LaravelAuthEnabled}" 
-                                                      OnContent="Laravel Breeze" OffContent="None" Margin="0,0,0,8" />
-                                                      
-                                    <mah:ToggleSwitch Style="{StaticResource WizardToggleSwitch}" Header="Team Management Support" IsOn="{Binding LaravelTeamsEnabled}" 
-                                                      OnContent="Jetstream Teams" OffContent="Standard Users" Margin="0,0,0,8" />
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <mah:ToggleSwitch Grid.Column="0" Style="{StaticResource WizardToggleSwitch}" Header="Authentication Starter" IsOn="{Binding LaravelAuthEnabled}" 
+                                                          OnContent="Laravel Breeze" OffContent="None" Margin="0,0,8,0" />
+                                                          
+                                        <mah:ToggleSwitch Grid.Column="1" Style="{StaticResource WizardToggleSwitch}" Header="Team Management" IsOn="{Binding LaravelTeamsEnabled}" 
+                                                          OnContent="Jetstream Teams" OffContent="Standard Users" Margin="8,0,0,0" />
+                                    </Grid>
                                 </StackPanel>
 
                                 <!-- Flutter Panel -->
@@ -742,15 +1010,91 @@
                                                       OnContent="Generate docs.zenvix" OffContent="No Docs" Margin="0,0,0,8" />
                                 </StackPanel>
 
+                                <!-- React Admin Panel -->
+                                <StackPanel Style="{StaticResource ReactAdminParamsVisibilityStyle}">
+                                    <TextBlock Text="REACT ADMIN CONFIGURATIONS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
+
+                                    <TextBlock Text="REACT-ADMIN VERSION" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                    <ComboBox SelectedItem="{Binding ReactAdminVersion}" 
+                                              ItemsSource="{Binding ReactAdminVersions}"
+                                              Style="{StaticResource WizardComboBox}" 
+                                              Height="36" Margin="0,0,0,12" VerticalContentAlignment="Center" />
+
+                                    <!-- TypeScript Indicator Block -->
+                                    <Border Background="#1E293B" CornerRadius="8" Padding="12" BorderThickness="1" BorderBrush="#3B82F6" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="28" Height="28" Background="#3178C6" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,12,0">
+                                                <TextBlock Text="TS" FontSize="14" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Built-in TypeScript Declarations" FontSize="12" FontWeight="Bold" Foreground="White" />
+                                                <TextBlock Text="Package includes native type declarations out of the box." FontSize="10" Foreground="#94A3B8" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Vue Admin Panel -->
+                                <StackPanel Style="{StaticResource VueAdminParamsVisibilityStyle}">
+                                    <TextBlock Text="VUE 3 ADMIN TEMPLATES" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
+
+                                    <TextBlock Text="SELECT TEMPLATE BASE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                    <ComboBox SelectedItem="{Binding VueAdminTemplate}" 
+                                              ItemsSource="{Binding VueAdminTemplates}"
+                                              Style="{StaticResource WizardComboBox}" 
+                                              Height="36" Margin="0,0,0,12" VerticalContentAlignment="Center" />
+
+                                    <!-- Vue Indicator Block -->
+                                    <Border Background="#1E293B" CornerRadius="8" Padding="12" BorderThickness="1" BorderBrush="#10B981" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="28" Height="28" Background="#41B883" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,12,0">
+                                                <TextBlock Text="V3" FontSize="14" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="ESM &amp; Vite Optimized" FontSize="12" FontWeight="Bold" Foreground="White" />
+                                                <TextBlock Text="Highly-rated modern architectures powered by Vue 3, Vite, and high-performance Tailwind styling." FontSize="10" Foreground="#94A3B8" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+
                                 <!-- Default/Static/React Panel -->
                                 <StackPanel Style="{StaticResource DefaultParamsVisibilityStyle}">
                                     <TextBlock Text="WORKSPACE SETTINGS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
 
-                                    <mah:ToggleSwitch Style="{StaticResource WizardToggleSwitch}" Header="Local Developer Documentation" IsOn="{Binding CreateDocsSite}" 
-                                                      OnContent="docs.zenvix enabled" OffContent="No Docs" Margin="0,0,0,12" />
+                                    <mah:ToggleSwitch Header="Local Developer Documentation" IsOn="{Binding CreateDocsSite}" 
+                                                      OnContent="docs.zenvix enabled" OffContent="No Docs" Margin="0,0,0,12">
+                                        <mah:ToggleSwitch.Style>
+                                            <Style TargetType="mah:ToggleSwitch" BasedOn="{StaticResource WizardToggleSwitch}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </mah:ToggleSwitch.Style>
+                                    </mah:ToggleSwitch>
                                                       
-                                    <mah:ToggleSwitch Style="{StaticResource WizardToggleSwitch}" Header="Git Repository Initialization" IsOn="{Binding GitInitEnabled}" 
-                                                      OnContent="git init" OffContent="Manual Git" Margin="0,0,0,12" />
+                                    <mah:ToggleSwitch Header="Git Repository Initialization" IsOn="{Binding GitInitEnabled}" 
+                                                      OnContent="git init" OffContent="Manual Git" Margin="0,0,0,12">
+                                        <mah:ToggleSwitch.Style>
+                                            <Style TargetType="mah:ToggleSwitch" BasedOn="{StaticResource WizardToggleSwitch}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </mah:ToggleSwitch.Style>
+                                    </mah:ToggleSwitch>
 
                                     <mah:ToggleSwitch Style="{StaticResource WizardToggleSwitch}" Header="Enable SSL (HTTPS)" IsOn="{Binding NewWebsiteSslEnabled}" 
                                                       OnContent="Secure HTTPS" OffContent="Insecure HTTP" Margin="0,0,0,12" />
@@ -771,9 +1115,13 @@
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button}">
                                     <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="IsEnabled" Value="True" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding WizardStep}" Value="1">
                                             <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsCooking}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -781,7 +1129,18 @@
                         </Button>
                         <StackPanel Grid.Column="2" Orientation="Horizontal">
                             <Button Content="Cancel" Command="{Binding CancelAddWebsiteCommand}" 
-                                    Style="{DynamicResource Hostix.Button.Ghost}" Margin="0,0,12,0" Width="90" Height="34" />
+                                    Width="90" Height="34" Margin="0,0,12,0">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Ghost}">
+                                        <Setter Property="IsEnabled" Value="True" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCooking}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                             <Button Content="Next Step" Command="{Binding GoForwardCommand}" 
                                     Width="120" Height="34">
                                 <Button.Style>
@@ -795,14 +1154,48 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button Content="Create Project" Command="{Binding CreateWebsiteCommand}" 
-                                    Width="140" Height="34" Background="{DynamicResource SuccessBrush}">
+                            <Button Command="{Binding CreateWebsiteCommand}" 
+                                    Width="150" Height="34" Background="{DynamicResource SuccessBrush}">
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center" FontWeight="Bold" FontSize="11">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="Create Project" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                                            <Setter Property="Text" Value="Open Project" />
+                                                        </DataTrigger>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsCooking}" Value="True" />
+                                                                <Condition Binding="{Binding SelectedCategory}" Value="Import Project" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Text" Value="Importing..." />
+                                                        </MultiDataTrigger>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsCooking}" Value="True" />
+                                                                <Condition Binding="{Binding SelectedCategory}" Value="Website" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Text" Value="Cooking..." />
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Button.Content>
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource Hostix.Button.Primary}">
                                         <Setter Property="Visibility" Value="Collapsed" />
+                                        <Setter Property="IsEnabled" Value="True" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding WizardStep}" Value="3">
                                                 <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsCooking}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -810,6 +1203,30 @@
                             </Button>
                         </StackPanel>
                     </Grid>
+                    
+                    <!-- Cooking Progress Bar Section at the Bottom of Card -->
+                    <StackPanel Grid.Row="3" Margin="0,16,0,0" Visibility="{Binding IsCooking, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <mah:ProgressRing Width="18" Height="18" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Grid.Column="1" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="Cooking your Zenvix workspace... Running system CLI tasks" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedCategory}" Value="Import Project">
+                                                <Setter Property="Text" Value="Importing existing Zenvix workspace... Registering virtual hosts" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                        <mah:MetroProgressBar IsIndeterminate="True" Height="4" Foreground="{DynamicResource AccentBrush}" Background="#E2E8F0" mah:ControlsHelper.CornerRadius="2" />
+                    </StackPanel>
                 </Grid>
             </Border>
         </Border>

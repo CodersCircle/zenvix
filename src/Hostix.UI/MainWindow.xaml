@@ -10,10 +10,11 @@
         xmlns:views="clr-namespace:Hostix.UI.Views"
         xmlns:views_work="clr-namespace:Hostix.UI.Views.Workstations"
         xmlns:conv="clr-namespace:Hostix.UI.Converters"
+        xmlns:ds="clr-namespace:Zenvix.DesignSystem"
         mc:Ignorable="d"
         Title="ZENVIX - Local Hosting OS" Height="800" Width="1300"
         Icon="/Assets/Icons/zenvix.ico"
-        Background="{StaticResource BackgroundBrush}"
+        Background="{StaticResource Zenvix.Background}"
         GlowBrush="{StaticResource BorderBrush}"
         WindowStartupLocation="CenterScreen"
         WindowTitleBrush="#4F46E5"
@@ -49,35 +50,76 @@
         </Grid.ColumnDefinitions>
 
         <!-- SIDEBAR -->
-        <Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
+        <Border Grid.Column="0" Background="{StaticResource Zenvix.Surface}" BorderBrush="{StaticResource Zenvix.Border}" BorderThickness="0,0,1,0">
             <Grid Margin="20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-
+ 
                 <StackPanel Grid.Row="0" Margin="5,10,0,40">
-                    <TextBlock Text="ZENVIX" Style="{DynamicResource Hostix.Title}" />
-                    <TextBlock Text="v1.0.0" Style="{DynamicResource Hostix.Subtitle}" Margin="0,2,0,0" />
+                    <TextBlock Text="ZENVIX" Style="{DynamicResource Hostix.Title}" Foreground="{StaticResource Zenvix.TextPrimary}" />
+                    <TextBlock Text="v1.0.0" Style="{DynamicResource Hostix.Subtitle}" Foreground="{StaticResource Zenvix.TextSecondary}" Margin="0,2,0,0" />
                 </StackPanel>
-
+ 
                 <StackPanel Grid.Row="1">
-                    <RadioButton Content="Dashboard" IsChecked="True" Command="{Binding NavigateCommand}" CommandParameter="Dashboard" Style="{StaticResource Hostix.NavButton}" />
-                    <RadioButton Content="Websites" Command="{Binding NavigateCommand}" CommandParameter="Websites" Style="{StaticResource Hostix.NavButton}" />
-                    <RadioButton Content="Workstations" Command="{Binding NavigateCommand}" CommandParameter="Workstations" Style="{StaticResource Hostix.NavButton}" />
-                    <RadioButton Content="Databases" Command="{Binding NavigateCommand}" CommandParameter="Databases" Style="{StaticResource Hostix.NavButton}" />
-                    <RadioButton Content="Services" Command="{Binding NavigateCommand}" CommandParameter="Services" Style="{StaticResource Hostix.NavButton}" />
-                    <RadioButton Content="Logs" Command="{Binding NavigateCommand}" CommandParameter="Logs" Style="{StaticResource Hostix.NavButton}" />
-                    <RadioButton Content="Settings" Command="{Binding NavigateCommand}" CommandParameter="Settings" Style="{StaticResource Hostix.NavButton}" />
-                </StackPanel>
+                    <RadioButton IsChecked="True" Command="{Binding NavigateCommand}" CommandParameter="Dashboard" Style="{StaticResource ZenvixSidebar.Button}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource HeroIcon.Dashboard}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="Dashboard" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                    
+                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Websites" Style="{StaticResource ZenvixSidebar.Button}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource HeroIcon.Website}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="Websites" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
 
-                <Border Grid.Row="2" Background="{DynamicResource CardBrush}" CornerRadius="12" Padding="15">
+                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Workstations" Style="{StaticResource ZenvixSidebar.Button}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource HeroIcon.Terminal}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="Workstations" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Databases" Style="{StaticResource ZenvixSidebar.Button}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource HeroIcon.Database}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="Databases" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Services" Style="{StaticResource ZenvixSidebar.Button}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource HeroIcon.Server}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="Services" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Logs" Style="{StaticResource ZenvixSidebar.Button}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource HeroIcon.Logs}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="Logs" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Settings" Style="{StaticResource ZenvixSidebar.Button}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource HeroIcon.Settings}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="Settings" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+ 
+                <Border Grid.Row="2" Background="{StaticResource Zenvix.Card}" BorderBrush="{StaticResource Zenvix.Border}" BorderThickness="1" CornerRadius="12" Padding="15">
                     <StackPanel>
-                        <TextBlock Text="ENGINE STATUS" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <TextBlock Text="ENGINE STATUS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource Zenvix.TextSecondary}" />
                         <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <Ellipse Width="8" Height="8" Fill="{DynamicResource SuccessBrush}" Margin="0,0,8,0" />
-                            <TextBlock Text="Orchestrator Active" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" />
+                            <Ellipse Width="8" Height="8" Fill="{StaticResource Zenvix.Success}" Margin="0,0,8,0" />
+                            <TextBlock Text="Orchestrator Active" Foreground="{StaticResource Zenvix.TextPrimary}" FontSize="12" />
                         </StackPanel>
                     </StackPanel>
                 </Border>

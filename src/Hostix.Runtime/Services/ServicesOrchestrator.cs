@@ -167,7 +167,7 @@ namespace Hostix.Runtime.Services
         {
             return type switch
             {
-                RuntimeServiceType.PhpFpm => "8.3.6",
+                RuntimeServiceType.PhpFpm => "8.5.0",
                 RuntimeServiceType.Nginx => "1.26.0",
                 RuntimeServiceType.Apache => "2.4.67",
                 RuntimeServiceType.MySQL => "8.4.0",

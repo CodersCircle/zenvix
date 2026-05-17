@@ -18,9 +18,27 @@
     ],
     "PhpFpm": [
       {
+        "Version": "8.5.0",
+        "DownloadUrl": "https://windows.php.net/downloads/releases/archives/php-8.5.0-nts-Win32-vs17-x64.zip",
+        "IsDefault": true,
+        "RelativeBinaryPath": "php-cgi.exe"
+      },
+      {
+        "Version": "8.4.3",
+        "DownloadUrl": "https://windows.php.net/downloads/releases/archives/php-8.4.3-nts-Win32-vs17-x64.zip",
+        "IsDefault": false,
+        "RelativeBinaryPath": "php-cgi.exe"
+      },
+      {
         "Version": "8.3.6",
         "DownloadUrl": "https://windows.php.net/downloads/releases/archives/php-8.3.6-nts-Win32-vs16-x64.zip",
-        "IsDefault": true,
+        "IsDefault": false,
+        "RelativeBinaryPath": "php-cgi.exe"
+      },
+      {
+        "Version": "8.2.20",
+        "DownloadUrl": "https://windows.php.net/downloads/releases/archives/php-8.2.20-nts-Win32-vs16-x64.zip",
+        "IsDefault": false,
         "RelativeBinaryPath": "php-cgi.exe"
       }
     ],

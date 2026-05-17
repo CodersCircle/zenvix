@@ -2,31 +2,32 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="CONFIRM PROJECT DELETION" Height="380" Width="520"
+        xmlns:ds="clr-namespace:Zenvix.DesignSystem"
+        Title="CONFIRM PROJECT DELETION" Height="380" Width="520"            
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
-        Background="{DynamicResource BackgroundBrush}"
-        BorderThickness="0" GlowBrush="{DynamicResource ErrorBrush}"
-        WindowTitleBrush="{DynamicResource AccentBrush}"
-        TitleForeground="White"
+        Background="{StaticResource Zenvix.Background}" 
+        BorderThickness="1" BorderBrush="{StaticResource Zenvix.Border}"
+        GlowBrush="{StaticResource Zenvix.Danger}"
         TitleCharacterCasing="Normal"
-        TitleAlignment="Center">
+        TitleAlignment="Left">
     
     <Grid>
         <StackPanel Margin="32,24">
             <!-- Warning Title -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets" FontSize="32" Foreground="#F59E0B" VerticalAlignment="Center" Margin="0,0,16,0" />
-                <TextBlock Text="Are you absolutely sure?" FontSize="20" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center" />
+                <!-- SVG Icon rendering via crisp Hero Line Icon -->
+                <Path Data="{StaticResource HeroIcon.Trash}" Stroke="{StaticResource Zenvix.Danger}" StrokeThickness="1.5" Fill="Transparent" Width="24" Height="24" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                <TextBlock Text="Are you absolutely sure?" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Zenvix.TextPrimary}" VerticalAlignment="Center" />
             </StackPanel>
             
-            <TextBlock TextWrapping="Wrap" FontSize="12" LineHeight="22" Foreground="#64748B" Margin="0,0,0,28">
-                This action <Run FontWeight="Medium" Foreground="#EF4444">CANNOT</Run> be undone. 
-                This will permanently remove <Run FontWeight="Medium" Foreground="#0F172A" Text="{Binding WebsiteName, Mode=OneWay}" /> 
+            <TextBlock TextWrapping="Wrap" FontSize="13" LineHeight="20" Foreground="{StaticResource Zenvix.TextSecondary}" Margin="0,0,0,24">
+                This action <Run FontWeight="SemiBold" Foreground="{StaticResource Zenvix.Danger}">CANNOT</Run> be undone. 
+                This will permanently remove <Run FontWeight="Medium" Foreground="{StaticResource Zenvix.TextPrimary}" Text="{Binding WebsiteName, Mode=OneWay}" /> 
                 and delete all files from your disk.
             </TextBlock>
 
             <!-- Confirmation Helper Box -->
-            <Border Background="#F1F5F9" Padding="20,16" CornerRadius="12" Margin="0,0,0,24">
+            <Border Background="{StaticResource Zenvix.Surface}" BorderBrush="{StaticResource Zenvix.Border}" BorderThickness="1" Padding="16,12" CornerRadius="12" Margin="0,0,0,24">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -34,15 +35,14 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     
-                    <TextBlock Text="Type name to confirm:" VerticalAlignment="Center" FontSize="13" FontWeight="Medium" Foreground="Black" />
+                    <TextBlock Text="Type name to confirm:" VerticalAlignment="Center" FontSize="13" FontWeight="Regular" Foreground="{StaticResource Zenvix.TextPrimary}" />
                     
-                    <Border Grid.Column="1" Background="White" Padding="14,6" CornerRadius="8" HorizontalAlignment="Left" Margin="16,0" Effect="{x:Null}">
-                        <TextBlock Text="{Binding WebsiteName}" FontWeight="Bold" FontSize="14" Foreground="#6366F1" />
+                    <Border Grid.Column="1" Background="{StaticResource Zenvix.Card}" BorderBrush="{StaticResource Zenvix.Border}" BorderThickness="1" Padding="10,4" CornerRadius="8" HorizontalAlignment="Left" Margin="12,0">
+                        <TextBlock Text="{Binding WebsiteName}" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.Accent}" />
                     </Border>
                     
                     <Button Grid.Column="2" Content="COPY" Command="{Binding CopyNameCommand}" 
-                            Style="{DynamicResource Hostix.Button.Ghost}" Height="34" Padding="20,0" FontSize="12" FontWeight="Black" 
-                            Background="White" Foreground="Black" />
+                            Style="{StaticResource ZenvixButton.Ghost}" Height="30" Padding="12,0" FontSize="11" FontWeight="SemiBold" />
                 </Grid>
             </Border>
 
@@ -50,21 +50,19 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="120" />
                 </Grid.ColumnDefinitions>
                 
                 <TextBox x:Name="ConfirmBox" Text="{Binding ConfirmationInput, UpdateSourceTrigger=PropertyChanged}" 
-                         mah:TextBoxHelper.Watermark="Verify website name..." 
-                         mah:ControlsHelper.CornerRadius="10"
-                         mah:ControlsHelper.FocusBorderBrush="#EF4444"
-                         mah:ControlsHelper.MouseOverBorderBrush="#EF4444"
-                         Height="54" Padding="14,0" VerticalContentAlignment="Center" FontSize="16" Foreground="Black" Margin="0,0,12,0" 
-                         Background="White" BorderBrush="#EF4444" BorderThickness="1" FontWeight="SemiBold" />
+                          Style="{StaticResource ZenvixInput}"
+                          mah:TextBoxHelper.Watermark="Verify website name..." 
+                          Height="42" Padding="12,0" VerticalContentAlignment="Center" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" Margin="0,0,12,0" 
+                          FontWeight="Regular" />
 
-                <Button Grid.Column="1" Content="Delete" IsDefault="True" Command="{Binding ConfirmDeleteCommand}" 
-                        Style="{DynamicResource Hostix.Button.Danger}" Height="54" FontSize="20" FontWeight="SemiBold"
-                        IsEnabled="{Binding IsConfirmEnabled}" mah:ControlsHelper.CornerRadius="10" 
-                        Background="#FF6B6B" BorderThickness="0" Foreground="White" />
+                <ds:ZenvixButton Grid.Column="1" Content="Delete" IsDefault="True" Command="{Binding ConfirmDeleteCommand}" 
+                         Style="{StaticResource ZenvixButton}" Height="42" FontSize="13" FontWeight="Medium"
+                         Background="{StaticResource Zenvix.Danger}" Foreground="White" BorderBrush="{StaticResource Zenvix.Danger}"
+                         IsEnabled="{Binding IsConfirmEnabled}" />
             </Grid>
             
         </StackPanel>
