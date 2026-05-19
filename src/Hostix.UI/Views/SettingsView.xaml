@@ -5,13 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:Hostix.UI.Views"
-             xmlns:conv="clr-namespace:Hostix.UI.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1000">
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <conv:BoolToVisibilityInvertedConverter x:Key="BoolToVisibilityInvertedConverter" />
     </UserControl.Resources>
 
     <!-- Dead Center Form Container -->
@@ -107,8 +105,8 @@
                         Margin="0,0,0,20"
                         HorizontalAlignment="Right" />
 
-                <!-- LIVE AVATAR PREVIEW (COHESIVE BOTTOM BOX - LIGHT THEME) -->
-                <Border Background="#F8FAFC" CornerRadius="10" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <!-- LIVE AVATAR PREVIEW (COHESIVE BOTTOM BOX - HIGH VISIBILITY COLORS) -->
+                <Border Background="#101323" CornerRadius="10" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -116,17 +114,17 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Avatar Preview" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14" FontWeight="Bold" />
-                            <TextBlock Text="Live changes before saving" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,2,0,0" />
+                            <TextBlock Text="Avatar Preview" Foreground="#F8FAFC" FontSize="14" FontWeight="Bold" />
+                            <TextBlock Text="Live changes before saving" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Border Width="45" Height="45" CornerRadius="22.5" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Margin="0,0,12,0">
-                                <TextBlock Text="{Binding DraftAvatarText}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Border Width="45" Height="45" CornerRadius="22.5" Background="#1E1B4B" BorderBrush="#4F46E5" BorderThickness="1.5" Margin="0,0,12,0">
+                                <TextBlock Text="{Binding DraftAvatarText}" Foreground="#F8FAFC" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="{Binding DraftFirstName}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" FontSize="14" />
-                                <TextBlock Text="{Binding DraftUsername}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" />
+                                <TextBlock Text="{Binding DraftFirstName}" Foreground="#F8FAFC" FontWeight="Bold" FontSize="14" />
+                                <TextBlock Text="{Binding DraftUsername}" Foreground="#94A3B8" FontSize="11" />
                             </StackPanel>
                         </StackPanel>
                     </Grid>
@@ -134,51 +132,53 @@
             </StackPanel>
         </Border>
 
-        <!-- UPDATES CARD (SINGLE TILE COMPACT ROW) -->
-        <Border Width="500" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,20,0,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+        <!-- UPDATES CARD -->
+        <Border Width="500" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="30" Margin="0,20,0,0">
+            <StackPanel>
+                <Grid Margin="0,0,0,25">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <!-- Icon Badge -->
-                <Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" Background="#F1F5F9" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="🔄" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
+                    <Border Width="50" Height="50" CornerRadius="25" Background="#064E3B" BorderBrush="#10B981" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="🔄" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
 
-                <!-- Title & Status Details -->
-                <StackPanel Grid.Column="1" Margin="15,0" VerticalAlignment="Center">
-                    <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="SemiBold" />
-                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                        <TextBlock Text="{Binding AppVersion, StringFormat='Current Version: v{0}'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" />
-                        <TextBlock Text="  |  " Foreground="{DynamicResource BorderBrush}" FontSize="12" />
-                        <TextBlock Text="{Binding UpdateStatus}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="Medium" />
+                    <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="18" FontWeight="Bold" />
+                        <TextBlock Text="{Binding AppVersion, StringFormat='Current Version: v{0}'}" Style="{DynamicResource Hostix.Subtitle}" FontSize="12" />
                     </StackPanel>
-                    <ProgressBar Value="{Binding UpdateProgress}" Maximum="100" Height="4" Margin="0,6,0,0" 
-                                 Visibility="{Binding IsCheckingUpdate, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                </StackPanel>
+                </Grid>
 
-                <!-- Update Action Buttons -->
-                <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,5,0">
-                    <Grid>
-                        <!-- Check Update Button (Shown when update not available) -->
-                        <Button Content="Check Update" 
+                <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,25" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding UpdateStatus}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold" FontSize="13" />
+                        <ProgressBar Value="{Binding UpdateProgress}" Maximum="100" Height="4" Margin="0,10,20,0" 
+                                     Visibility="{Binding IsCheckingUpdate, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Check Updates" 
                                 Command="{Binding CheckForUpdatesCommand}"
                                 Style="{StaticResource Hostix.Button.Secondary}"
-                                Width="150" Height="34" Cursor="Hand"
-                                Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BoolToVisibilityInvertedConverter}}" />
+                                Width="120" Height="36" Cursor="Hand" Margin="0,0,10,0" />
 
-                        <!-- Install Update Button (Shown when update IS available) -->
                         <Button Content="Install Update" 
                                 Command="{Binding InstallUpdateCommand}"
                                 Style="{StaticResource Hostix.Button.Primary}"
-                                Width="150" Height="34" Cursor="Hand"
+                                Width="120" Height="36" Cursor="Hand"
                                 Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </Grid>
-                </StackPanel>
-            </Grid>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
         </Border>
 
     </StackPanel>

@@ -12,6 +12,7 @@ using Hostix.Runtime.Services;
 using Hostix.Modules.Services;
 using Hostix.ViewModels.Services;
 using Hostix.ViewModels.Workstations;
+using Serilog;
 
 using Hostix.Core.Services;
 
@@ -134,9 +135,10 @@ namespace Hostix.ViewModels
         {
             _ = Task.Run(async () =>
             {
-                while (true)
+                // Immediate check on startup
+                try
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(30)); // Check every 30 minutes
+                    Log.Information("[MainViewModel] Running initial update check on startup...");
                     var info = await _updater.CheckForUpdatesAsync();
                     if (info != null && info.IsUpdateAvailable)
                     {
@@ -146,6 +148,33 @@ namespace Hostix.ViewModels
                             _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
                             _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings to update.");
                         });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[MainViewModel] Initial update check failed");
+                }
+
+                // Periodic check every minute
+                while (true)
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(1)); // Check every minute
+                    try
+                    {
+                        var info = await _updater.CheckForUpdatesAsync();
+                        if (info != null && info.IsUpdateAvailable)
+                        {
+                            _dispatcher.Invoke(() =>
+                            {
+                                _settingsVm.IsUpdateAvailable = true;
+                                _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
+                                _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings to update.");
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "[MainViewModel] Periodic update check failed");
                     }
                 }
             });

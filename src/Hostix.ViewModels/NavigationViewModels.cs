@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using Hostix.Core.Models;
 using Hostix.ViewModels.Services;
 using Hostix.Modules.Services;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Hostix.ViewModels
 {
@@ -37,35 +37,32 @@ namespace Hostix.ViewModels
     public partial class SettingsViewModel : ObservableObject
     {
         private readonly IAppUpdaterService? _updater;
-        private readonly IDispatcherService? _dispatcher;
 
         [ObservableProperty] private string _updateStatus = "Check for Updates";
-        
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
         [NotifyCanExecuteChangedFor(nameof(InstallUpdateCommand))]
-        [NotifyPropertyChangedFor(nameof(IsNotCheckingUpdate))]
-        [NotifyPropertyChangedFor(nameof(CanInstallUpdate))]
         private bool _isCheckingUpdate = false;
 
         [ObservableProperty] private double _updateProgress = 0;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(InstallUpdateCommand))]
-        [NotifyPropertyChangedFor(nameof(CanInstallUpdate))]
         private bool _isUpdateAvailable = false;
 
         public bool IsNotCheckingUpdate => !IsCheckingUpdate;
         public bool CanInstallUpdate => IsUpdateAvailable && !IsCheckingUpdate;
 
+        private readonly SynchronizationContext? _syncContext;
+
         public string AppVersion => _updater?.CurrentVersion ?? "1.0.0";
 
         public SettingsViewModel() { } // Design-time constructor
 
-        public SettingsViewModel(IAppUpdaterService updater, IDispatcherService dispatcher)
+        public SettingsViewModel(IAppUpdaterService updater)
         {
             _updater = updater;
-            _dispatcher = dispatcher;
+            _syncContext = SynchronizationContext.Current;
         }
 
         [CommunityToolkit.Mvvm.Input.RelayCommand(CanExecute = nameof(IsNotCheckingUpdate))]
@@ -91,7 +88,7 @@ namespace Hostix.ViewModels
         [CommunityToolkit.Mvvm.Input.RelayCommand(CanExecute = nameof(CanInstallUpdate))]
         private async Task InstallUpdateAsync()
         {
-            if (_updater == null || !IsUpdateAvailable || _dispatcher == null) return;
+            if (_updater == null || !IsUpdateAvailable) return;
             IsCheckingUpdate = true;
             UpdateStatus = "Downloading...";
 
@@ -100,11 +97,19 @@ namespace Hostix.ViewModels
             {
                 await _updater.DownloadAndInstallUpdateAsync(info, p =>
                 {
-                    _dispatcher.Invoke(() =>
+                    if (_syncContext != null)
+                    {
+                        _syncContext.Post(_ =>
+                        {
+                            UpdateProgress = p;
+                            UpdateStatus = $"Downloading... {p:F1}%";
+                        }, null);
+                    }
+                    else
                     {
                         UpdateProgress = p;
                         UpdateStatus = $"Downloading... {p:F1}%";
-                    });
+                    }
                 });
             }
             IsCheckingUpdate = false;

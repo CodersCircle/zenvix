@@ -39,14 +39,28 @@ namespace Hostix.Modules.Services
             _httpClient.Timeout = TimeSpan.FromSeconds(15);
         }
 
+        private Version? ParseVersionFromFilename(string filename)
+        {
+            var cleaned = filename.Replace("Zenvix-Setup-", "").Replace(".exe", "");
+            cleaned = cleaned.TrimStart('v', 'V');
+            if (cleaned.Length == 3 && char.IsDigit(cleaned[0]) && char.IsDigit(cleaned[1]) && char.IsDigit(cleaned[2]))
+            {
+                return new Version(int.Parse(cleaned[0].ToString()), int.Parse(cleaned[1].ToString()), int.Parse(cleaned[2].ToString()));
+            }
+            if (Version.TryParse(cleaned, out var v))
+            {
+                return v;
+            }
+            return null;
+        }
+
         public async Task<UpdateInfo?> CheckForUpdatesAsync()
         {
             try
             {
-                Log.Information("[Updater] Checking for updates via GitHub API...");
+                Log.Information("[Updater] Checking for updates via GitHub contents API...");
 
-                // GitHub API URL for the latest release
-                var url = "https://api.github.com/repos/CodersCircle/zenvix/releases/latest";
+                var url = "https://api.github.com/repos/CodersCircle/zenvix/contents/versions";
                 var response = await _httpClient.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
@@ -56,34 +70,57 @@ namespace Hostix.Modules.Services
                 }
 
                 var json = await response.Content.ReadAsStringAsync();
-                var doc = JsonDocument.Parse(json);
+                using var doc = JsonDocument.Parse(json);
 
-                var tag = doc.RootElement.GetProperty("tag_name").GetString();
-                if (string.IsNullOrEmpty(tag)) return null;
-
-                var versionString = tag.TrimStart('v', 'V');
-                var latestVersion = Version.Parse(versionString);
-                var currentVer = Version.Parse(CurrentVersion);
-
-                var updateInfo = new UpdateInfo
+                if (doc.RootElement.ValueKind != JsonValueKind.Array)
                 {
-                    Version = tag,
-                    ReleaseNotes = doc.RootElement.GetProperty("body").GetString() ?? "",
-                    IsUpdateAvailable = latestVersion > currentVer
-                };
+                    Log.Warning("[Updater] GitHub API returned unexpected format (not an array)");
+                    return null;
+                }
 
-                if (doc.RootElement.TryGetProperty("assets", out var assets))
+                Version? latestVersion = null;
+                string downloadUrl = "";
+
+                foreach (var item in doc.RootElement.EnumerateArray())
                 {
-                    foreach (var asset in assets.EnumerateArray())
+                    if (item.TryGetProperty("type", out var typeProp) && typeProp.GetString() == "file" &&
+                        item.TryGetProperty("name", out var nameProp))
                     {
-                        var name = asset.GetProperty("name").GetString();
-                        if (name != null && name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                        var name = nameProp.GetString();
+                        if (name != null && name.StartsWith("Zenvix-Setup-V", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
                         {
-                            updateInfo.DownloadUrl = asset.GetProperty("browser_download_url").GetString() ?? "";
-                            break;
+                            var parsedVer = ParseVersionFromFilename(name);
+                            if (parsedVer != null)
+                            {
+                                if (latestVersion == null || parsedVer > latestVersion)
+                                {
+                                    latestVersion = parsedVer;
+                                    if (item.TryGetProperty("download_url", out var downloadUrlProp))
+                                    {
+                                        downloadUrl = downloadUrlProp.GetString() ?? "";
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+
+                if (latestVersion == null)
+                {
+                    Log.Information("[Updater] No valid setup files found in versions directory.");
+                    return null;
+                }
+
+                var currentVer = Version.Parse(CurrentVersion);
+                Log.Information("[Updater] Latest version found: {LatestVersion}, Current version: {CurrentVersion}", latestVersion, currentVer);
+
+                var updateInfo = new UpdateInfo
+                {
+                    Version = $"v{latestVersion}",
+                    DownloadUrl = downloadUrl,
+                    ReleaseNotes = $"New version {latestVersion} is available in versions history.",
+                    IsUpdateAvailable = latestVersion > currentVer
+                };
 
                 return updateInfo;
             }
@@ -160,7 +197,7 @@ namespace Hostix.Modules.Services
 
                 Process.Start(psi);
 
-                // Signal application to shut down gracefully
+                // Signal application to shut down immediately
                 Environment.Exit(0);
 
                 return true;
