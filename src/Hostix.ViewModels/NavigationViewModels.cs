@@ -2,6 +2,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using Hostix.Core.Models;
 using Hostix.ViewModels.Services;
+using Hostix.Modules.Services;
+using System.Threading.Tasks;
 
 namespace Hostix.ViewModels
 {
@@ -40,13 +42,17 @@ namespace Hostix.ViewModels
         [ObservableProperty] 
         [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
         [NotifyCanExecuteChangedFor(nameof(InstallUpdateCommand))]
+        [NotifyPropertyChangedFor(nameof(IsNotCheckingUpdate))]
+        [NotifyPropertyChangedFor(nameof(CanInstallUpdate))]
         private bool _isCheckingUpdate = false;
         
         [ObservableProperty] private double _updateProgress = 0;
         
         [ObservableProperty] 
         [NotifyCanExecuteChangedFor(nameof(InstallUpdateCommand))]
+        [NotifyPropertyChangedFor(nameof(CanInstallUpdate))]
         private bool _isUpdateAvailable = false;
+        private readonly IDispatcherService? _dispatcher;
         
         public bool IsNotCheckingUpdate => !IsCheckingUpdate;
         public bool CanInstallUpdate => IsUpdateAvailable && !IsCheckingUpdate;
@@ -55,9 +61,10 @@ namespace Hostix.ViewModels
 
         public SettingsViewModel() { } // Design-time constructor
 
-        public SettingsViewModel(IAppUpdaterService updater)
+        public SettingsViewModel(IAppUpdaterService updater, IDispatcherService dispatcher)
         {
             _updater = updater;
+            _dispatcher = dispatcher;
         }
 
         [CommunityToolkit.Mvvm.Input.RelayCommand(CanExecute = nameof(IsNotCheckingUpdate))]
@@ -83,7 +90,7 @@ namespace Hostix.ViewModels
         [CommunityToolkit.Mvvm.Input.RelayCommand(CanExecute = nameof(CanInstallUpdate))]
         private async Task InstallUpdateAsync()
         {
-            if (_updater == null || !IsUpdateAvailable) return;
+            if (_updater == null || !IsUpdateAvailable || _dispatcher == null) return;
             IsCheckingUpdate = true;
             UpdateStatus = "Downloading...";
             
@@ -91,7 +98,7 @@ namespace Hostix.ViewModels
             if (info != null)
             {
                 await _updater.DownloadAndInstallUpdateAsync(info, p => {
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    _dispatcher.Invoke(() => {
                         UpdateProgress = p;
                         UpdateStatus = $"Downloading... {p:F1}%";
                     });

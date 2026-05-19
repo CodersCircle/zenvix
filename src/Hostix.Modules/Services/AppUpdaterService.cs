@@ -161,9 +161,7 @@ namespace Hostix.Modules.Services
                 Process.Start(psi);
                 
                 // Signal application to shut down gracefully
-                System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                    System.Windows.Application.Current.Shutdown();
-                });
+                Environment.Exit(0);
 
                 return true;
             }

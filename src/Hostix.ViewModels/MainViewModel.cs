@@ -131,18 +131,40 @@ namespace Hostix.ViewModels
         private void StartUpdateChecker()
         {
             _ = Task.Run(async () => {
-                while (true)
+                // Check immediately at startup
+                try
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(30)); // Check every 30 minutes
                     var info = await _updater.CheckForUpdatesAsync();
                     if (info != null && info.IsUpdateAvailable)
                     {
                         _dispatcher.Invoke(() => {
                             _settingsVm.IsUpdateAvailable = true;
                             _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
-                            _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings to update.");
+                            _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings or Dashboard to update.");
                         });
                     }
+                }
+                catch (Exception ex)
+                {
+                    _stateManager.AddEvent($"Startup update check failed: {ex.Message}");
+                }
+
+                while (true)
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(30)); // Check every 30 minutes
+                    try
+                    {
+                        var info = await _updater.CheckForUpdatesAsync();
+                        if (info != null && info.IsUpdateAvailable)
+                        {
+                            _dispatcher.Invoke(() => {
+                                _settingsVm.IsUpdateAvailable = true;
+                                _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
+                                _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings or Dashboard to update.");
+                            });
+                        }
+                    }
+                    catch { }
                 }
             });
         }
