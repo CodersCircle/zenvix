@@ -5,16 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZENVIX | Version History & Git Activity</title>
-    <meta name="description" content="View official releases, updates, and live git push activity for Zenvix Developer Workstation.">
+    <meta name="description"
+        content="View official releases, updates, and live git push activity for Zenvix Developer Workstation.">
     <link rel="icon" type="image/x-icon" href="assets/Icons/favicon.ico">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
-    
+
     <style>
         .versions-container {
             max-width: 1200px;
@@ -72,14 +75,17 @@
         .list-wrapper::-webkit-scrollbar {
             width: 6px;
         }
+
         .list-wrapper::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 4px;
         }
+
         .list-wrapper::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.15);
             border-radius: 4px;
         }
+
         .list-wrapper::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.25);
         }
@@ -220,7 +226,9 @@
         }
 
         @keyframes spin {
-            100% { transform: rotate(360deg); }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .empty-state {
@@ -262,7 +270,8 @@
             </nav>
             <div class="nav-actions">
                 <div class="nav-download-wrapper">
-                    <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" class="btn btn-primary btn-sm" id="nav-download-btn" download>
+                    <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe"
+                        class="btn btn-primary btn-sm" id="nav-download-btn" download>
                         <i data-lucide="download"></i> Download Setup
                     </a>
                 </div>
@@ -273,7 +282,8 @@
     <!-- Main Content -->
     <main class="versions-container">
         <h1 class="page-header-title">Version Control & <span class="gradient-text">Git Activity</span></h1>
-        <p class="page-header-subtitle">Track the latest developer updates, commits, and official releases fetched live from GitHub.</p>
+        <p class="page-header-subtitle">Track the latest developer updates, commits, and official releases fetched live
+            from GitHub.</p>
 
         <div class="versions-grid">
             <!-- Official Releases Section -->
@@ -281,9 +291,11 @@
                 <h2 class="panel-title"><i data-lucide="award"></i> Official Releases</h2>
                 <div class="list-wrapper" id="releases-list">
                     <div class="loading-spinner">
-                        <svg class="spinner-icon" viewBox="0 0 50 50" fill="none" stroke-width="5" stroke-linecap="round">
+                        <svg class="spinner-icon" viewBox="0 0 50 50" fill="none" stroke-width="5"
+                            stroke-linecap="round">
                             <circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.1)" />
-                            <circle cx="25" cy="25" r="20" stroke="currentColor" stroke-dasharray="80, 200" stroke-dashoffset="0" />
+                            <circle cx="25" cy="25" r="20" stroke="currentColor" stroke-dasharray="80, 200"
+                                stroke-dashoffset="0" />
                         </svg>
                         <span>Loading official releases...</span>
                     </div>
@@ -295,9 +307,11 @@
                 <h2 class="panel-title"><i data-lucide="git-branch"></i> Git Activity (Commits)</h2>
                 <div class="list-wrapper" id="commits-list">
                     <div class="loading-spinner">
-                        <svg class="spinner-icon" viewBox="0 0 50 50" fill="none" stroke-width="5" stroke-linecap="round">
+                        <svg class="spinner-icon" viewBox="0 0 50 50" fill="none" stroke-width="5"
+                            stroke-linecap="round">
                             <circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.1)" />
-                            <circle cx="25" cy="25" r="20" stroke="currentColor" stroke-dasharray="80, 200" stroke-dashoffset="0" />
+                            <circle cx="25" cy="25" r="20" stroke="currentColor" stroke-dasharray="80, 200"
+                                stroke-dashoffset="0" />
                         </svg>
                         <span>Loading recent Git commits...</span>
                     </div>
@@ -318,7 +332,8 @@
                         <span class="india-dot green"></span>
                     </span>
                 </div>
-                <p class="brand-description">Premium Local Developer OS & Hosting Suite for Windows. Built for high performance, stability, and absolute zero configuration.</p>
+                <p class="brand-description">Premium Local Developer OS & Hosting Suite for Windows. Built for high
+                    performance, stability, and absolute zero configuration.</p>
             </div>
 
             <div class="footer-links-column">
@@ -367,7 +382,7 @@
                 const files = await response.json();
                 // Filter only setup executables
                 const setupFiles = files.filter(f => f.name.startsWith("Zenvix-Setup-V") && f.name.endsWith(".exe"));
-                
+
                 if (setupFiles.length === 0) {
                     container.innerHTML = '<div class="empty-state">No installers found in versions folder.</div>';
                     return;
@@ -384,7 +399,7 @@
                     let dateStr = "Unknown Date";
                     let shortDesc = "No description provided.";
                     const downloadUrl = file.download_url;
-                    
+
                     // Parse version name from filename (e.g. Zenvix-Setup-V105.exe -> v1.0.5)
                     let versionTag = file.name.replace("Zenvix-Setup-", "").replace(".exe", "");
                     const vMatch = versionTag.match(/V(\d)(\d)(\d)/);
@@ -403,7 +418,7 @@
                                     dateStyle: "medium",
                                     timeStyle: "short"
                                 });
-                                shortDesc = latestCommit.commit.message.split("\n")[0];
+
                             }
                         }
                     } catch (cErr) {
@@ -426,9 +441,6 @@
                                     <span class="commit-author">CodersCircle</span>
                                     <span class="commit-hash" style="background: rgba(16, 185, 129, 0.12); color: #34d399; font-family: sans-serif; font-size: 0.7rem; font-weight: 600;">Active</span>
                                     <span>${dateStr}</span>
-                                </div>
-                                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 6px; line-height: 1.4;">
-                                    ${shortDesc}
                                 </div>
                             </div>
                         </div>
