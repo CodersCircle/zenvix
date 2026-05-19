@@ -69,6 +69,18 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="Hostix.Button.Secondary" TargetType="Button" BasedOn="{StaticResource Hostix.Button}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#8f8f8fff" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="Hostix.Button.Blue" TargetType="Button" BasedOn="{StaticResource Hostix.Button.Primary}">
         <Setter Property="Background" Value="#6366F1" />
         <Setter Property="mah:ControlsHelper.CornerRadius" Value="12" />

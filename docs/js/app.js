@@ -388,36 +388,3 @@ legalModal.addEventListener('click', (e) => {
         legalModal.classList.remove('show');
     }
 });
-
-// 4. Dynamic Download Link Updater
-async function updateDownloadLinks() {
-    try {
-        const response = await fetch("https://api.github.com/repos/CodersCircle/zenvix/contents/versions");
-        if (!response.ok) return;
-        const files = await response.json();
-        const setupFiles = files.filter(f => f.name.startsWith("Zenvix-Setup-V") && f.name.endsWith(".exe"));
-        if (setupFiles.length > 0) {
-            setupFiles.sort((a, b) => b.name.localeCompare(a.name));
-            const latestFile = setupFiles[0];
-            const downloadUrl = `https://github.com/CodersCircle/zenvix/raw/main/${latestFile.name}`;
-            
-            // Update all download buttons
-            const elements = document.querySelectorAll("[download]");
-            elements.forEach(el => {
-                el.href = downloadUrl;
-                if (el.id === "nav-download-btn") {
-                    let versionTag = latestFile.name.replace("Zenvix-Setup-", "").replace(".exe", "");
-                    const vMatch = versionTag.match(/V(\d)(\d)(\d)/);
-                    if (vMatch) versionTag = `v${vMatch[1]}.${vMatch[2]}.${vMatch[3]}`;
-                    el.innerHTML = `<i data-lucide="download"></i> Download ${versionTag}`;
-                }
-            });
-            if (window.lucide) window.lucide.createIcons();
-        }
-    } catch (err) {
-        console.error("Error updating download links:", err);
-    }
-}
-
-document.addEventListener("DOMContentLoaded", updateDownloadLinks);
-updateDownloadLinks();

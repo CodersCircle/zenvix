@@ -16,6 +16,17 @@ namespace Hostix.UI
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                var ex = args.ExceptionObject as Exception;
+                System.IO.File.WriteAllText("crash_log.txt", ex?.ToString() ?? "Unknown exception");
+            };
+
+            this.DispatcherUnhandledException += (sender, args) =>
+            {
+                System.IO.File.WriteAllText("crash_log.txt", args.Exception?.ToString() ?? "Unknown dispatcher exception");
+            };
+
             base.OnStartup(e);
 
             var serviceCollection = new ServiceCollection();

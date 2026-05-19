@@ -29,8 +29,8 @@ namespace Hostix.Modules.Services
     public class AppUpdaterService : IAppUpdaterService
     {
         private readonly HttpClient _httpClient;
-        
-        public string CurrentVersion => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0";
+
+        public string CurrentVersion => System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "1.0.0";
 
         public AppUpdaterService()
         {
@@ -44,11 +44,11 @@ namespace Hostix.Modules.Services
             try
             {
                 Log.Information("[Updater] Checking for updates via GitHub API...");
-                
+
                 // GitHub API URL for the latest release
                 var url = "https://api.github.com/repos/CodersCircle/zenvix/releases/latest";
                 var response = await _httpClient.GetAsync(url);
-                
+
                 if (!response.IsSuccessStatusCode)
                 {
                     Log.Warning("[Updater] Failed to check for updates: {Status}", response.StatusCode);
@@ -57,7 +57,7 @@ namespace Hostix.Modules.Services
 
                 var json = await response.Content.ReadAsStringAsync();
                 var doc = JsonDocument.Parse(json);
-                
+
                 var tag = doc.RootElement.GetProperty("tag_name").GetString();
                 if (string.IsNullOrEmpty(tag)) return null;
 
@@ -100,13 +100,13 @@ namespace Hostix.Modules.Services
 
             var tempDir = Path.Combine(Path.GetTempPath(), "ZenvixUpdate");
             if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
-            
+
             var installerPath = Path.Combine(tempDir, $"Zenvix-Update-{info.Version}.exe");
 
             try
             {
                 Log.Information("[Updater] Downloading update to {Path}", installerPath);
-                
+
                 // Download file
                 using var response = await _httpClient.GetAsync(info.DownloadUrl, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
@@ -159,7 +159,7 @@ namespace Hostix.Modules.Services
                 };
 
                 Process.Start(psi);
-                
+
                 // Signal application to shut down gracefully
                 Environment.Exit(0);
 

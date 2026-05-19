@@ -71,25 +71,25 @@ namespace Hostix.ViewModels
             IAppUpdaterService updater,
             ISSLManager sslManager)
         {
-            _runtimeEngine        = runtimeEngine;
+            _runtimeEngine = runtimeEngine;
             _servicesOrchestrator = servicesOrchestrator;
-            _bridge               = bridge;
-            _phpMyAdmin           = phpMyAdmin;
-            _projectScanner       = projectScanner;
-            _themeService         = themeService;
-            _dispatcher           = dispatcher;
-            _stateManager         = stateManager;
-            _clipboard            = clipboard;
-            _credentialsManager   = credentialsManager;
-            _settingsVm           = settingsViewModel;
-            _updater              = updater;
-            _sslManager           = sslManager;
+            _bridge = bridge;
+            _phpMyAdmin = phpMyAdmin;
+            _projectScanner = projectScanner;
+            _themeService = themeService;
+            _dispatcher = dispatcher;
+            _stateManager = stateManager;
+            _clipboard = clipboard;
+            _credentialsManager = credentialsManager;
+            _settingsVm = settingsViewModel;
+            _updater = updater;
+            _sslManager = sslManager;
 
             // Initialize Child ViewModels with shared state
-            _dashboardVm  = new DashboardViewModel(_stateManager);
-            _websitesVm   = websitesViewModel;
-            _databasesVm  = databasesViewModel;
-            _servicesVm   = servicesViewModel;
+            _dashboardVm = new DashboardViewModel(_stateManager);
+            _websitesVm = websitesViewModel;
+            _databasesVm = databasesViewModel;
+            _servicesVm = servicesViewModel;
 
             CurrentViewModel = _dashboardVm;
             _runtimeEngine.StartHeartbeat();
@@ -104,8 +104,10 @@ namespace Hostix.ViewModels
             // Start the global sync bridge AFTER seeding so initial state is correct
             _bridge.Start();
 
-            _phpMyAdmin.OnStatusMessage += msg => {
-                _dispatcher.Invoke(() => {
+            _phpMyAdmin.OnStatusMessage += msg =>
+            {
+                _dispatcher.Invoke(() =>
+                {
                     _stateManager.AddEvent($"[AdminPanel] {msg}");
                 });
             };
@@ -130,41 +132,21 @@ namespace Hostix.ViewModels
 
         private void StartUpdateChecker()
         {
-            _ = Task.Run(async () => {
-                // Check immediately at startup
-                try
-                {
-                    var info = await _updater.CheckForUpdatesAsync();
-                    if (info != null && info.IsUpdateAvailable)
-                    {
-                        _dispatcher.Invoke(() => {
-                            _settingsVm.IsUpdateAvailable = true;
-                            _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
-                            _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings or Dashboard to update.");
-                        });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _stateManager.AddEvent($"Startup update check failed: {ex.Message}");
-                }
-
+            _ = Task.Run(async () =>
+            {
                 while (true)
                 {
                     await Task.Delay(TimeSpan.FromMinutes(30)); // Check every 30 minutes
-                    try
+                    var info = await _updater.CheckForUpdatesAsync();
+                    if (info != null && info.IsUpdateAvailable)
                     {
-                        var info = await _updater.CheckForUpdatesAsync();
-                        if (info != null && info.IsUpdateAvailable)
+                        _dispatcher.Invoke(() =>
                         {
-                            _dispatcher.Invoke(() => {
-                                _settingsVm.IsUpdateAvailable = true;
-                                _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
-                                _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings or Dashboard to update.");
-                            });
-                        }
+                            _settingsVm.IsUpdateAvailable = true;
+                            _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
+                            _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings to update.");
+                        });
                     }
-                    catch { }
                 }
             });
         }
@@ -265,7 +247,7 @@ namespace Hostix.ViewModels
                 SelectedDiagnosticLogs = rsi.DiagnosticLogs ?? "No diagnostic information available for this service.";
             }
             else return;
-            
+
             IsDiagnosticFlyoutOpen = true;
         }
 
@@ -283,7 +265,7 @@ namespace Hostix.ViewModels
         private void ExportDiagnostics()
         {
             if (string.IsNullOrEmpty(SelectedDiagnosticLogs)) return;
-            
+
             try
             {
                 var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"diagnostic_{SelectedServiceName}_{DateTime.Now:yyyyMMdd_HHmmss}.log");
@@ -347,12 +329,12 @@ namespace Hostix.ViewModels
             if (service == null) return;
             var (dbType, dbPort) = service.Type switch
             {
-                ServiceType.MySQL    => ("mysql",      service.Port),
-                ServiceType.MariaDB  => ("mariadb",    service.Port),
+                ServiceType.MySQL => ("mysql", service.Port),
+                ServiceType.MariaDB => ("mariadb", service.Port),
                 ServiceType.Postgres => ("postgresql", service.Port),
-                ServiceType.Redis    => ("redis",      service.Port),
-                ServiceType.Mailpit  => ("mailpit",    8025),
-                _                    => ("",            0)
+                ServiceType.Redis => ("redis", service.Port),
+                ServiceType.Mailpit => ("mailpit", 8025),
+                _ => ("", 0)
             };
 
             if (string.IsNullOrEmpty(dbType)) return;
@@ -380,14 +362,14 @@ namespace Hostix.ViewModels
         private void StopAllServices()
         {
             var running = Services.Where(s => s.Status == ServiceStatus.Running).ToList();
-            foreach(var s in running) _ = ToggleService(s);
+            foreach (var s in running) _ = ToggleService(s);
             _stateManager.AddEvent("Shutting down all active runtimes...");
         }
 
         private void OnServiceStateChanged(Service service)
         {
             _stateManager.UpdateService(service);
-            
+
             var runningCount = Services.Count(s => s.Status == ServiceStatus.Running);
             _stateManager.InfrastructureState = runningCount > 0 ? "Active" : "Idle";
             StatusText = runningCount > 0 ? "Runtime Active" : "Ready";
@@ -396,7 +378,8 @@ namespace Hostix.ViewModels
         private void OnMonitoringTick(object? state)
         {
             var rand = new Random();
-            _dispatcher.Invoke(() => {
+            _dispatcher.Invoke(() =>
+            {
                 _stateManager.CpuUsage = $"{rand.Next(2, 8)}%";
                 _stateManager.RamUsage = $"{rand.NextDouble() * 2 + 1:F1} GB";
                 OnPropertyChanged(nameof(State)); // Notify UI to refresh metrics bindings
@@ -413,7 +396,8 @@ namespace Hostix.ViewModels
             var projects = _projectScanner.ScanNow(@"C:\Hostix\projects");
             var query = SearchQuery.ToLower();
 
-            _dispatcher.Invoke(() => {
+            _dispatcher.Invoke(() =>
+            {
                 _stateManager.RunningWebsites.Clear();
                 foreach (var project in projects)
                 {
@@ -427,10 +411,10 @@ namespace Hostix.ViewModels
         {
             return type switch
             {
-                ServiceType.MySQL    => RuntimeServiceType.MySQL,
-                ServiceType.MariaDB  => RuntimeServiceType.MariaDB,
+                ServiceType.MySQL => RuntimeServiceType.MySQL,
+                ServiceType.MariaDB => RuntimeServiceType.MariaDB,
                 ServiceType.Postgres => RuntimeServiceType.PostgreSQL,
-                _                    => RuntimeServiceType.MySQL
+                _ => RuntimeServiceType.MySQL
             };
         }
     }

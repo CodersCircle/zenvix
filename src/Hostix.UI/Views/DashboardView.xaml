@@ -104,51 +104,6 @@
     <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="0,0,10,24">
 
-            <!-- UPDATE NOTIFICATION BANNER -->
-            <Border Background="#1e1b4b" 
-                    BorderBrush="#4338ca" 
-                    BorderThickness="1" 
-                    CornerRadius="12" 
-                    Padding="18,12" 
-                    Margin="0,0,0,20"
-                    Visibility="{Binding DataContext.Settings.IsUpdateAvailable, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibilityConverter}}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                            <TextBlock Text="🚀 Update Available!" FontWeight="Bold" FontSize="14" Foreground="#a5b4fc" VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding DataContext.Settings.UpdateStatus, RelativeSource={RelativeSource AncestorType=Window}}" 
-                                       FontSize="12" Foreground="#cbd5e1" Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Medium" />
-                        </StackPanel>
-                        <TextBlock Text="A new version of Zenvix has been detected. Click Update to install it silently." 
-                                   FontSize="11" Foreground="#94a3b8" />
-                        
-                        <!-- Download Progress Bar (visible during checking/downloading) -->
-                        <ProgressBar Height="4" Margin="0,8,0,0" Background="#312e81" Foreground="#6366f1" BorderThickness="0"
-                                     Value="{Binding DataContext.Settings.UpdateProgress, RelativeSource={RelativeSource AncestorType=Window}}"
-                                     Visibility="{Binding DataContext.Settings.IsCheckingUpdate, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="15,0,0,0">
-                        <Button Content="Update Now" 
-                                Command="{Binding DataContext.Settings.InstallUpdateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                Style="{DynamicResource Hostix.Button.Primary}"
-                                Background="#4f46e5" BorderBrush="#6366f1"
-                                FontWeight="Bold" FontSize="11" Height="32" Padding="14,0" Margin="0,0,8,0" />
-                        <Button Content="Go to Settings" 
-                                Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                CommandParameter="Settings"
-                                Style="{DynamicResource Hostix.Button.Ghost}"
-                                BorderBrush="#4338ca" BorderThickness="1" Foreground="#a5b4fc"
-                                FontSize="11" Height="32" Padding="12,0" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-
             <!-- 1. TOP METRICS -->
             <UniformGrid Columns="4" Margin="0,0,0,24">
                 <Border Style="{DynamicResource Hostix.Card}" Margin="0,0,15,0">

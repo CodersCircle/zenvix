@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Hostix.ViewModels
 {
-    public partial class DashboardViewModel : ObservableObject 
+    public partial class DashboardViewModel : ObservableObject
     {
         [ObservableProperty]
         private IRuntimeStateManager _stateManager;
@@ -22,10 +22,10 @@ namespace Hostix.ViewModels
             _stateManager = stateManager;
         }
 
-        public DashboardViewModel() 
-        { 
+        public DashboardViewModel()
+        {
             // Design-time or default initialization
-            _stateManager = null!; 
+            _stateManager = null!;
         }
     }
 
@@ -34,29 +34,30 @@ namespace Hostix.ViewModels
 
 
     public partial class LogsViewModel : ObservableObject { }
-    public partial class SettingsViewModel : ObservableObject 
+    public partial class SettingsViewModel : ObservableObject
     {
         private readonly IAppUpdaterService? _updater;
-        
+        private readonly IDispatcherService? _dispatcher;
+
         [ObservableProperty] private string _updateStatus = "Check for Updates";
-        [ObservableProperty] 
+        
+        [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
         [NotifyCanExecuteChangedFor(nameof(InstallUpdateCommand))]
         [NotifyPropertyChangedFor(nameof(IsNotCheckingUpdate))]
         [NotifyPropertyChangedFor(nameof(CanInstallUpdate))]
         private bool _isCheckingUpdate = false;
-        
+
         [ObservableProperty] private double _updateProgress = 0;
-        
-        [ObservableProperty] 
+
+        [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(InstallUpdateCommand))]
         [NotifyPropertyChangedFor(nameof(CanInstallUpdate))]
         private bool _isUpdateAvailable = false;
-        private readonly IDispatcherService? _dispatcher;
-        
+
         public bool IsNotCheckingUpdate => !IsCheckingUpdate;
         public bool CanInstallUpdate => IsUpdateAvailable && !IsCheckingUpdate;
-        
+
         public string AppVersion => _updater?.CurrentVersion ?? "1.0.0";
 
         public SettingsViewModel() { } // Design-time constructor
@@ -73,7 +74,7 @@ namespace Hostix.ViewModels
             if (_updater == null) return;
             IsCheckingUpdate = true;
             UpdateStatus = "Checking...";
-            
+
             var info = await _updater.CheckForUpdatesAsync();
             if (info != null && info.IsUpdateAvailable)
             {
@@ -93,12 +94,14 @@ namespace Hostix.ViewModels
             if (_updater == null || !IsUpdateAvailable || _dispatcher == null) return;
             IsCheckingUpdate = true;
             UpdateStatus = "Downloading...";
-            
+
             var info = await _updater.CheckForUpdatesAsync();
             if (info != null)
             {
-                await _updater.DownloadAndInstallUpdateAsync(info, p => {
-                    _dispatcher.Invoke(() => {
+                await _updater.DownloadAndInstallUpdateAsync(info, p =>
+                {
+                    _dispatcher.Invoke(() =>
+                    {
                         UpdateProgress = p;
                         UpdateStatus = $"Downloading... {p:F1}%";
                     });
