@@ -36,7 +36,6 @@ namespace Hostix.Runtime.Services
 
             if (allowExternal || anyMissing)
             {
-                results.AddRange(await ScanLaragonAsync());
                 results.AddRange(await ScanXamppAsync());
                 results.AddRange(await ScanSystemPathsAsync());
             }

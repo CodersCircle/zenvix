@@ -84,11 +84,6 @@ namespace Hostix.Runtime.Services
             
             var localIp = GetLocalIPAddress();
             
-            // 1. HTTP Server
-            sb.AppendLine("server {");
-            sb.AppendLine("    listen 80;");
-            sb.AppendLine($"    server_name {website.Domain} {localIp};");
-
             var isCertValid = false;
             var certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ssl", "certs", website.Domain, "server.crt");
             var keyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ssl", "certs", website.Domain, "server.key");
@@ -143,14 +138,41 @@ namespace Hostix.Runtime.Services
 
             Log.Warning("[ConfigGenerator] SSL VALIDATION RESULT for {Domain}: {Result}", website.Domain, isCertValid);
 
+            var rootPath = website.LocalPath.Replace("\\", "/");
+            if (website.Type == ProjectType.Laravel)
+            {
+                rootPath = Path.Combine(website.LocalPath, "public").Replace("\\", "/");
+            }
+
             if (website.SslEnabled && isCertValid)
             {
                 Log.Warning("[ConfigGenerator] GENERATING SSL BLOCK for {Domain}", website.Domain);
+                
+                // 1. HTTP Server - Redirect to HTTPS only for custom Domain
+                sb.AppendLine("server {");
+                sb.AppendLine("    listen 80;");
+                sb.AppendLine($"    server_name {website.Domain};");
                 sb.AppendLine("    return 301 https://$host$request_uri;");
                 sb.AppendLine("}");
                 sb.AppendLine();
 
-                // 2. HTTPS Server
+                // 2. HTTP Server - Serve content directly over HTTP for Local IP
+                sb.AppendLine("server {");
+                sb.AppendLine("    listen 80;");
+                sb.AppendLine($"    server_name {localIp};");
+                sb.AppendLine($"    root \"{rootPath}\";");
+                sb.AppendLine("    index index.php index.html;");
+                sb.AppendLine("    location / { try_files $uri $uri/ /index.php?$query_string; }");
+                sb.AppendLine("    location ~ \\.php$ {");
+                sb.AppendLine($"        fastcgi_pass 127.0.0.1:{phpPort};");
+                sb.AppendLine("        fastcgi_index index.php;");
+                sb.AppendLine("        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;");
+                sb.AppendLine("        include fastcgi_params;");
+                sb.AppendLine("    }");
+                sb.AppendLine("}");
+                sb.AppendLine();
+
+                // 3. HTTPS Server - Serve content over HTTPS for Domain and Local IP
                 sb.AppendLine("server {");
                 sb.AppendLine("    listen 443 ssl;");
                 sb.AppendLine($"    server_name {website.Domain} {localIp};");
@@ -161,27 +183,39 @@ namespace Hostix.Runtime.Services
                 sb.AppendLine($"    ssl_certificate \"{nxtCertPath}\";");
                 sb.AppendLine($"    ssl_certificate_key \"{nxtKeyPath}\";");
                 sb.AppendLine("    ssl_protocols TLSv1.2 TLSv1.3;");
+                sb.AppendLine($"    root \"{rootPath}\";");
+                sb.AppendLine("    index index.php index.html;");
+                sb.AppendLine("    location / { try_files $uri $uri/ /index.php?$query_string; }");
+                sb.AppendLine("    location ~ \\.php$ {");
+                sb.AppendLine($"        fastcgi_pass 127.0.0.1:{phpPort};");
+                sb.AppendLine("        fastcgi_index index.php;");
+                sb.AppendLine("        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;");
+                sb.AppendLine("        include fastcgi_params;");
+                sb.AppendLine("    }");
+                sb.AppendLine("}");
             }
-            else if (website.SslEnabled)
+            else
             {
-                Log.Warning("[ConfigGenerator] SSL validation FAILED for {Domain}. FALLING BACK TO HTTP-ONLY.", website.Domain);
-            }
+                if (website.SslEnabled)
+                {
+                    Log.Warning("[ConfigGenerator] SSL validation FAILED for {Domain}. FALLING BACK TO HTTP-ONLY.", website.Domain);
+                }
 
-            var rootPath = website.LocalPath.Replace("\\", "/");
-            if (website.Type == ProjectType.Laravel)
-            {
-                rootPath = Path.Combine(website.LocalPath, "public").Replace("\\", "/");
+                // Plain HTTP Server for Domain and Local IP
+                sb.AppendLine("server {");
+                sb.AppendLine("    listen 80;");
+                sb.AppendLine($"    server_name {website.Domain} {localIp};");
+                sb.AppendLine($"    root \"{rootPath}\";");
+                sb.AppendLine("    index index.php index.html;");
+                sb.AppendLine("    location / { try_files $uri $uri/ /index.php?$query_string; }");
+                sb.AppendLine("    location ~ \\.php$ {");
+                sb.AppendLine($"        fastcgi_pass 127.0.0.1:{phpPort};");
+                sb.AppendLine("        fastcgi_index index.php;");
+                sb.AppendLine("        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;");
+                sb.AppendLine("        include fastcgi_params;");
+                sb.AppendLine("    }");
+                sb.AppendLine("}");
             }
-            sb.AppendLine($"    root \"{rootPath}\";");
-            sb.AppendLine("    index index.php index.html;");
-            sb.AppendLine("    location / { try_files $uri $uri/ /index.php?$query_string; }");
-            sb.AppendLine("    location ~ \\.php$ {");
-            sb.AppendLine($"        fastcgi_pass 127.0.0.1:{phpPort};");
-            sb.AppendLine("        fastcgi_index index.php;");
-            sb.AppendLine("        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;");
-            sb.AppendLine("        include fastcgi_params;");
-            sb.AppendLine("    }");
-            sb.AppendLine("}");
 
             var filePath = Path.Combine(vhostDir, $"{website.Domain}.conf");
             var content = sb.ToString();
@@ -208,11 +242,43 @@ namespace Hostix.Runtime.Services
             };
 
             // 1. Try standard locations for mime.types and fastcgi_params
-            var mimePath = candidates.Select(c => Path.Combine(c, "mime.types")).FirstOrDefault(File.Exists) ?? 
-                           Directory.GetFiles(runtimeRoot, "mime.types", SearchOption.AllDirectories).FirstOrDefault();
+            var mimePath = candidates.Select(c => Path.Combine(c, "mime.types")).FirstOrDefault(File.Exists);
+            if (mimePath == null && Directory.Exists(runtimeRoot))
+            {
+                mimePath = Directory.GetFiles(runtimeRoot, "mime.types", SearchOption.AllDirectories).FirstOrDefault();
+            }
+            if (mimePath == null)
+            {
+                var checkPath = Path.Combine(_configRoot, "mime.types");
+                if (File.Exists(checkPath)) mimePath = checkPath;
+            }
+            if (mimePath == null)
+            {
+                var runtimesDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runtimes");
+                if (Directory.Exists(runtimesDir))
+                {
+                    mimePath = Directory.GetFiles(runtimesDir, "mime.types", SearchOption.AllDirectories).FirstOrDefault();
+                }
+            }
 
-            var fastcgiParamsPath = candidates.Select(c => Path.Combine(c, "fastcgi_params")).FirstOrDefault(File.Exists) ?? 
-                                    Directory.GetFiles(runtimeRoot, "fastcgi_params", SearchOption.AllDirectories).FirstOrDefault();
+            var fastcgiParamsPath = candidates.Select(c => Path.Combine(c, "fastcgi_params")).FirstOrDefault(File.Exists);
+            if (fastcgiParamsPath == null && Directory.Exists(runtimeRoot))
+            {
+                fastcgiParamsPath = Directory.GetFiles(runtimeRoot, "fastcgi_params", SearchOption.AllDirectories).FirstOrDefault();
+            }
+            if (fastcgiParamsPath == null)
+            {
+                var checkPath = Path.Combine(_configRoot, "fastcgi_params");
+                if (File.Exists(checkPath)) fastcgiParamsPath = checkPath;
+            }
+            if (fastcgiParamsPath == null)
+            {
+                var runtimesDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runtimes");
+                if (Directory.Exists(runtimesDir))
+                {
+                    fastcgiParamsPath = Directory.GetFiles(runtimesDir, "fastcgi_params", SearchOption.AllDirectories).FirstOrDefault();
+                }
+            }
 
             if (mimePath == null) throw new Exception("Nginx critical file 'mime.types' not found.");
             if (fastcgiParamsPath == null) throw new Exception("Nginx critical file 'fastcgi_params' not found.");

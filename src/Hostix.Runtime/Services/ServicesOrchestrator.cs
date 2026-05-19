@@ -160,7 +160,8 @@ namespace Hostix.Runtime.Services
             return type == RuntimeServiceType.Mailpit || 
                    type == RuntimeServiceType.Nginx || 
                    type == RuntimeServiceType.Apache ||
-                   type == RuntimeServiceType.PhpFpm;
+                   type == RuntimeServiceType.PhpFpm ||
+                   type == RuntimeServiceType.MySQL;
         }
 
         private string GetDefaultVersion(RuntimeServiceType type)
@@ -170,7 +171,7 @@ namespace Hostix.Runtime.Services
                 RuntimeServiceType.PhpFpm => "8.5.0",
                 RuntimeServiceType.Nginx => "1.26.0",
                 RuntimeServiceType.Apache => "2.4.67",
-                RuntimeServiceType.MySQL => "8.4.0",
+                RuntimeServiceType.MySQL => "9.7.0",
                 _ => "latest"
             };
         }

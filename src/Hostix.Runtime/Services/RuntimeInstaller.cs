@@ -44,8 +44,9 @@ namespace Hostix.Runtime.Services
         {
             var possiblePaths = new[]
             {
-                @"d:\RuningProjects\Hostix\runtime-manifest.json",
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runtime-manifest.json"),
+                @"c:\allymechProject\New3.7\allymechworking\Zenvix\runtime-manifest.json",
+                @"d:\RuningProjects\Hostix\runtime-manifest.json",
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "runtime-manifest.json")
             };
 
