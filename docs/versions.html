@@ -174,7 +174,7 @@
 
         .commit-message {
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 500;
             color: #e2e8f0;
             margin-bottom: 4px;
             line-height: 1.4;
@@ -189,7 +189,7 @@
         }
 
         .commit-author {
-            font-weight: 600;
+            font-weight: 500;
             color: #f1f5f9;
         }
 
@@ -262,8 +262,8 @@
             </nav>
             <div class="nav-actions">
                 <div class="nav-download-wrapper">
-                    <a href="https://github.com/CodersCircle/zenvix/raw/main/releases/Zenvix-Setup-V105.exe" class="btn btn-primary btn-sm" id="nav-download-btn" download>
-                        <i data-lucide="download"></i> Download V1.0.5
+                    <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" class="btn btn-primary btn-sm" id="nav-download-btn" download>
+                        <i data-lucide="download"></i> Download Setup
                     </a>
                 </div>
             </div>
@@ -327,7 +327,7 @@
                 <a href="index.html#guide">Setup Guide</a>
                 <a href="index.html#requirements">Requirements</a>
                 <a href="versions.html">Version History</a>
-                <a href="https://github.com/CodersCircle/zenvix/raw/main/releases/Zenvix-Setup-V105.exe" download>Download Setup</a>
+                <a href="https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe" download>Download Setup</a>
             </div>
 
             <div class="footer-links-column">
@@ -371,7 +371,7 @@
                 }
 
                 let html = "";
-                releases.forEach(rel => {
+                releases.slice(0, 3).forEach(rel => {
                     const date = new Date(rel.published_at).toLocaleString("en-US", {
                         dateStyle: "medium",
                         timeStyle: "short"
@@ -419,7 +419,7 @@
                 }
 
                 let html = "";
-                commits.slice(0, 15).forEach(c => {
+                commits.slice(0, 3).forEach(c => {
                     const date = new Date(c.commit.author.date).toLocaleString("en-US", {
                         dateStyle: "medium",
                         timeStyle: "short"
