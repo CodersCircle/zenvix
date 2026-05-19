@@ -169,15 +169,15 @@
                                 <DockPanel Grid.Column="1" Margin="16,0,16,0" LastChildFill="False" VerticalAlignment="Center">
                                     <!-- Left side: Title & Version -->
                                     <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                                        <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="Bold" />
-                                        <TextBlock Text="{Binding AppVersion, StringFormat='Current Version: v{0}'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,4,0,0" />
+                                        <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding AppVersion, StringFormat='Current Version: v{0}'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" Margin="0,4,0,0" />
                                     </StackPanel>
 
                                     <!-- Right side: Dynamic status text -->
                                     <TextBlock DockPanel.Dock="Right" 
                                                Text="{Binding UpdateStatus}" 
                                                Foreground="{DynamicResource TextPrimaryBrush}" 
-                                               FontWeight="SemiBold" 
+                                               FontWeight="Medium" 
                                                FontSize="12" 
                                                VerticalAlignment="Center" 
                                                TextAlignment="Right"
@@ -208,7 +208,7 @@
                                                     </Style>
                                                 </mah:ProgressRing.Style>
                                             </mah:ProgressRing>
-                                            <TextBlock Text="Check Update" VerticalAlignment="Center" FontWeight="Medium" FontSize="10"/>
+                                            <TextBlock Text="Check Update" VerticalAlignment="Center" FontWeight="Medium" FontSize="12"/>
                                         </StackPanel>
                                     </Button>
 
@@ -280,11 +280,11 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Version History" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="Bold" Margin="0,0,0,4" />
-                <TextBlock Grid.Row="1" Text="Roll back or change build" Style="{DynamicResource Hostix.Subtitle}" FontSize="11" Margin="0,0,0,15" />
+                <TextBlock Grid.Row="0" Text="Version History" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,4" />
+                <TextBlock Grid.Row="1" Text="Roll back or change build" Style="{DynamicResource Hostix.Subtitle}" FontSize="10" Margin="0,0,0,15" />
 
                 <!-- Loading Indicator -->
-                <TextBlock Grid.Row="2" Text="Loading versions..." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"
+                <TextBlock Grid.Row="2" Text="Loading versions..." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                            Visibility="{Binding IsLoadingVersions, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!-- Scrollable list of versions -->
@@ -313,7 +313,7 @@
                                                 CommandParameter="{Binding}"
                                                 Style="{DynamicResource Hostix.Button.Primary}"
                                                 Background="#4F46E5" BorderBrush="#6366F1"
-                                                Height="26" Width="60" FontSize="10" FontWeight="Medium" Padding="0" Cursor="Hand" />
+                                                Height="26" Width="60" FontSize="10" FontWeight="Regular" Padding="0" Cursor="Hand" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>
