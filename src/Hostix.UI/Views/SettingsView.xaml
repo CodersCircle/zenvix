@@ -208,7 +208,7 @@
                                                     </Style>
                                                 </mah:ProgressRing.Style>
                                             </mah:ProgressRing>
-                                            <TextBlock Text="Check Update" VerticalAlignment="Center" />
+                                            <TextBlock Text="Check Update" VerticalAlignment="Center" FontWeight="Medium" FontSize="10"/>
                                         </StackPanel>
                                     </Button>
 
