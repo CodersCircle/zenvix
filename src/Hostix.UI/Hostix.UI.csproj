@@ -32,8 +32,8 @@
     <Product>Zenvix</Product>
     <Description>ZENVIX Developer Workstation &amp; Local Hosting Engine</Description>
     <Copyright>Copyright © 2026 CodersCircle</Copyright>
-    <AssemblyVersion>1.0.4.0</AssemblyVersion>
-    <FileVersion>1.0.4.0</FileVersion>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
   </PropertyGroup>
 
 </Project>

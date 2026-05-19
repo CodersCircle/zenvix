@@ -539,7 +539,7 @@ namespace Hostix.ViewModels
                     SslEnabled = NewWebsiteSslEnabled,
                     Type = _orchestrator.DetectProjectType(targetPath)
                 };
-                if (website.Type == ProjectType.Laravel)
+                if (website.Type == ProjectType.Laravel && !isImport)
                 {
                     var envPath = Path.Combine(targetPath, ".env");
                     if (File.Exists(envPath))

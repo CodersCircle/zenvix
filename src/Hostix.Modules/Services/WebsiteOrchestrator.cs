@@ -246,7 +246,18 @@ namespace Hostix.Runtime.Services
 
                         // If it's a new site, we expect our "Welcome" message.
                         // If it's an existing site, we just want it to NOT be an empty Nginx error page.
-                        if (content.Contains("Welcome to Zenvix") || content.Contains("PHP") || content.Length > 20)
+                        
+                        bool isLaravel = website.Type == ProjectType.Laravel;
+                        bool hasLaravelFiles = false;
+                        if (isLaravel)
+                        {
+                            var artisanPath = Path.Combine(website.LocalPath, "artisan");
+                            var vendorAutoload = Path.Combine(website.LocalPath, "vendor", "autoload.php");
+                            var composerJson = Path.Combine(website.LocalPath, "composer.json");
+                            hasLaravelFiles = File.Exists(artisanPath) && (File.Exists(vendorAutoload) || File.Exists(composerJson));
+                        }
+
+                        if (content.Contains("Welcome to Zenvix") || content.Contains("PHP") || content.Length > 20 || hasLaravelFiles)
                         {
                             Log.Information("[WebOrchestrator] Health-check PASSED for {Domain} (Status: {Code}).", website.Domain, response.StatusCode);
                             return true;

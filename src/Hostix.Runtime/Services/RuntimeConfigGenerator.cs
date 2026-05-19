@@ -34,6 +34,23 @@ namespace Hostix.Runtime.Services
             Directory.CreateDirectory(vhostDir);
         }
 
+        private string GetLocalIPAddress()
+        {
+            try
+            {
+                var host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        return ip.ToString();
+                    }
+                }
+            }
+            catch { }
+            return "127.0.0.1";
+        }
+
         public string GenerateAndSave(RuntimeServiceInstance inst, RuntimeMetadata metadata)
         {
             var content = inst.Type switch
@@ -65,10 +82,12 @@ namespace Hostix.Runtime.Services
 
             var sb = new StringBuilder();
             
+            var localIp = GetLocalIPAddress();
+            
             // 1. HTTP Server
             sb.AppendLine("server {");
             sb.AppendLine("    listen 80;");
-            sb.AppendLine($"    server_name {website.Domain};");
+            sb.AppendLine($"    server_name {website.Domain} {localIp};");
 
             var isCertValid = false;
             var certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ssl", "certs", website.Domain, "server.crt");
@@ -134,7 +153,7 @@ namespace Hostix.Runtime.Services
                 // 2. HTTPS Server
                 sb.AppendLine("server {");
                 sb.AppendLine("    listen 443 ssl;");
-                sb.AppendLine($"    server_name {website.Domain};");
+                sb.AppendLine($"    server_name {website.Domain} {localIp};");
 
                 var nxtCertPath = certPath.Replace("\\", "/");
                 var nxtKeyPath = keyPath.Replace("\\", "/");
@@ -245,7 +264,8 @@ namespace Hostix.Runtime.Services
             sb.AppendLine("    }");
 
             // 4. Localhost / System Panel Server
-            sb.AppendLine($"    server {{ listen {inst.Port}; server_name localhost;");
+            var localIp = GetLocalIPAddress();
+            sb.AppendLine($"    server {{ listen {inst.Port}; server_name localhost {localIp};");
             sb.AppendLine("        location / { root html; index index.php index.html; }");
  
             // ── phpMyAdmin Location ───────────────────────────────────────────
@@ -300,6 +320,8 @@ namespace Hostix.Runtime.Services
             var sb = new StringBuilder();
             sb.AppendLine($"ServerRoot \"{serverRoot}\"");
             sb.AppendLine($"Listen {inst.Port}");
+            var localIp = GetLocalIPAddress();
+            sb.AppendLine($"ServerName localhost");
             
             // Essential modules for Hostix runtimes
             sb.AppendLine("LoadModule authz_core_module modules/mod_authz_core.so");
