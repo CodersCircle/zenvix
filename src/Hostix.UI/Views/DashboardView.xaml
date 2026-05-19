@@ -148,7 +148,7 @@
                     </StackPanel>
                     
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                        <Button Content="Update Now" 
+                        <Button Content="{Binding DataContext.Settings.UpdateButtonText, RelativeSource={RelativeSource AncestorType=Window}}" 
                                 Command="{Binding DataContext.Settings.InstallUpdateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 Style="{DynamicResource Hostix.Button.Primary}"
                                 Background="#6366f1" BorderBrush="#818cf8"

@@ -135,9 +135,9 @@ namespace Hostix.ViewModels
         {
             _ = Task.Run(async () =>
             {
-                while (true)
+                // Initial check on startup
+                try
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(30)); // Check every 30 minutes
                     var info = await _updater.CheckForUpdatesAsync();
                     if (info != null && info.IsUpdateAvailable)
                     {
@@ -147,6 +147,31 @@ namespace Hostix.ViewModels
                             _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
                             _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings to update.");
                         });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Error(ex, "[MainViewModel] Initial update check failed");
+                }
+
+                while (true)
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(5)); // Check every 5 minutes
+                    try
+                    {
+                        var info = await _updater.CheckForUpdatesAsync();
+                        if (info != null && info.IsUpdateAvailable)
+                        {
+                            _dispatcher.Invoke(() =>
+                            {
+                                _settingsVm.IsUpdateAvailable = true;
+                                _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Serilog.Log.Error(ex, "[MainViewModel] Periodic update check failed");
                     }
                 }
             });

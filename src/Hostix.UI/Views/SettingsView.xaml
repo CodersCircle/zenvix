@@ -5,181 +5,322 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:Hostix.UI.Views"
+             xmlns:conv="clr-namespace:Hostix.UI.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1000">
 
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:BoolToVisibilityInvertedConverter x:Key="BoolToVisibilityInvertedConverter" />
     </UserControl.Resources>
 
-    <!-- Dead Center Form Container -->
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        
-        <!-- COMPACT PROFILE CARD -->
-        <Border Width="500" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="30">
-            <StackPanel>
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="24" />
+            <ColumnDefinition Width="4*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT SIDE: Profile & Main Updates (60% space) -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="0,0,10,0">
                 
-                <!-- HEADER WITH ACCENT BADGE -->
-                <Grid Margin="0,0,0,25">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <!-- COMPACT PROFILE CARD -->
+                <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="30" Margin="0,0,0,20">
+                    <StackPanel>
+                        <!-- HEADER WITH ACCENT BADGE -->
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                    <Border Width="50" Height="50" CornerRadius="25" Background="#1E1B4B" BorderBrush="#4F46E5" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="👤" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-
-                    <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="Developer Profile" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="18" FontWeight="Bold" />
-                        <TextBlock Text="Configure your workstation identity and avatar." Style="{DynamicResource Hostix.Subtitle}" FontSize="12" />
-                    </StackPanel>
-                </Grid>
-
-                <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,25" />
-
-                <!-- FORM CONTROLS -->
-                <StackPanel Margin="0,0,0,10">
-                    
-                    <!-- USERNAME (SINGLE FIELD IN A ROW) -->
-                    <TextBlock Text="USERNAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
-                    <TextBox Text="{Binding DraftUsername, UpdateSourceTrigger=PropertyChanged}" 
-                             mah:TextBoxHelper.Watermark="e.g. dev_admin" 
-                             mah:ControlsHelper.CornerRadius="8"
-                             mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
-                             mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
-                             Background="{DynamicResource SurfaceBrush}"
-                             Foreground="{DynamicResource TextPrimaryBrush}"
-                             BorderBrush="{DynamicResource BorderBrush}"
-                             CaretBrush="{DynamicResource AccentBrush}"
-                             Height="38" Margin="0,0,0,20" Padding="10,0" VerticalContentAlignment="Center" />
-
-                    <!-- FIRST & LAST NAME (2 IN A SINGLE ROW) -->
-                    <Grid Margin="0,0,0,20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="15" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- FIRST NAME -->
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="FIRST NAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
-                            <TextBox Text="{Binding DraftFirstName, UpdateSourceTrigger=PropertyChanged}" 
-                                     mah:TextBoxHelper.Watermark="First name" 
-                                     mah:ControlsHelper.CornerRadius="8"
-                                     mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
-                                     mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
-                                     Background="{DynamicResource SurfaceBrush}"
-                                     Foreground="{DynamicResource TextPrimaryBrush}"
-                                     BorderBrush="{DynamicResource BorderBrush}"
-                                     CaretBrush="{DynamicResource AccentBrush}"
-                                     Height="38" Padding="10,0" VerticalContentAlignment="Center" />
-                        </StackPanel>
-
-                        <!-- LAST NAME -->
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="LAST NAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
-                            <TextBox Text="{Binding DraftLastName, UpdateSourceTrigger=PropertyChanged}" 
-                                     mah:TextBoxHelper.Watermark="Last name (optional)" 
-                                     mah:ControlsHelper.CornerRadius="8"
-                                     mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
-                                     mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
-                                     Background="{DynamicResource SurfaceBrush}"
-                                     Foreground="{DynamicResource TextPrimaryBrush}"
-                                     BorderBrush="{DynamicResource BorderBrush}"
-                                     CaretBrush="{DynamicResource AccentBrush}"
-                                     Height="38" Padding="10,0" VerticalContentAlignment="Center" />
-                        </StackPanel>
-                    </Grid>
-                    
-                </StackPanel>
-
-                <!-- SAVE BUTTON (PRIMARY APP STYLE WITH HAND HOVER CURSOR) -->
-                <Button Content="Save Profile" 
-                        Command="{Binding SaveCommand}"
-                        Style="{StaticResource Hostix.Button.Primary}"
-                        Width="140"
-                        Height="36"
-                        Cursor="Hand"
-                        Margin="0,0,0,20"
-                        HorizontalAlignment="Right" />
-
-                <!-- LIVE AVATAR PREVIEW (COHESIVE BOTTOM BOX - HIGH VISIBILITY COLORS) -->
-                <Border Background="#101323" CornerRadius="10" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Avatar Preview" Foreground="#F8FAFC" FontSize="14" FontWeight="Bold" />
-                            <TextBlock Text="Live changes before saving" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Border Width="45" Height="45" CornerRadius="22.5" Background="#1E1B4B" BorderBrush="#4F46E5" BorderThickness="1.5" Margin="0,0,12,0">
-                                <TextBlock Text="{Binding DraftAvatarText}" Foreground="#F8FAFC" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Border Width="50" Height="50" CornerRadius="25" Background="#1E1B4B" BorderBrush="#4F46E5" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="👤" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="{Binding DraftFirstName}" Foreground="#F8FAFC" FontWeight="Bold" FontSize="14" />
-                                <TextBlock Text="{Binding DraftUsername}" Foreground="#94A3B8" FontSize="11" />
+
+                            <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Developer Profile" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="18" FontWeight="Bold" />
+                                <TextBlock Text="Configure your workstation identity and avatar." Style="{DynamicResource Hostix.Subtitle}" FontSize="12" />
                             </StackPanel>
+                        </Grid>
+
+                        <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,25" />
+
+                        <!-- FORM CONTROLS -->
+                        <StackPanel Margin="0,0,0,10">
+                            <!-- USERNAME -->
+                            <TextBlock Text="USERNAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
+                            <TextBox Text="{Binding DraftUsername, UpdateSourceTrigger=PropertyChanged}" 
+                                     mah:TextBoxHelper.Watermark="e.g. dev_admin" 
+                                     mah:ControlsHelper.CornerRadius="8"
+                                     mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
+                                     mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
+                                     Background="{DynamicResource SurfaceBrush}"
+                                     Foreground="{DynamicResource TextPrimaryBrush}"
+                                     BorderBrush="{DynamicResource BorderBrush}"
+                                     CaretBrush="{DynamicResource AccentBrush}"
+                                     Height="38" Margin="0,0,0,20" Padding="10,0" VerticalContentAlignment="Center" />
+
+                            <!-- FIRST & LAST NAME -->
+                            <Grid Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="15" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- FIRST NAME -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="FIRST NAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
+                                    <TextBox Text="{Binding DraftFirstName, UpdateSourceTrigger=PropertyChanged}" 
+                                             mah:TextBoxHelper.Watermark="First name" 
+                                             mah:ControlsHelper.CornerRadius="8"
+                                             mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
+                                             mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
+                                             Background="{DynamicResource SurfaceBrush}"
+                                             Foreground="{DynamicResource TextPrimaryBrush}"
+                                             BorderBrush="{DynamicResource BorderBrush}"
+                                             CaretBrush="{DynamicResource AccentBrush}"
+                                             Height="38" Padding="10,0" VerticalContentAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- LAST NAME -->
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="LAST NAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="2,0,0,8" />
+                                    <TextBox Text="{Binding DraftLastName, UpdateSourceTrigger=PropertyChanged}" 
+                                             mah:TextBoxHelper.Watermark="Last name (optional)" 
+                                             mah:ControlsHelper.CornerRadius="8"
+                                             mah:ControlsHelper.FocusBorderBrush="{DynamicResource AccentBrush}"
+                                             mah:ControlsHelper.MouseOverBorderBrush="{DynamicResource AccentBrush}"
+                                             Background="{DynamicResource SurfaceBrush}"
+                                             Foreground="{DynamicResource TextPrimaryBrush}"
+                                             BorderBrush="{DynamicResource BorderBrush}"
+                                             CaretBrush="{DynamicResource AccentBrush}"
+                                             Height="38" Padding="10,0" VerticalContentAlignment="Center" />
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
+
+                        <!-- SAVE BUTTON -->
+                        <Button Content="Save Profile" 
+                                Command="{Binding SaveCommand}"
+                                Style="{StaticResource Hostix.Button.Primary}"
+                                Width="140"
+                                Height="36"
+                                Cursor="Hand"
+                                Margin="0,0,0,20"
+                                HorizontalAlignment="Right" />
+
+                        <!-- LIVE AVATAR PREVIEW -->
+                        <Border Background="#101323" CornerRadius="10" Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Avatar Preview" Foreground="#F8FAFC" FontSize="14" FontWeight="Bold" />
+                                    <TextBlock Text="Live changes before saving" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="45" Height="45" CornerRadius="22.5" Background="#1E1B4B" BorderBrush="#4F46E5" BorderThickness="1.5" Margin="0,0,12,0">
+                                        <TextBlock Text="{Binding DraftAvatarText}" Foreground="#F8FAFC" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding DraftFirstName}" Foreground="#F8FAFC" FontWeight="Bold" FontSize="14" />
+                                        <TextBlock Text="{Binding DraftUsername}" Foreground="#94A3B8" FontSize="11" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- UPDATES CARD -->
+                <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Margin="0,0,0,20" ClipToBounds="True">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Content Area with Padding -->
+                        <Border Grid.Row="0" Padding="20,16">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Circular Update Icon (Left - Decreased size) -->
+                                <Grid Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <Border Width="36" Height="36" CornerRadius="18" Background="#10B981" Opacity="0.1" />
+                                    <Border Width="36" Height="36" CornerRadius="18" BorderBrush="#10B981" BorderThickness="1">
+                                        <Path Data="M19 8l-4 4h3c0 3.31-2.69 6-6 6-1.01 0-1.97-.25-2.8-.7l-1.46 1.46C8.97 19.54 10.43 20 12 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46C15.03 4.46 13.57 4 12 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z" 
+                                              Fill="#10B981" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </Grid>
+
+                                <!-- Version Text Details & Status Text (Center-Left) -->
+                                <DockPanel Grid.Column="1" Margin="16,0,16,0" LastChildFill="False" VerticalAlignment="Center">
+                                    <!-- Left side: Title & Version -->
+                                    <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding AppVersion, StringFormat='Current Version: v{0}'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,4,0,0" />
+                                    </StackPanel>
+
+                                    <!-- Right side: Dynamic status text -->
+                                    <TextBlock DockPanel.Dock="Right" 
+                                               Text="{Binding UpdateStatus}" 
+                                               Foreground="{DynamicResource TextPrimaryBrush}" 
+                                               FontWeight="SemiBold" 
+                                               FontSize="12" 
+                                               VerticalAlignment="Center" 
+                                               TextAlignment="Right"
+                                               TextWrapping="Wrap"
+                                               MaxWidth="320" />
+                                </DockPanel>
+
+                                <!-- Buttons (Right) -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <!-- Check Update button -->
+                                    <Button Command="{Binding CheckForUpdatesCommand}"
+                                            Style="{StaticResource Hostix.Button}"
+                                            Width="120" Height="36" Cursor="Hand" Margin="0,0,5,0">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <mah:ProgressRing Width="14" Height="14" Margin="0,0,6,0" Foreground="{DynamicResource TextPrimaryBrush}">
+                                                <mah:ProgressRing.Style>
+                                                    <Style TargetType="mah:ProgressRing">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsCheckingUpdate}" Value="True" />
+                                                                    <Condition Binding="{Binding IsUpdateAvailable}" Value="False" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </mah:ProgressRing.Style>
+                                            </mah:ProgressRing>
+                                            <TextBlock Text="Check Update" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+
+                                    <!-- Install/Download button -->
+                                    <Button Command="{Binding InstallUpdateCommand}"
+                                            Style="{StaticResource Hostix.Button.Primary}"
+                                            Width="120" Height="36" Cursor="Hand"
+                                            Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <mah:ProgressRing Width="14" Height="14" Margin="0,0,6,0" Foreground="White">
+                                                <mah:ProgressRing.Style>
+                                                    <Style TargetType="mah:ProgressRing">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsCheckingUpdate}" Value="True" />
+                                                                    <Condition Binding="{Binding IsUpdateAvailable}" Value="True" />
+                                                                    <Condition Binding="{Binding IsDownloadComplete}" Value="False" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </mah:ProgressRing.Style>
+                                            </mah:ProgressRing>
+                                            <TextBlock Text="{Binding UpdateButtonText}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Edge-to-edge loading bar at the very bottom of the card -->
+                        <ProgressBar Grid.Row="1" 
+                                     Value="{Binding UpdateProgress}" 
+                                     Maximum="100" 
+                                     Height="4" 
+                                     Background="Transparent"
+                                     Foreground="{DynamicResource AccentBrush}"
+                                     BorderThickness="0"
+                                     HorizontalAlignment="Stretch">
+                            <ProgressBar.Style>
+                                <Style TargetType="ProgressBar">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsCheckingUpdate}" Value="True" />
+                                                <Condition Binding="{Binding IsUpdateAvailable}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ProgressBar.Style>
+                        </ProgressBar>
                     </Grid>
                 </Border>
             </StackPanel>
+        </ScrollViewer>
+
+        <!-- RIGHT SIDE: Versions History List (40% space) -->
+        <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Version History" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="Bold" Margin="0,0,0,4" />
+                <TextBlock Grid.Row="1" Text="Roll back or change build" Style="{DynamicResource Hostix.Subtitle}" FontSize="11" Margin="0,0,0,15" />
+
+                <!-- Loading Indicator -->
+                <TextBlock Grid.Row="2" Text="Loading versions..." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Visibility="{Binding IsLoadingVersions, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <!-- Scrollable list of versions -->
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              Visibility="{Binding IsLoadingVersions, Converter={StaticResource BoolToVisibilityInvertedConverter}}">
+                    <ItemsControl ItemsSource="{Binding GitVersions}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,10">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#090A0F" BlurRadius="6" ShadowDepth="1.5" Opacity="0.06" Direction="270" />
+                                    </Border.Effect>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding DisplayName}" Foreground="#0F172A" FontSize="12" FontWeight="Bold" />
+                                            <TextBlock Text="{Binding VersionName}" Foreground="#475569" FontSize="10" Margin="0,2,0,0" />
+                                        </StackPanel>
+
+                                        <Button Grid.Column="1" Content="Install" 
+                                                Command="{Binding DataContext.InstallSpecificVersionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{DynamicResource Hostix.Button.Primary}"
+                                                Background="#4F46E5" BorderBrush="#6366F1"
+                                                Height="26" Width="60" FontSize="10" FontWeight="Medium" Padding="0" Cursor="Hand" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
         </Border>
-
-        <!-- UPDATES CARD -->
-        <Border Width="500" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="30" Margin="0,20,0,0">
-            <StackPanel>
-                <Grid Margin="0,0,0,25">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Border Width="50" Height="50" CornerRadius="25" Background="#064E3B" BorderBrush="#10B981" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🔄" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-
-                    <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="18" FontWeight="Bold" />
-                        <TextBlock Text="{Binding AppVersion, StringFormat='Current Version: v{0}'}" Style="{DynamicResource Hostix.Subtitle}" FontSize="12" />
-                    </StackPanel>
-                </Grid>
-
-                <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,25" />
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="{Binding UpdateStatus}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold" FontSize="13" />
-                        <ProgressBar Value="{Binding UpdateProgress}" Maximum="100" Height="4" Margin="0,10,20,0" 
-                                     Visibility="{Binding IsCheckingUpdate, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="Check Updates" 
-                                Command="{Binding CheckForUpdatesCommand}"
-                                Style="{DynamicResource Hostix.Button.Ghost}"
-                                Width="120" Height="36" Cursor="Hand" Margin="0,0,10,0" />
-
-                        <Button Content="Install Update" 
-                                Command="{Binding InstallUpdateCommand}"
-                                Style="{StaticResource Hostix.Button.Primary}"
-                                Width="120" Height="36" Cursor="Hand"
-                                Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </StackPanel>
-                </Grid>
-            </StackPanel>
-        </Border>
-
-    </StackPanel>
+    </Grid>
 </UserControl>

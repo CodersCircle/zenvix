@@ -19,11 +19,20 @@ namespace Hostix.Modules.Services
         public bool IsUpdateAvailable { get; set; }
     }
 
+    public class GitVersionItem
+    {
+        public string VersionName { get; set; } = "";
+        public string DownloadUrl { get; set; } = "";
+        public string DisplayName { get; set; } = "";
+    }
+
     public interface IAppUpdaterService
     {
         string CurrentVersion { get; }
         Task<UpdateInfo?> CheckForUpdatesAsync();
-        Task<bool> DownloadAndInstallUpdateAsync(UpdateInfo info, Action<double>? progressCallback = null);
+        Task<bool> DownloadUpdateAsync(UpdateInfo info, Action<double>? progressCallback = null);
+        void RunInstaller(string version);
+        Task<List<GitVersionItem>> GetVersionsHistoryAsync();
     }
 
     public class AppUpdaterService : IAppUpdaterService
@@ -131,7 +140,7 @@ namespace Hostix.Modules.Services
             }
         }
 
-        public async Task<bool> DownloadAndInstallUpdateAsync(UpdateInfo info, Action<double>? progressCallback = null)
+        public async Task<bool> DownloadUpdateAsync(UpdateInfo info, Action<double>? progressCallback = null)
         {
             if (string.IsNullOrEmpty(info.DownloadUrl)) return false;
 
@@ -179,34 +188,87 @@ namespace Hostix.Modules.Services
                 }
                 while (isMoreToRead);
 
-                Log.Information("[Updater] Download complete. Launching installer...");
-
-                // Execute installer silently
-                // /VERYSILENT: run completely silently
-                // /SUPPRESSMSGBOXES: don't ask for any confirmation
-                // /CLOSEAPPLICATIONS: close Zenvix to update
-                // /RESTARTAPPLICATIONS: restart Zenvix after update
-                // /SP-: disable the 'This will install...' prompt
-                var psi = new ProcessStartInfo
-                {
-                    FileName = installerPath,
-                    Arguments = "/VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /SP- /NORESTART",
-                    UseShellExecute = true,
-                    Verb = "runas" // Request elevation for installer
-                };
-
-                Process.Start(psi);
-
-                // Signal application to shut down immediately
-                Environment.Exit(0);
-
+                Log.Information("[Updater] Download complete: {Path}", installerPath);
                 return true;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[Updater] Failed to download or install update");
+                Log.Error(ex, "[Updater] Failed to download update");
                 return false;
             }
+        }
+
+        public void RunInstaller(string version)
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "ZenvixUpdate");
+            var installerPath = Path.Combine(tempDir, $"Zenvix-Update-{version}.exe");
+
+            Log.Information("[Updater] Launching installer from {Path}", installerPath);
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = installerPath,
+                Arguments = "/VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /SP- /NORESTART /DIR=\"C:\\Zenvix\"",
+                UseShellExecute = true,
+                Verb = "runas"
+            };
+
+            Process.Start(psi);
+            Environment.Exit(0);
+        }
+
+        public async Task<List<GitVersionItem>> GetVersionsHistoryAsync()
+        {
+            var list = new List<GitVersionItem>();
+            try
+            {
+                var url = "https://api.github.com/repos/CodersCircle/zenvix/contents/versions";
+                var response = await _httpClient.GetAsync(url);
+                if (!response.IsSuccessStatusCode) return list;
+
+                var json = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(json);
+
+                if (doc.RootElement.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in doc.RootElement.EnumerateArray())
+                    {
+                        if (item.TryGetProperty("type", out var typeProp) && typeProp.GetString() == "file" &&
+                            item.TryGetProperty("name", out var nameProp))
+                        {
+                            var name = nameProp.GetString();
+                            if (name != null && name.StartsWith("Zenvix-Setup-V", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var parsedVer = ParseVersionFromFilename(name);
+                                if (parsedVer != null)
+                                {
+                                    var downloadUrl = "";
+                                    if (item.TryGetProperty("download_url", out var downloadUrlProp))
+                                    {
+                                        downloadUrl = downloadUrlProp.GetString() ?? "";
+                                    }
+
+                                    list.Add(new GitVersionItem
+                                    {
+                                        VersionName = $"v{parsedVer}",
+                                        DisplayName = $"Version {parsedVer}",
+                                        DownloadUrl = downloadUrl
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[Updater] Failed to get versions history");
+            }
+
+            return list.OrderByDescending(v => {
+                Version.TryParse(v.VersionName.TrimStart('v', 'V'), out var parsed);
+                return parsed ?? new Version(0, 0);
+            }).ToList();
         }
     }
 }
