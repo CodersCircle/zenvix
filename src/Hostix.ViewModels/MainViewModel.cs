@@ -135,10 +135,9 @@ namespace Hostix.ViewModels
         {
             _ = Task.Run(async () =>
             {
-                // Immediate check on startup
-                try
+                while (true)
                 {
-                    Log.Information("[MainViewModel] Running initial update check on startup...");
+                    await Task.Delay(TimeSpan.FromMinutes(30)); // Check every 30 minutes
                     var info = await _updater.CheckForUpdatesAsync();
                     if (info != null && info.IsUpdateAvailable)
                     {
@@ -148,33 +147,6 @@ namespace Hostix.ViewModels
                             _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
                             _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings to update.");
                         });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "[MainViewModel] Initial update check failed");
-                }
-
-                // Periodic check every minute
-                while (true)
-                {
-                    await Task.Delay(TimeSpan.FromMinutes(1)); // Check every minute
-                    try
-                    {
-                        var info = await _updater.CheckForUpdatesAsync();
-                        if (info != null && info.IsUpdateAvailable)
-                        {
-                            _dispatcher.Invoke(() =>
-                            {
-                                _settingsVm.IsUpdateAvailable = true;
-                                _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
-                                _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings to update.");
-                            });
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "[MainViewModel] Periodic update check failed");
                     }
                 }
             });

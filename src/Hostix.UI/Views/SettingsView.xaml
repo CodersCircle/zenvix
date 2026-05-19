@@ -168,7 +168,7 @@
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Content="Check Updates" 
                                 Command="{Binding CheckForUpdatesCommand}"
-                                Style="{StaticResource Hostix.Button.Secondary}"
+                                Style="{DynamicResource Hostix.Button.Ghost}"
                                 Width="120" Height="36" Cursor="Hand" Margin="0,0,10,0" />
 
                         <Button Content="Install Update" 
