@@ -361,48 +361,73 @@
         async function fetchReleases() {
             const container = document.getElementById("releases-list");
             try {
-                const response = await fetch("https://api.github.com/repos/CodersCircle/zenvix/releases");
-                if (!response.ok) throw new Error("Failed to fetch releases");
+                const response = await fetch("https://api.github.com/repos/CodersCircle/zenvix/contents/versions");
+                if (!response.ok) throw new Error("Failed to fetch versions folder contents");
 
-                const releases = await response.json();
-                if (releases.length === 0) {
-                    container.innerHTML = '<div class="empty-state">No official releases available yet.</div>';
+                const files = await response.json();
+                // Filter only setup executables
+                const setupFiles = files.filter(f => f.name.startsWith("Zenvix-Setup-V") && f.name.endsWith(".exe"));
+                
+                if (setupFiles.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No installers found in versions folder.</div>';
                     return;
                 }
 
+                // Sort files descending (e.g. V105 first, then V102)
+                setupFiles.sort((a, b) => b.name.localeCompare(a.name));
+
+                // Take last 3 versions
+                const recentFiles = setupFiles.slice(0, 3);
                 let html = "";
-                releases.slice(0, 3).forEach(rel => {
-                    const date = new Date(rel.published_at).toLocaleString("en-US", {
-                        dateStyle: "medium",
-                        timeStyle: "short"
-                    });
+
+                for (const file of recentFiles) {
+                    let dateStr = "Unknown Date";
+                    let shortDesc = "No description provided.";
+                    const downloadUrl = file.download_url;
                     
-                    let downloadUrl = rel.html_url;
-                    if (rel.assets && rel.assets.length > 0) {
-                        // Find setup executable
-                        const setupAsset = rel.assets.find(a => a.name.endsWith(".exe"));
-                        if (setupAsset) {
-                            downloadUrl = setupAsset.browser_download_url;
+                    // Parse version name from filename (e.g. Zenvix-Setup-V105.exe -> v1.0.5)
+                    let versionTag = file.name.replace("Zenvix-Setup-", "").replace(".exe", "");
+                    const vMatch = versionTag.match(/V(\d)(\d)(\d)/);
+                    if (vMatch) {
+                        versionTag = `v${vMatch[1]}.${vMatch[2]}.${vMatch[3]}`;
+                    }
+
+                    try {
+                        // Fetch commit details for this file to get date and commit message (short description)
+                        const commitRes = await fetch(`https://api.github.com/repos/CodersCircle/zenvix/commits?path=versions/${file.name}`);
+                        if (commitRes.ok) {
+                            const commits = await commitRes.json();
+                            if (commits && commits.length > 0) {
+                                const latestCommit = commits[0];
+                                dateStr = new Date(latestCommit.commit.author.date).toLocaleString("en-US", {
+                                    dateStyle: "medium",
+                                    timeStyle: "short"
+                                });
+                                shortDesc = latestCommit.commit.message.split("\n")[0];
+                            }
                         }
+                    } catch (cErr) {
+                        console.log(`Failed to fetch commit date for ${file.name}:`, cErr);
                     }
 
                     html += `
                         <div class="version-card">
                             <div class="version-header">
-                                <span class="version-tag">${rel.tag_name}</span>
-                                <span class="version-date">${date}</span>
+                                <span class="version-tag">${versionTag}</span>
+                                <span class="version-date">${dateStr}</span>
                             </div>
-                            <div class="version-body">${rel.body || "No release notes provided."}</div>
+                            <div class="version-body">${shortDesc}</div>
                             <a href="${downloadUrl}" class="version-download-btn" target="_blank">
-                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download Package
+                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download installer
                             </a>
                         </div>
                     `;
-                });
+                }
+
                 container.innerHTML = html;
                 lucide.createIcons();
             } catch (err) {
-                container.innerHTML = `<div class="empty-state" style="color: #ef4444;">Error loading releases: ${err.message}</div>`;
+                container.innerHTML = `<div class="empty-state" style="color: #ef4444;">Error loading versions: ${err.message}</div>`;
             }
         }
 
