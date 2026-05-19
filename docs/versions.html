@@ -411,15 +411,26 @@
                     }
 
                     html += `
-                        <div class="version-card">
-                            <div class="version-header">
-                                <span class="version-tag">${versionTag}</span>
-                                <span class="version-date">${dateStr}</span>
+                        <div class="commit-card">
+                            <div class="commit-avatar" style="display: flex; align-items: center; justify-content: center; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25);">
+                                <i data-lucide="package" style="width: 18px; height: 18px; stroke: #818cf8;"></i>
                             </div>
-                            <div class="version-body">${shortDesc}</div>
-                            <a href="${downloadUrl}" class="version-download-btn" target="_blank">
-                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download installer
-                            </a>
+                            <div class="commit-content">
+                                <div class="commit-message" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                                    <span>Zenvix Setup ${versionTag}</span>
+                                    <a href="${downloadUrl}" class="version-download-btn" target="_blank" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; margin: 0; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.25); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="download" style="width: 12px; height: 12px;"></i> Download
+                                    </a>
+                                </div>
+                                <div class="commit-meta">
+                                    <span class="commit-author">CodersCircle</span>
+                                    <span class="commit-hash" style="background: rgba(16, 185, 129, 0.12); color: #34d399; font-family: sans-serif; font-size: 0.7rem; font-weight: 600;">Active</span>
+                                    <span>${dateStr}</span>
+                                </div>
+                                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 6px; line-height: 1.4;">
+                                    ${shortDesc}
+                                </div>
+                            </div>
                         </div>
                     `;
                 }
