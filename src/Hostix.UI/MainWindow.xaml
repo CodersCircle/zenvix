@@ -60,7 +60,7 @@
  
                 <StackPanel Grid.Row="0" Margin="5,10,0,40">
                     <TextBlock Text="ZENVIX" Style="{DynamicResource Hostix.Title}" Foreground="{StaticResource Zenvix.TextPrimary}" />
-                    <TextBlock Text="v1.0.0" Style="{DynamicResource Hostix.Subtitle}" Foreground="{StaticResource Zenvix.TextSecondary}" Margin="0,2,0,0" />
+                    <TextBlock Text="{Binding AppVersion}" Style="{DynamicResource Hostix.Subtitle}" Foreground="{StaticResource Zenvix.TextSecondary}" Margin="0,2,0,0" />
                 </StackPanel>
  
                 <StackPanel Grid.Row="1">

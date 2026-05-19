@@ -58,6 +58,7 @@ namespace Hostix.UI
             services.AddSingleton<IDialogService, WpfDialogService>();
             services.AddSingleton<IRuntimeStateManager, RuntimeStateManager>();
             services.AddSingleton<IRuntimeStateBridge, RuntimeStateBridge>();
+            services.AddSingleton<IAppUpdaterService, AppUpdaterService>();
             services.AddSingleton<IClipboardService, WpfClipboardService>();
             services.AddSingleton<IRuntimeLocator, RuntimeLocator>();
             services.AddSingleton<IRuntimeInstaller, RuntimeInstaller>();
@@ -69,6 +70,7 @@ namespace Hostix.UI
             services.AddSingleton<DatabasesViewModel>();
             services.AddSingleton<ServicesViewModel>();
             services.AddSingleton<WebsitesViewModel>();
+            services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<MainViewModel>();
         }
     }

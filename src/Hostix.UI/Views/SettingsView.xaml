@@ -8,8 +8,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1000">
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
     <!-- Dead Center Form Container -->
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         
         <!-- COMPACT PROFILE CARD -->
         <Border Width="500" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="30">
@@ -125,8 +129,57 @@
                         </StackPanel>
                     </Grid>
                 </Border>
-
             </StackPanel>
         </Border>
-    </Grid>
+
+        <!-- UPDATES CARD -->
+        <Border Width="500" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="30" Margin="0,20,0,0">
+            <StackPanel>
+                <Grid Margin="0,0,0,25">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Width="50" Height="50" CornerRadius="25" Background="#064E3B" BorderBrush="#10B981" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="🔄" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="18" FontWeight="Bold" />
+                        <TextBlock Text="{Binding AppVersion, StringFormat='Current Version: v{0}'}" Style="{DynamicResource Hostix.Subtitle}" FontSize="12" />
+                    </StackPanel>
+                </Grid>
+
+                <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,25" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding UpdateStatus}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold" FontSize="13" />
+                        <ProgressBar Value="{Binding UpdateProgress}" Maximum="100" Height="4" Margin="0,10,20,0" 
+                                     Visibility="{Binding IsCheckingUpdate, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Check Updates" 
+                                Command="{Binding CheckForUpdatesCommand}"
+                                Style="{StaticResource Hostix.Button.Secondary}"
+                                Width="120" Height="36" Cursor="Hand" Margin="0,0,10,0" />
+
+                        <Button Content="Install Update" 
+                                Command="{Binding InstallUpdateCommand}"
+                                Style="{StaticResource Hostix.Button.Primary}"
+                                Width="120" Height="36" Cursor="Hand"
+                                Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
 </UserControl>

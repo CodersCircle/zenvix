@@ -34,6 +34,72 @@ namespace Hostix.ViewModels
     public partial class LogsViewModel : ObservableObject { }
     public partial class SettingsViewModel : ObservableObject 
     {
+        private readonly IAppUpdaterService? _updater;
+        
+        [ObservableProperty] private string _updateStatus = "Check for Updates";
+        [ObservableProperty] 
+        [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
+        [NotifyCanExecuteChangedFor(nameof(InstallUpdateCommand))]
+        private bool _isCheckingUpdate = false;
+        
+        [ObservableProperty] private double _updateProgress = 0;
+        
+        [ObservableProperty] 
+        [NotifyCanExecuteChangedFor(nameof(InstallUpdateCommand))]
+        private bool _isUpdateAvailable = false;
+        
+        public bool IsNotCheckingUpdate => !IsCheckingUpdate;
+        public bool CanInstallUpdate => IsUpdateAvailable && !IsCheckingUpdate;
+        
+        public string AppVersion => _updater?.CurrentVersion ?? "1.0.0";
+
+        public SettingsViewModel() { } // Design-time constructor
+
+        public SettingsViewModel(IAppUpdaterService updater)
+        {
+            _updater = updater;
+        }
+
+        [CommunityToolkit.Mvvm.Input.RelayCommand(CanExecute = nameof(IsNotCheckingUpdate))]
+        private async Task CheckForUpdatesAsync()
+        {
+            if (_updater == null) return;
+            IsCheckingUpdate = true;
+            UpdateStatus = "Checking...";
+            
+            var info = await _updater.CheckForUpdatesAsync();
+            if (info != null && info.IsUpdateAvailable)
+            {
+                IsUpdateAvailable = true;
+                UpdateStatus = $"Update Available: {info.Version}";
+            }
+            else
+            {
+                UpdateStatus = "Up to date";
+            }
+            IsCheckingUpdate = false;
+        }
+
+        [CommunityToolkit.Mvvm.Input.RelayCommand(CanExecute = nameof(CanInstallUpdate))]
+        private async Task InstallUpdateAsync()
+        {
+            if (_updater == null || !IsUpdateAvailable) return;
+            IsCheckingUpdate = true;
+            UpdateStatus = "Downloading...";
+            
+            var info = await _updater.CheckForUpdatesAsync();
+            if (info != null)
+            {
+                await _updater.DownloadAndInstallUpdateAsync(info, p => {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                        UpdateProgress = p;
+                        UpdateStatus = $"Downloading... {p:F1}%";
+                    });
+                });
+            }
+            IsCheckingUpdate = false;
+        }
+
         [ObservableProperty]
         private string _username = "admin";
 

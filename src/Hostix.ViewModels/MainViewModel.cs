@@ -49,8 +49,9 @@ namespace Hostix.ViewModels
         private readonly DatabasesViewModel _databasesVm;
         private readonly ServicesViewModel _servicesVm;
         private readonly LogsViewModel _logsVm = new();
-        private readonly SettingsViewModel _settingsVm = new();
+        private readonly SettingsViewModel _settingsVm;
         private readonly WorkstationsViewModel _workstationsVm = new();
+        private readonly IAppUpdaterService _updater;
 
         public MainViewModel(
             IRuntimeEngine runtimeEngine,
@@ -66,6 +67,8 @@ namespace Hostix.ViewModels
             DatabasesViewModel databasesViewModel,
             ServicesViewModel servicesViewModel,
             WebsitesViewModel websitesViewModel,
+            SettingsViewModel settingsViewModel,
+            IAppUpdaterService updater,
             ISSLManager sslManager)
         {
             _runtimeEngine        = runtimeEngine;
@@ -78,6 +81,8 @@ namespace Hostix.ViewModels
             _stateManager         = stateManager;
             _clipboard            = clipboard;
             _credentialsManager   = credentialsManager;
+            _settingsVm           = settingsViewModel;
+            _updater              = updater;
             _sslManager           = sslManager;
 
             // Initialize Child ViewModels with shared state
@@ -116,6 +121,29 @@ namespace Hostix.ViewModels
                 await _runtimeEngine.InitializeAsync();
                 _stateManager.AddEvent("Startup scan complete. All services in Stopped state.");
                 _dispatcher.Invoke(RefreshData);
+            });
+
+            StartUpdateChecker();
+        }
+
+        public string AppVersion => $"v{_updater.CurrentVersion}";
+
+        private void StartUpdateChecker()
+        {
+            _ = Task.Run(async () => {
+                while (true)
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(30)); // Check every 30 minutes
+                    var info = await _updater.CheckForUpdatesAsync();
+                    if (info != null && info.IsUpdateAvailable)
+                    {
+                        _dispatcher.Invoke(() => {
+                            _settingsVm.IsUpdateAvailable = true;
+                            _settingsVm.UpdateStatus = $"Update Available: {info.Version}";
+                            _stateManager.AddEvent($"New version {info.Version} is available! Go to Settings to update.");
+                        });
+                    }
+                }
             });
         }
 
