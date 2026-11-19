@@ -2083,3 +2083,33 @@ a {
     max-width: none;
     margin-top: 12px;
 }
+
+/* Green hero pill (SmartScreen install hint) – same shape as .hero-badge */
+.hero-badge-green {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.28);
+    color: #34d399;
+    max-width: 920px;
+    text-align: left;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.hero-badge-green .badge-dot {
+    flex-shrink: 0;
+    background: #34d399;
+    box-shadow: 0 0 8px #34d399;
+}
+
+.hero-badge-green strong,
+.hero-badge-green em {
+    color: #6ee7b7;
+}
+
+@media (max-width: 768px) {
+    .hero-badge-green {
+        border-radius: 16px;
+        font-size: 0.78rem;
+        padding: 10px 14px;
+    }
+}
