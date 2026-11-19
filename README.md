@@ -59,10 +59,10 @@ Get the official ZENVIX Setup installer instantly in a single click:
 ```
 ZENVIX/
 ├── src/
-│   ├── Hostix.UI/             # WPF MVVM Presentation layer
-│   ├── Hostix.ViewModels/     # Core MVVM bindings, state navigation, & profiles
-│   ├── Hostix.Core/           # Server engines, SSL, directories, and orchestrators
-│   └── Hostix.Infrastructure/ # Database managers, Nginx/Apache configuration builders
+│   ├── Zenvix.UI/             # WPF MVVM Presentation layer
+│   ├── Zenvix.ViewModels/     # Core MVVM bindings, state navigation, & profiles
+│   ├── Zenvix.Core/           # Server engines, SSL, directories, and orchestrators
+│   └── Zenvix.Infrastructure/ # Database managers, Nginx/Apache configuration builders
 ├── tools/                     # Pre-packaged runtime configurations
 ├── Assets/                    # Application icons, graphics, & branding
 └── zenvix.iss                 # Inno Setup installation wizard configuration
@@ -78,11 +78,7 @@ If you want to compile ZENVIX from source code locally:
 To build the optimized WPF executable:
 ```powershell
 # Publish win-x64 Release build
-dotnet publish .\src\Hostix.UI\Hostix.UI.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:PublishReadyToRun=true --self-contained false -o .\dist\
-
-# Rename published executable to ZENVIX branding
-Remove-Item -Path .\dist\Zenvix.exe -Force -ErrorAction SilentlyContinue
-Rename-Item -Path .\dist\Hostix.UI.exe -NewName Zenvix.exe
+dotnet publish .\src\Zenvix.UI\Zenvix.UI.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:PublishReadyToRun=true --self-contained false -o .\dist\
 ```
 
 ### 2. Compile Setup Installer

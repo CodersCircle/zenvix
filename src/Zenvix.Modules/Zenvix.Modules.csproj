@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zenvix.Runtime\Zenvix.Runtime.csproj" />
+    <ProjectReference Include="..\Zenvix.Infrastructure\Zenvix.Infrastructure.csproj" />
+    <ProjectReference Include="..\Zenvix.Core\Zenvix.Core.csproj" />
+    <ProjectReference Include="..\Zenvix.Shared\Zenvix.Shared.csproj" />
+    <ProjectReference Include="..\Zenvix.Events\Zenvix.Events.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SSH.NET" Version="2024.2.0" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

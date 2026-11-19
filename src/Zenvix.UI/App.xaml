@@ -1,0 +1,32 @@
+<Application x:Class="Zenvix.UI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Zenvix.UI"
+             xmlns:conv="clr-namespace:Zenvix.UI.Converters"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Purple.xaml" />
+                <ui:ThemesDictionary Theme="Light" />
+                <ui:ControlsDictionary />
+                <ResourceDictionary Source="/DesignSystem/DesignSystemResources.xaml" />
+                <ResourceDictionary Source="/Styles/ModernTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <conv:StatusToColorConverter x:Key="StatusToColorConverter" />
+            <conv:StatusToButtonTextConverter x:Key="StatusToButtonTextConverter" />
+            <conv:StatusToIsEnabledConverter x:Key="StatusToIsEnabledConverter" />
+            <conv:StatusToSpinnerVisibilityConverter x:Key="StatusToSpinnerVisibilityConverter" />
+            <conv:StatusToLabelVisibilityConverter x:Key="StatusToLabelVisibilityConverter" />
+            <conv:StatusToVisibilityConverter x:Key="StatusToVisibilityConverter" />
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <conv:TechIconConverter x:Key="TechIconConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

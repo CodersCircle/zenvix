@@ -6,7 +6,7 @@ Welcome to the official developer notes for **ZENVIX**! This file serves as a qu
 
 ## 🚀 1. Git Workflow (How to Push Code)
 
-Follow these steps in your terminal (PowerShell, Command Prompt, or Git Bash) from the project root (`Hostix/`) to stage, commit, and push your changes:
+Follow these steps in your terminal (PowerShell, Command Prompt, or Git Bash) from the project root (`Zenvix/`) to stage, commit, and push your changes:
 
 ### 📝 Standard Command Sequence
 ```bash

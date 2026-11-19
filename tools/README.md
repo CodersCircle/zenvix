@@ -1,4 +1,4 @@
-# Hostix Embedded Tools Directory
+# Zenvix Embedded Tools Directory
 
 ## Quick Start (No PHP? Place it here)
 Place a portable PHP binary at:
@@ -15,7 +15,7 @@ Download PHP for Windows (no installer needed):
 - tools/redisinsight/           ? future
 - tools/mongo-express/          ? future
 
-## How Hostix finds PHP (in order):
+## How Zenvix finds PHP (in order):
 1. tools/php/php.exe            (embedded — preferred)
 2. C:\laragon\bin\php\...
 3. C:\xampp\php\php.exe

@@ -1,6 +1,6 @@
 <?php
 /**
- * Hostix PHP Built-in Server Router
+ * Zenvix PHP Built-in Server Router
  * -----------------------------------
  * PHP's built-in server uses this as the "router script".
  * It routes requests to either autologin.php or adminer.php.

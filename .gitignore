@@ -26,7 +26,6 @@ Desktop.ini
 !DEVELOPER-NOTES.md
 
 # Project scratch/config files
-runtime-manifest.json
 zenvix.iss
 run_log.txt
 app_exit.txt

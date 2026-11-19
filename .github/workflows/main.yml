@@ -1,4 +1,4 @@
-name: Hostix CI/CD
+name: Zenvix CI/CD
 
 on:
   push:
@@ -19,13 +19,13 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore ./src/Hostix.sln
+      run: dotnet restore ./src/Zenvix.sln
 
     - name: Build
-      run: dotnet build ./src/Hostix.sln --no-restore --configuration Release
+      run: dotnet build ./src/Zenvix.sln --no-restore --configuration Release
 
     - name: Test
-      run: dotnet test ./src/Hostix.sln --no-build --verbosity normal
+      run: dotnet test ./src/Zenvix.sln --no-build --verbosity normal
 
     - name: Publish Portable
-      run: dotnet publish ./src/Hostix.UI/Hostix.UI.csproj -c Release -o ./publish/portable --runtime win-x64 --self-contained true
+      run: dotnet publish ./src/Zenvix.UI/Zenvix.UI.csproj -c Release -o ./publish/portable --runtime win-x64 --self-contained true

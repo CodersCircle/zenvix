@@ -1,6 +1,6 @@
 <?php
 /**
- * Hostix Autologin Bridge for Adminer
+ * Zenvix Autologin Bridge for Adminer
  * ------------------------------------
  * Adminer ignores password= in GET query strings for security.
  * This page accepts credentials via GET, then immediately auto-submits
@@ -24,7 +24,7 @@ $db       = htmlspecialchars($_GET['db']       ?? 'test');
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Connecting — Hostix Database Panel</title>
+<title>Connecting — Zenvix Database Panel</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -58,7 +58,7 @@ $db       = htmlspecialchars($_GET['db']       ?? 'test');
     Adminer's login endpoint accepts auth[] fields via POST.
     This is the only way to pass a password + tick Permanent login.
   -->
-  <form id="hostix_autologin" method="post" action="/">
+  <form id="zenvix_autologin" method="post" action="/">
     <input type="hidden" name="auth[driver]"    value="<?= $driver ?>">
     <input type="hidden" name="auth[server]"    value="<?= $server ?>">
     <input type="hidden" name="auth[username]"  value="<?= $username ?>">
@@ -69,7 +69,7 @@ $db       = htmlspecialchars($_GET['db']       ?? 'test');
 
   <script>
     // Auto-submit immediately — the spinner shows briefly while this happens
-    document.getElementById('hostix_autologin').submit();
+    document.getElementById('zenvix_autologin').submit();
   </script>
 </body>
 </html>
