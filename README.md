@@ -15,6 +15,10 @@ Get the official ZENVIX Setup installer instantly in a single click:
 
 *(Note: ZENVIX is designed and built exclusively for Windows 10 & 11 64-bit systems).*
 
+> **"Windows protected your PC"?** Zenvix is open source but its installer isn't code-signed yet, so
+> Microsoft Defender SmartScreen shows this for new downloads. Click **More info → Run anyway** to install.
+> The installer has been submitted to Microsoft for review, and code signing is planned.
+
 ---
 
 ### 💻 System Requirements
@@ -24,7 +28,7 @@ Get the official ZENVIX Setup installer instantly in a single click:
 
 ### 🚀 How to Install & Run
 1. **Download:** Click the direct download button above.
-2. **Launch Setup:** Double-click **`Zenvix-Setup.exe`**. The professional wizard will guide you through:
+2. **Launch Setup:** Double-click **`Zenvix-Setup.exe`** (if SmartScreen appears, choose **More info → Run anyway**). The wizard will guide you through:
    * Accepting the License terms
    * Choosing your destination directory (`C:\ZENVIX` is recommended)
    * Creating Desktop & Start Menu shortcuts

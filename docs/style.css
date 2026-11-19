@@ -2054,3 +2054,32 @@ a {
     font-size: 0.8rem;
     color: var(--accent-cyan);
 }
+/* SmartScreen install hint (calm, informational — not an alarm) */
+.smartscreen-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    max-width: 380px;
+    margin: 10px 0 0;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    text-align: left;
+}
+
+.smartscreen-note svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    color: #34d399;
+}
+
+.smartscreen-note strong {
+    color: var(--text-primary, #fff);
+}
+
+.step-content .smartscreen-note {
+    max-width: none;
+    margin-top: 12px;
+}
