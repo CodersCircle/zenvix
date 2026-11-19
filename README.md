@@ -11,7 +11,7 @@
 
 Get the official ZENVIX Setup installer instantly in a single click:
 
-[📥 DOWNLOAD ZENVIX SETUP FOR WINDOWS (42 MB)](https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe)
+[📥 DOWNLOAD ZENVIX SETUP FOR WINDOWS (73 MB)](https://github.com/CodersCircle/zenvix/raw/main/Zenvix-Setup.exe)
 
 *(Note: ZENVIX is designed and built exclusively for Windows 10 & 11 64-bit systems).*
 
@@ -20,7 +20,7 @@ Get the official ZENVIX Setup installer instantly in a single click:
 ### 💻 System Requirements
 * **Operating System:** Windows 10 or Windows 11 (64-bit strictly supported)
 * **Privileges:** Administrator access (required to configure virtual hosts and register local domains automatically)
-* **Framework:** .NET 8.0 Runtime (Included/Auto-configured)
+* **Framework:** None to install - .NET is bundled in the app
 
 ### 🚀 How to Install & Run
 1. **Download:** Click the direct download button above.
@@ -74,17 +74,19 @@ ZENVIX/
 
 If you want to compile ZENVIX from source code locally:
 
-### 1. Restore & Publish Binaries
-To build the optimized WPF executable:
+### 1. Publish the app (self-contained, single file)
 ```powershell
-# Publish win-x64 Release build
-dotnet publish .\src\Zenvix.UI\Zenvix.UI.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:PublishReadyToRun=true --self-contained false -o .\dist\
+dotnet publish .\src\Zenvix.UI\Zenvix.UI.csproj -c Release -r win-x64 --self-contained true `
+  -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
+  -p:EnableCompressionInSingleFile=true -p:DebugType=none -o .\dist
+Copy-Item .\tools .\dist\tools -Recurse -Force
 ```
 
 ### 2. Compile Setup Installer
-Ensure you have **Inno Setup 6** installed on your system. Run the compiler command:
+Install **Inno Setup 6**, bump `AppVersion` in `zenvix.iss` (and `AssemblyVersion` in `Zenvix.UI.csproj`), then:
 ```powershell
-& "C:\Users\BABA\AppData\Local\Programs\Inno Setup 6\ISCC.exe" .\zenvix.iss
+& "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" .\zenvix.iss
+Copy-Item .\Zenvix-Setup.exe .\versions\Zenvix-Setup-V110.exe   # V<major><minor><patch> - the in-app updater reads versions/
 ```
 This generates the ready-to-distribute **`Zenvix-Setup.exe`** setup in the root workspace folder.
 
