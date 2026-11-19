@@ -277,66 +277,65 @@ quoteModal.addEventListener('click', (e) => {
     }
 });
 
-// 6. Live GitHub Release Download Counter
+// 6. Download counter + download links from GitHub Releases
+//
+// GitHub only counts downloads of files attached to a Release, so the installer is published as a
+// release asset. The counter shows downloads from before releases existed (HISTORIC_DOWNLOADS) plus
+// the real download_count of every release asset – the same number for every visitor.
+// If there is no release yet (or the API is unreachable) buttons keep the in-repo download link.
+const HISTORIC_DOWNLOADS = 437;
+const RELEASES_API = 'https://api.github.com/repos/CodersCircle/zenvix/releases?per_page=100';
+const CACHE_KEY = 'zenvix_release_stats_v2';
+const CACHE_MINUTES = 10; // unauthenticated GitHub API allows 60 requests/hour per visitor
+
+async function loadReleaseStats() {
+    try {
+        const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+        if (cached && Date.now() - cached.at < CACHE_MINUTES * 60 * 1000) return cached;
+    } catch (e) { /* storage blocked – just fetch */ }
+
+    const response = await fetch(RELEASES_API, { headers: { Accept: 'application/vnd.github+json' } });
+    if (!response.ok) throw new Error('GitHub API ' + response.status);
+    const releases = await response.json();
+
+    let total = 0;
+    let latestInstaller = null;
+    releases.forEach(release => {
+        (release.assets || []).forEach(asset => {
+            total += asset.download_count || 0;
+            // newest published, non-draft, non-prerelease release with the installer wins
+            if (!latestInstaller && !release.draft && !release.prerelease && /^Zenvix-Setup.*\.exe$/i.test(asset.name)) {
+                latestInstaller = { url: asset.browser_download_url, tag: release.tag_name, size: asset.size };
+            }
+        });
+    });
+
+    const stats = { at: Date.now(), total, latestInstaller };
+    try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(stats)); } catch (e) { }
+    return stats;
+}
+
 async function updateDownloadCounter() {
     const counterElement = document.getElementById('download-counter');
-    if (!counterElement) return;
-
-    // Premium fallback baseline
-    let baseDownloads = 437;
-
-    // Fetch from local storage if clicked before to keep increments persistent
-    const storedClicks = localStorage.getItem('zenvix_extra_downloads');
-    if (storedClicks) {
-        baseDownloads += parseInt(storedClicks, 10);
-    }
-
-    counterElement.innerText = baseDownloads.toLocaleString();
+    if (counterElement) counterElement.innerText = HISTORIC_DOWNLOADS.toLocaleString();
 
     try {
-        // Fetch actual release details from GitHub API
-        const response = await fetch('https://api.github.com/repos/CodersCircle/zenvix/releases');
-        if (response.ok) {
-            const releases = await response.json();
-            let apiDownloads = 0;
+        const stats = await loadReleaseStats();
+        if (counterElement) counterElement.innerText = (HISTORIC_DOWNLOADS + stats.total).toLocaleString();
 
-            // Sum up all asset download counts across all releases
-            releases.forEach(release => {
-                if (release.assets) {
-                    release.assets.forEach(asset => {
-                        apiDownloads += asset.download_count || 0;
-                    });
-                }
+        // Point every download button at the release asset so each download is counted by GitHub.
+        if (stats.latestInstaller) {
+            document.querySelectorAll('a[download][href*="Zenvix-Setup"]').forEach(a => {
+                a.setAttribute('href', stats.latestInstaller.url);
             });
-
-            // If we have actual downloads recorded on GitHub releases, use that or sum with baseline!
-            if (apiDownloads > 0) {
-                const total = baseDownloads + apiDownloads;
-                counterElement.innerText = total.toLocaleString();
-            }
+            const mb = Math.round(stats.latestInstaller.size / 1048576);
+            document.querySelectorAll('#hero-download-btn .btn-meta').forEach(m => m.textContent = `(${mb} MB)`);
         }
     } catch (err) {
-        console.log("GitHub API limits or network issues, loaded premium baseline.");
+        console.log('Download stats unavailable (GitHub API limit or offline) – showing baseline.', err);
     }
 }
 
-// Increment counter on click to simulate real-time download tracking
-function registerDownloadClick() {
-    let extra = parseInt(localStorage.getItem('zenvix_extra_downloads') || '0', 10);
-    extra += 1;
-    localStorage.setItem('zenvix_extra_downloads', extra);
-    updateDownloadCounter();
-}
-
-// Attach trigger to all download buttons
-document.querySelectorAll('a[download]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Delay slightly to match spinner animation start
-        setTimeout(registerDownloadClick, 800);
-    });
-});
-
-// Initialize counter
 updateDownloadCounter();
 
 // 7. Premium Custom Legal Modals Interaction
