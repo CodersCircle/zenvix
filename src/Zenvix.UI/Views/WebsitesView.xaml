@@ -133,7 +133,7 @@
                         Style="{DynamicResource Zenvix.Button.Primary}" Height="36" Padding="20,0">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="14" />
-                        <TextBlock Text="New Website" VerticalAlignment="Center" />
+                        <TextBlock Text="New Project" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -292,10 +292,10 @@
 
                                 <!-- 3. Quick Tool Actions (Sleek Hero Line Icons) -->
                                 <Border Grid.Row="2" Background="{StaticResource Zenvix.Background}" BorderThickness="0,1" BorderBrush="{StaticResource Zenvix.Border}" Padding="6,3">
-                                    <UniformGrid Columns="4">
+                                    <UniformGrid Rows="1">
                                         <Button Command="{Binding DataContext.OpenFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                                 CommandParameter="{Binding}" ToolTip="Open Folder" Style="{StaticResource ZenvixButton.Ghost}" Height="28" Padding="0">
-                                            <Path Data="{StaticResource HeroIcon.Folder}" Stroke="#4F46E5" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
+                                            <Path Data="{StaticResource Icon.Folder}" Stroke="#4F46E5" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                         <Button Command="{Binding DataContext.OpenCodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                                 CommandParameter="{Binding}" ToolTip="Open in VS Code" Style="{StaticResource ZenvixButton.Ghost}" Height="28" Padding="0">
@@ -303,7 +303,7 @@
                                         </Button>
                                         <Button Command="{Binding DataContext.OpenTerminalCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                                 CommandParameter="{Binding}" ToolTip="Open Terminal" Style="{StaticResource ZenvixButton.Ghost}" Height="28" Padding="0">
-                                            <Path Data="{StaticResource HeroIcon.Terminal}" Stroke="#10B981" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
+                                            <Path Data="{StaticResource Icon.Terminal}" Stroke="#10B981" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                         <Button Command="{Binding DataContext.OpenSiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                                 CommandParameter="{Binding}" ToolTip="Open Website" Height="28" Padding="0" Cursor="Hand">
@@ -317,7 +317,19 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Button.Style>
-                                            <Path Data="{StaticResource HeroIcon.Website}" Stroke="#06B6D4" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
+                                            <Path Data="{StaticResource Icon.Website}" Stroke="#06B6D4" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
+                                        </Button>
+                                        <!-- Admin panel (Filament / WordPress): opens it and copies the generated password -->
+                                        <Button Command="{Binding DataContext.OpenAdminCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}" Height="28" Padding="0" Cursor="Hand" Style="{StaticResource ZenvixButton.Ghost}"
+                                                Visibility="{Binding AdminPath, Converter={StaticResource NullToVisibilityConverter}}">
+                                            <Button.ToolTip>
+                                                <TextBlock>
+                                                    <Run Text="Open admin panel" /><LineBreak />
+                                                    <Run Text="{Binding AdminEmail, Mode=OneWay}" />
+                                                </TextBlock>
+                                            </Button.ToolTip>
+                                            <Path Data="{StaticResource Icon.Admin}" Stroke="#F59E0B" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                     </UniformGrid>
                                 </Border>
@@ -334,7 +346,7 @@
                                         <!-- Run/Stop Button -->
                                         <Button Grid.Column="0" Command="{Binding DataContext.ToggleWebsiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}" IsEnabled="{Binding Status, Converter={StaticResource StatusToIsEnabledConverter}}"
-                                                Height="32" Margin="0,0,6,0" Style="{StaticResource ZenvixButton.Primary}">
+                                                Height="34" Padding="8,0" Margin="0,0,6,0" Style="{StaticResource ZenvixButton.Primary}">
                                             <StackPanel Orientation="Horizontal">
                                                 <mah:ProgressRing Width="10" Height="10" Margin="0,0,6,0" Foreground="White" 
                                                                   Visibility="{Binding Status, Converter={StaticResource StatusToSpinnerVisibilityConverter}}" />
@@ -346,15 +358,15 @@
                                         <!-- Remove (Panel) Button -->
                                         <Button Grid.Column="1" Command="{Binding DataContext.RemoveWebsiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                                 CommandParameter="{Binding}" Style="{StaticResource ZenvixButton}" 
-                                                Height="32" Margin="2,0,6,0">
-                                            <TextBlock Text="Remove" FontSize="11" FontWeight="Medium" Foreground="{StaticResource Zenvix.TextPrimary}" VerticalAlignment="Center" />
+                                                Height="34" Padding="8,0" Margin="2,0,6,0">
+                                            <TextBlock Text="Remove" FontSize="12" FontWeight="Medium" Foreground="{StaticResource Zenvix.TextPrimary}" VerticalAlignment="Center" />
                                         </Button>
 
                                         <!-- Delete (Disk) Button -->
                                         <Button Grid.Column="2" Command="{Binding DataContext.DeleteWebsiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                                 CommandParameter="{Binding}" ToolTip="Delete from Disk (Permanent)" Style="{StaticResource ZenvixButton.Ghost}" 
                                                 Width="32" Height="32" Padding="0">
-                                            <Path Data="{StaticResource HeroIcon.Trash}" Stroke="{StaticResource Zenvix.Danger}" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
+                                            <Path Data="{StaticResource Icon.Trash}" Stroke="{StaticResource Zenvix.Danger}" StrokeThickness="1.5" Fill="Transparent" Width="14" Height="14" Stretch="Uniform" />
                                         </Button>
                                     </Grid>
                                 </Border>
@@ -366,8 +378,12 @@
         </ScrollViewer>
 
         <!-- 3. Add Website Overlay (Themed) -->
-        <Border Grid.RowSpan="2" Background="#88000000" Visibility="{Binding IsAddingWebsite, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Width="820" VerticalAlignment="Center" Padding="35" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+        <!-- Negative margin = MainWindow sidebar (260) + content margin (40) / top bar (80) + content margin (10),
+             so the backdrop covers the whole window like a real modal instead of a box inside the page. -->
+        <Border Grid.RowSpan="2" Margin="-300,-90,-40,-40" Background="#B30F172A" Panel.ZIndex="100"
+                Visibility="{Binding IsAddingWebsite, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="20" Width="860" MaxHeight="760" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Padding="40,36" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                 <Grid>
                     <Grid.Resources>
                         <!-- Style for Step 1 -->
@@ -524,11 +540,6 @@
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="cardBorder" Property="BorderBrush" Value="{StaticResource Zenvix.Accent}" />
                                                 <Setter TargetName="cardBorder" Property="Background" Value="{StaticResource Zenvix.Surface}" />
-                                                <Setter Property="Effect">
-                                                    <Setter.Value>
-                                                        <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.06" Color="#000000" />
-                                                    </Setter.Value>
-                                                </Setter>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -594,7 +605,7 @@
                                     <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Website" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
                                             <!-- SVG Hero Line Icon for Website -->
-                                            <Path Data="{StaticResource HeroIcon.Website}" Stroke="#3B82F6" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
+                                            <Path Data="{StaticResource Icon.Website}" Stroke="#3B82F6" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock Text="Website" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
                                                 <TextBlock Text="Laravel, WordPress, React, Vue, PHP" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
@@ -605,10 +616,10 @@
                                     <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Mobile App" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
                                             <!-- SVG Hero Line Icon for Mobile App -->
-                                            <Path Data="{StaticResource HeroIcon.Mobile}" Stroke="#EC4899" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
+                                            <Path Data="{StaticResource Icon.Mobile}" Stroke="#EC4899" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock Text="Mobile App" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
-                                                <TextBlock Text="Flutter, React Native, Ionic previews" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
+                                                <TextBlock Text="Flutter, React Native, Ionic apps" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Button>
@@ -616,7 +627,7 @@
                                     <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Admin Panel" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
                                             <!-- SVG Hero Line Icon for Admin Panel -->
-                                            <Path Data="{StaticResource HeroIcon.Admin}" Stroke="#F59E0B" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
+                                            <Path Data="{StaticResource Icon.Admin}" Stroke="#F59E0B" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock Text="Admin Panel" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
                                                 <TextBlock Text="FilamentPHP, React or Vue admin portals" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
@@ -627,7 +638,7 @@
                                     <Button Command="{Binding SelectCategoryCommand}" CommandParameter="API Backend" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
                                             <!-- SVG Hero Line Icon for API Backend -->
-                                            <Path Data="{StaticResource HeroIcon.Bolt}" Stroke="#EAB308" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
+                                            <Path Data="{StaticResource Icon.Bolt}" Stroke="#EAB308" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock Text="API Backend" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
                                                 <TextBlock Text="Laravel API, Node.js Express, pure APIs" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
@@ -638,7 +649,7 @@
                                     <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Static Site" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
                                             <!-- SVG Hero Line Icon for Static Site -->
-                                            <Path Data="{StaticResource HeroIcon.Document}" Stroke="#10B981" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
+                                            <Path Data="{StaticResource Icon.Document}" Stroke="#10B981" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock Text="Static Site" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
                                                 <TextBlock Text="Plain HTML/CSS, Tailwind starter kits" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
@@ -649,7 +660,7 @@
                                     <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Import Project" Style="{StaticResource WizardCardButton}" Height="90" Margin="6">
                                         <StackPanel Orientation="Horizontal">
                                             <!-- SVG Hero Line Icon for Import Project -->
-                                            <Path Data="{StaticResource HeroIcon.Folder}" Stroke="#06B6D4" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
+                                            <Path Data="{StaticResource Icon.Folder}" Stroke="#06B6D4" StrokeThickness="1.5" Fill="Transparent" Width="28" Height="28" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,16,0" />
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock Text="Import Project" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource Zenvix.TextPrimary}" />
                                                 <TextBlock Text="Host existing local folder on our platform" FontSize="11" Foreground="{StaticResource Zenvix.TextSecondary}" TextWrapping="Wrap" MaxWidth="220" Margin="0,2,0,0" />
@@ -683,12 +694,11 @@
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border x:Name="FrameworkCardBorder" 
-                                                                BorderThickness="1" 
+                                                                Background="{DynamicResource SurfaceBrush}"
+                                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                                BorderThickness="1.5" 
                                                                 CornerRadius="14" 
                                                                 Padding="14,10">
-                                                            <Border.Effect>
-                                                                <DropShadowEffect BlurRadius="8" ShadowDepth="1.5" Opacity="0.04" Color="#000000" />
-                                                            </Border.Effect>
                                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                                 <!-- Dynamic high-quality branded SVG icon -->
                                                                 <Image Source="{Binding Converter={StaticResource TechIconConverter}}" 
@@ -704,6 +714,19 @@
                                                         </Border>
                                                         
                                                         <ControlTemplate.Triggers>
+                                                            <!-- Mobile stacks -->
+                                                            <DataTrigger Binding="{Binding}" Value="Flutter">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#EFF6FF" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#93C5FD" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="React Native">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#ECFEFF" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#A5F3FC" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="Ionic">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#EEF2FF" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#A5B4FC" />
+                                                            </DataTrigger>
                                                             <!-- Default triggers for colors mapped by framework -->
                                                             <DataTrigger Binding="{Binding}" Value="Laravel">
                                                                 <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#FFF5F5" />
@@ -815,6 +838,19 @@
                                                                 <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="#0D9488" />
                                                                 <Setter TargetName="FrameworkCardBorder" Property="Background" Value="#CCFBF1" />
                                                             </MultiDataTrigger>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                                            </Trigger>
+                                                            <DataTrigger Value="True">
+                                                                <DataTrigger.Binding>
+                                                                    <MultiBinding Converter="{StaticResource EqualityMultiConverter}">
+                                                                        <Binding />
+                                                                        <Binding Path="DataContext.SelectedFramework" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                                                    </MultiBinding>
+                                                                </DataTrigger.Binding>
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                                                <Setter TargetName="FrameworkCardBorder" Property="BorderThickness" Value="2.5" />
+                                                            </DataTrigger>
                                                         </ControlTemplate.Triggers>
                                                     </ControlTemplate>
                                                 </Button.Template>

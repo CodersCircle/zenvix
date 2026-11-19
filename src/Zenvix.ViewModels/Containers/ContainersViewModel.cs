@@ -14,195 +14,170 @@ namespace Zenvix.ViewModels.Containers
 {
     public partial class ContainersViewModel : ObservableObject
     {
-        private readonly IDockerService _docker;
+        private readonly IContainerEngine _engine;
         private readonly IDialogService _dialogs;
+        private readonly IClipboardService _clipboard;
         private readonly IDispatcherService _dispatcher;
-        private readonly Timer _refreshTimer;
-        private int _refreshing;
+        private readonly Timer _timer;
 
-        public ObservableCollection<ContainerInfo> Containers { get; } = new();
+        public ObservableCollection<ContainerInstance> Containers { get; } = new();
         public ObservableCollection<string> ActivityLog { get; } = new();
-        public System.Collections.Generic.IReadOnlyList<ContainerTemplate> Templates => _docker.Templates;
+        public System.Collections.Generic.IReadOnlyList<ContainerTemplate> Templates => _engine.Templates;
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsDockerReady), nameof(IsDockerMissing), nameof(IsDockerStopped))]
-        private DockerState _dockerState = DockerState.NotRunning;
-
-        [ObservableProperty] private string _dockerDetail = "Checking Docker ...";
         [ObservableProperty] private bool _isBusy;
-        [ObservableProperty] private bool _isChecking = true;
-        [ObservableProperty] private ContainerInfo? _logsFor;
-        [ObservableProperty] private string _logsText = string.Empty;
 
-        // Custom container form
-        [ObservableProperty] private bool _isCustomFormOpen;
-        [ObservableProperty] private string _customName = string.Empty;
-        [ObservableProperty] private string _customImage = string.Empty;
-        [ObservableProperty] private string _customPorts = "8080:80";
-        [ObservableProperty] private string _customEnv = string.Empty;
+        // Create form
+        [ObservableProperty] private bool _isCreateOpen;
+        [ObservableProperty] private ContainerTemplate? _newTemplate;
+        [ObservableProperty] private string _newName = "";
+        [ObservableProperty] private string _newPort = "";
+        [ObservableProperty] private string _newPassword = "";
+        [ObservableProperty] private string _newMemoryMb = "0";
 
-        public bool IsDockerReady => DockerState == DockerState.Running;
-        public bool IsDockerMissing => DockerState == DockerState.NotInstalled;
-        public bool IsDockerStopped => DockerState == DockerState.NotRunning;
+        // Logs panel
+        [ObservableProperty] private ContainerInstance? _logsFor;
+        [ObservableProperty] private string _logsText = "";
 
-        public ContainersViewModel(IDockerService docker, IDialogService dialogs, IDispatcherService dispatcher)
+        public bool HasContainers => Containers.Count > 0;
+
+        public ContainersViewModel(IContainerEngine engine, IDialogService dialogs, IClipboardService clipboard, IDispatcherService dispatcher)
         {
-            _docker = docker;
+            _engine = engine;
             _dialogs = dialogs;
+            _clipboard = clipboard;
             _dispatcher = dispatcher;
-            // Light polling so state stays in sync with Docker Desktop / CLI changes.
-            _refreshTimer = new Timer(_ => _ = RefreshCoreAsync(), null, Timeout.Infinite, Timeout.Infinite);
+            _engine.ContainersChanged += () => _dispatcher.BeginInvoke(Sync);
+            Containers.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasContainers));
+            _timer = new Timer(_ => Tick(), null, Timeout.Infinite, Timeout.Infinite);
+            _ = _engine.InitializeAsync();
         }
 
-        /// <summary>Poll Docker only while the Container page is visible.</summary>
+        /// <summary>Poll usage/logs only while the Container page is visible.</summary>
         public void SetActive(bool active) =>
-            _refreshTimer.Change(active ? TimeSpan.Zero : Timeout.InfiniteTimeSpan, active ? TimeSpan.FromSeconds(6) : Timeout.InfiniteTimeSpan);
+            _timer.Change(active ? TimeSpan.Zero : Timeout.InfiniteTimeSpan, active ? TimeSpan.FromSeconds(3) : Timeout.InfiniteTimeSpan);
 
-        private void Log(string line) => _dispatcher.BeginInvoke(() =>
+        private void Tick()
+        {
+            _engine.RefreshUsage();
+            var c = LogsFor;
+            if (c != null)
+            {
+                var text = _engine.ReadLog(c);
+                _dispatcher.BeginInvoke(() => { if (LogsFor == c) LogsText = string.IsNullOrEmpty(text) ? "(no output yet)" : text; });
+            }
+        }
+
+        private void Sync()
+        {
+            var current = _engine.Containers;
+            foreach (var gone in Containers.Where(c => !current.Contains(c)).ToList()) Containers.Remove(gone);
+            foreach (var c in current.Where(c => !Containers.Contains(c))) Containers.Add(c);
+        }
+
+        private IProgress<string> NewLog() => new Progress<string>(line => _dispatcher.BeginInvoke(() =>
         {
             ActivityLog.Add($"[{DateTime.Now:HH:mm:ss}] {line}");
             while (ActivityLog.Count > 300) ActivityLog.RemoveAt(0);
-        });
+        }));
 
-        private IProgress<string> NewLog() => new Progress<string>(Log);
+        // ───────────── create ─────────────
 
         [RelayCommand]
-        private Task Refresh() => RefreshCoreAsync();
-
-        private async Task RefreshCoreAsync()
+        private void OpenCreate(ContainerTemplate? template)
         {
-            if (Interlocked.Exchange(ref _refreshing, 1) == 1) return;
-            try
-            {
-                var (state, detail) = await _docker.GetStateAsync();
-                var list = state == DockerState.Running ? await _docker.ListAsync() : new();
-                _dispatcher.BeginInvoke(() =>
-                {
-                    DockerState = state;
-                    DockerDetail = detail;
-                    IsChecking = false;
-                    // Replace in place to keep the list stable.
-                    Containers.Clear();
-                    foreach (var c in list) Containers.Add(c);
-                });
-            }
-            catch (Exception ex)
-            {
-                Serilog.Log.Warning(ex, "[Containers] refresh failed");
-            }
-            finally { Interlocked.Exchange(ref _refreshing, 0); }
+            NewTemplate = template ?? Templates.First();
+            var n = 1;
+            var baseName = NewTemplate.Kind.ToString().ToLowerInvariant();
+            var name = baseName;
+            while (Containers.Any(c => c.Name == name)) name = $"{baseName}-{++n}";
+            NewName = name;
+            NewPort = "";
+            NewPassword = NewTemplate.UsesPassword ? "secret" : "";
+            NewMemoryMb = "0";
+            IsCreateOpen = true;
         }
 
+        [RelayCommand] private void CancelCreate() => IsCreateOpen = false;
+
         [RelayCommand]
-        private void StartDocker()
+        private async Task Create()
         {
-            if (_docker.TryStartDockerDesktop())
-            {
-                DockerDetail = "Starting Docker Desktop ... this can take up to a minute.";
-                Log("Starting Docker Desktop.");
-            }
-            else
-            {
-                DockerDetail = "Docker Desktop was not found. Start your Docker engine manually.";
-            }
-        }
-
-        [RelayCommand]
-        private void InstallDocker() => OpenUrl("https://www.docker.com/products/docker-desktop/");
-
-        [RelayCommand]
-        private Task StartContainer(ContainerInfo? c) => Act(c, "Starting", _docker.StartAsync);
-
-        [RelayCommand]
-        private Task StopContainer(ContainerInfo? c) => Act(c, "Stopping", _docker.StopAsync);
-
-        [RelayCommand]
-        private Task RestartContainer(ContainerInfo? c) => Act(c, "Restarting", _docker.RestartAsync);
-
-        [RelayCommand]
-        private Task RemoveContainer(ContainerInfo? c)
-        {
-            if (c == null) return Task.CompletedTask;
-            if (!_dialogs.Confirm("Remove container",
-                    $"Remove container \"{c.Name}\"? It will be stopped and deleted. Named volumes (your data) are kept."))
-                return Task.CompletedTask;
-            return Act(c, "Removing", _docker.RemoveAsync);
-        }
-
-        private async Task Act(ContainerInfo? c, string verb, Func<string, CancellationToken, Task<(bool Ok, string Output)>> action)
-        {
-            if (c == null || IsBusy) return;
+            if (NewTemplate == null || IsBusy) return;
+            int? port = int.TryParse(NewPort, out var p) && p > 0 ? p : null;
+            int.TryParse(NewMemoryMb, out var mem);
             IsBusy = true;
-            Log($"{verb} {c.Name} ...");
-            try
-            {
-                var (ok, output) = await action(c.Id, CancellationToken.None);
-                Log(ok ? $"✔ {c.Name}: done." : $"✖ {c.Name}: {output}");
-            }
-            finally
-            {
-                IsBusy = false;
-                await RefreshCoreAsync();
-            }
+            IsCreateOpen = false;
+            var log = NewLog();
+            try { await _engine.CreateAsync(NewTemplate.Kind, NewName, port, NewPassword, mem, log); }
+            catch (Exception ex) { log.Report($"✖ {ex.Message}"); }
+            finally { IsBusy = false; }
+        }
+
+        // ───────────── lifecycle ─────────────
+
+        [RelayCommand] private Task Start(ContainerInstance? c) => c == null ? Task.CompletedTask : _engine.StartAsync(c, NewLog());
+        [RelayCommand] private Task Stop(ContainerInstance? c) => c == null ? Task.CompletedTask : _engine.StopAsync(c, NewLog());
+
+        [RelayCommand]
+        private async Task Restart(ContainerInstance? c)
+        {
+            if (c == null) return;
+            await _engine.StopAsync(c, NewLog());
+            await _engine.StartAsync(c, NewLog());
         }
 
         [RelayCommand]
-        private async Task ShowLogs(ContainerInfo? c)
+        private async Task Remove(ContainerInstance? c)
+        {
+            if (c == null) return;
+            if (!_dialogs.Confirm("Remove container", $"Remove container \"{c.Name}\"? It will be stopped.")) return;
+            var deleteData = _dialogs.Confirm("Delete data too?",
+                $"Also delete all data of \"{c.Name}\" (databases, files) from\n{c.Folder}?\n\nChoose No to keep the data folder.");
+            if (LogsFor == c) CloseLogs();
+            await _engine.RemoveAsync(c, deleteData);
+            NewLog().Report($"Removed {c.Name}{(deleteData ? " and its data" : " (data kept)")}.");
+        }
+
+        // ───────────── tools ─────────────
+
+        [RelayCommand]
+        private void ShowLogs(ContainerInstance? c)
         {
             if (c == null) return;
             LogsFor = c;
-            LogsText = "Loading logs ...";
-            LogsText = await _docker.LogsAsync(c.Id);
-            if (string.IsNullOrWhiteSpace(LogsText)) LogsText = "(no output yet)";
+            LogsText = _engine.ReadLog(c);
+            if (string.IsNullOrEmpty(LogsText)) LogsText = "(no output yet)";
         }
 
-        [RelayCommand]
-        private void CloseLogs() { LogsFor = null; LogsText = string.Empty; }
+        [RelayCommand] private void CloseLogs() { LogsFor = null; LogsText = ""; }
 
         [RelayCommand]
-        private void OpenInBrowser(ContainerInfo? c)
+        private void CopyConnection(ContainerInstance? c)
         {
-            if (c?.FirstHostPort is int port) OpenUrl($"http://localhost:{port}");
+            if (c == null) return;
+            _clipboard.SetText(c.ConnectionString);
+            NewLog().Report($"Copied connection string for {c.Name}.");
         }
 
         [RelayCommand]
-        private async Task CreateFromTemplate(ContainerTemplate? t)
+        private void CopyEnv(ContainerInstance? c)
         {
-            if (t == null || IsBusy) return;
-            IsBusy = true;
-            try
-            {
-                var name = $"zenvix-{t.Key}";
-                var n = 2;
-                while (Containers.Any(c => c.Name == name)) name = $"zenvix-{t.Key}-{n++}";
-                await _docker.RunTemplateAsync(t, name, NewLog());
-            }
-            finally
-            {
-                IsBusy = false;
-                await RefreshCoreAsync();
-            }
+            if (c == null) return;
+            _clipboard.SetText(c.EnvSnippet);
+            NewLog().Report($"Copied .env settings for {c.Name}.");
         }
-
-        [RelayCommand] private void ToggleCustomForm() => IsCustomFormOpen = !IsCustomFormOpen;
 
         [RelayCommand]
-        private async Task RunCustom()
+        private void OpenFolder(ContainerInstance? c)
         {
-            if (IsBusy) return;
-            IsBusy = true;
-            try
-            {
-                var (ok, _) = await _docker.RunCustomAsync(CustomName, CustomImage, CustomPorts, CustomEnv, NewLog());
-                if (ok) { IsCustomFormOpen = false; CustomName = CustomImage = CustomEnv = string.Empty; }
-            }
-            finally
-            {
-                IsBusy = false;
-                await RefreshCoreAsync();
-            }
+            if (c != null) Process.Start("explorer.exe", $"\"{c.Folder}\"");
         }
 
-        private static void OpenUrl(string url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        [RelayCommand]
+        private void OpenInbox(ContainerInstance? c)
+        {
+            if (c?.Spec.ExtraPort is int port)
+                Process.Start(new ProcessStartInfo($"http://127.0.0.1:{port}") { UseShellExecute = true });
+        }
     }
 }

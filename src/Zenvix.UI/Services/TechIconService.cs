@@ -50,7 +50,19 @@ namespace Zenvix.UI.Services
                                    .Replace(".", "")
                                    .Replace("/", "");
 
-            if (cleanName == "plainphp") cleanName = "corephp";
+            // Framework names in the wizard → the icon file that represents them.
+            cleanName = cleanName.Replace("(", "").Replace(")", "") switch
+            {
+                "plainphp" or "phpapi" or "existingphphtml" => "corephp",
+                "laravelapi" or "existinglaravel" or "filamentphp" => "laravel",
+                "reactadmin" or "existingreactvue" => "react",
+                "vueadmin" => "vue",
+                "expressnodejs" => "nodejs",
+                "tailwindstarter" => "tailwind",
+                "plainhtmlcss" or "customempty" => "htmlcss",
+                "existingwordpress" => "wordpress",
+                var n => n,
+            };
             
             string fileName = cleanName + ".svg";
             string filePath = Path.Combine(IconsDirectory, fileName);

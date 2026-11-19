@@ -91,6 +91,12 @@ namespace Zenvix.ViewModels.Services
         {
             _orchestrator.InstanceStateChanged += OnInstanceStateChanged;
             _dbService.InstanceStateChanged    += OnDbInstanceStateChanged;
+
+            // Catch up on anything that changed before we subscribed (start-up can finish first,
+            // e.g. versions resolved from the runtime cache), so the Dashboard never shows stale data.
+            foreach (var instance in _orchestrator.Instances)
+                OnInstanceStateChanged(instance);
+
             Log.Information("RuntimeStateBridge: global sync active — Dashboard + DB section wired.");
         }
 

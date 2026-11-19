@@ -17,12 +17,8 @@ namespace Zenvix.DesignSystem
 
         public ZenvixCard()
         {
-            // Fallback default style application
-            var dict = new ResourceDictionary { Source = new Uri("pack://application:,,,/Zenvix.UI;component/DesignSystem/DesignSystemResources.xaml", UriKind.Absolute) };
-            if (dict.Contains("ZenvixCard"))
-            {
-                Style = (Style)dict["ZenvixCard"];
-            }
+            // Style comes from the app-wide DesignSystemResources merged in App.xaml (no per-instance file load).
+            SetResourceReference(StyleProperty, "ZenvixCard");
         }
     }
 
@@ -33,11 +29,8 @@ namespace Zenvix.DesignSystem
     {
         public ZenvixButton()
         {
-            var dict = new ResourceDictionary { Source = new Uri("pack://application:,,,/Zenvix.UI;component/DesignSystem/DesignSystemResources.xaml", UriKind.Absolute) };
-            if (dict.Contains("ZenvixButton"))
-            {
-                Style = (Style)dict["ZenvixButton"];
-            }
+            // Style comes from the app-wide DesignSystemResources merged in App.xaml (no per-instance file load).
+            SetResourceReference(StyleProperty, "ZenvixButton");
         }
     }
 
@@ -70,17 +63,13 @@ namespace Zenvix.DesignSystem
 
         private void UpdateBadgeStyle()
         {
-            var dict = new ResourceDictionary { Source = new Uri("pack://application:,,,/Zenvix.UI;component/DesignSystem/DesignSystemResources.xaml", UriKind.Absolute) };
             string styleKey = "ZenvixBadge";
 
             if (State != null && State.Equals("Success", StringComparison.OrdinalIgnoreCase)) styleKey = "ZenvixBadge.Success";
             else if (State != null && State.Equals("Warning", StringComparison.OrdinalIgnoreCase)) styleKey = "ZenvixBadge.Warning";
             else if (State != null && State.Equals("Danger", StringComparison.OrdinalIgnoreCase)) styleKey = "ZenvixBadge.Danger";
 
-            if (dict.Contains(styleKey))
-            {
-                Style = (Style)dict[styleKey];
-            }
+            SetResourceReference(StyleProperty, styleKey);
         }
     }
 
@@ -91,11 +80,8 @@ namespace Zenvix.DesignSystem
     {
         public ZenvixInput()
         {
-            var dict = new ResourceDictionary { Source = new Uri("pack://application:,,,/Zenvix.UI;component/DesignSystem/DesignSystemResources.xaml", UriKind.Absolute) };
-            if (dict.Contains("ZenvixInput"))
-            {
-                Style = (Style)dict["ZenvixInput"];
-            }
+            // Style comes from the app-wide DesignSystemResources merged in App.xaml (no per-instance file load).
+            SetResourceReference(StyleProperty, "ZenvixInput");
         }
     }
 
@@ -106,11 +92,8 @@ namespace Zenvix.DesignSystem
     {
         public ZenvixProjectCard()
         {
-            var dict = new ResourceDictionary { Source = new Uri("pack://application:,,,/Zenvix.UI;component/DesignSystem/DesignSystemResources.xaml", UriKind.Absolute) };
-            if (dict.Contains("ZenvixProjectCard"))
-            {
-                Style = (Style)dict["ZenvixProjectCard"];
-            }
+            // Style comes from the app-wide DesignSystemResources merged in App.xaml (no per-instance file load).
+            SetResourceReference(StyleProperty, "ZenvixProjectCard");
         }
     }
 
@@ -121,11 +104,8 @@ namespace Zenvix.DesignSystem
     {
         public ZenvixRuntimeCard()
         {
-            var dict = new ResourceDictionary { Source = new Uri("pack://application:,,,/Zenvix.UI;component/DesignSystem/DesignSystemResources.xaml", UriKind.Absolute) };
-            if (dict.Contains("ZenvixRuntimeCard"))
-            {
-                Style = (Style)dict["ZenvixRuntimeCard"];
-            }
+            // Style comes from the app-wide DesignSystemResources merged in App.xaml (no per-instance file load).
+            SetResourceReference(StyleProperty, "ZenvixRuntimeCard");
         }
     }
 }

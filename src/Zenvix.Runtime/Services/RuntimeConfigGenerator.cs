@@ -25,13 +25,9 @@ namespace Zenvix.Runtime.Services
             _configRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "generated");
             if (!Directory.Exists(_configRoot)) Directory.CreateDirectory(_configRoot);
 
-            // Purge stale vhosts on startup to prevent Nginx from loading old/broken configs
-            var vhostDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "generated", "vhosts");
-            if (Directory.Exists(vhostDir))
-            {
-                try { Directory.Delete(vhostDir, true); } catch { }
-            }
-            Directory.CreateDirectory(vhostDir);
+            // Never wipe the vhosts folder here: another Zenvix process starting up would delete the
+            // configs of sites the running app is serving. Stale files are pruned by WebsiteOrchestrator.
+            Directory.CreateDirectory(Path.Combine(_configRoot, "vhosts"));
         }
 
         private string GetLocalIPAddress()
@@ -156,26 +152,10 @@ namespace Zenvix.Runtime.Services
                 sb.AppendLine("}");
                 sb.AppendLine();
 
-                // 2. HTTP Server - Serve content directly over HTTP for Local IP
-                sb.AppendLine("server {");
-                sb.AppendLine("    listen 80;");
-                sb.AppendLine($"    server_name {localIp};");
-                sb.AppendLine($"    root \"{rootPath}\";");
-                sb.AppendLine("    index index.php index.html;");
-                sb.AppendLine("    location / { try_files $uri $uri/ /index.php?$query_string; }");
-                sb.AppendLine("    location ~ \\.php$ {");
-                sb.AppendLine($"        fastcgi_pass 127.0.0.1:{phpPort};");
-                sb.AppendLine("        fastcgi_index index.php;");
-                sb.AppendLine("        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;");
-                sb.AppendLine("        include fastcgi_params;");
-                sb.AppendLine("    }");
-                sb.AppendLine("}");
-                sb.AppendLine();
-
                 // 3. HTTPS Server - Serve content over HTTPS for Domain and Local IP
                 sb.AppendLine("server {");
                 sb.AppendLine("    listen 443 ssl;");
-                sb.AppendLine($"    server_name {website.Domain} {localIp};");
+                sb.AppendLine($"    server_name {website.Domain};");
 
                 var nxtCertPath = certPath.Replace("\\", "/");
                 var nxtKeyPath = keyPath.Replace("\\", "/");
@@ -204,7 +184,7 @@ namespace Zenvix.Runtime.Services
                 // Plain HTTP Server for Domain and Local IP
                 sb.AppendLine("server {");
                 sb.AppendLine("    listen 80;");
-                sb.AppendLine($"    server_name {website.Domain} {localIp};");
+                sb.AppendLine($"    server_name {website.Domain};");
                 sb.AppendLine($"    root \"{rootPath}\";");
                 sb.AppendLine("    index index.php index.html;");
                 sb.AppendLine("    location / { try_files $uri $uri/ /index.php?$query_string; }");
@@ -315,6 +295,8 @@ namespace Zenvix.Runtime.Services
             sb.AppendLine("    default_type application/octet-stream;");
             sb.AppendLine("    sendfile on;");
             sb.AppendLine("    keepalive_timeout 65;");
+            // Long local domains (e.g. my-existing-laravel.test) overflow the default 32-byte bucket and nginx refuses to start.
+            sb.AppendLine("    server_names_hash_bucket_size 128;");
             
             // Include virtual hosts FIRST for routing priority
             sb.AppendLine($"    include \"{vhostDir}/*.conf\";");
@@ -464,43 +446,29 @@ namespace Zenvix.Runtime.Services
             sb.AppendLine("post_max_size = 100M");
             sb.AppendLine("max_execution_time = 360");
             sb.AppendLine("display_errors = On");
+            // Startup warnings must never be printed into HTTP responses (they break headers/redirects).
+            sb.AppendLine("display_startup_errors = Off");
             sb.AppendLine("error_reporting = E_ALL");
-            
+            sb.AppendLine("log_errors = On");
+            var phpLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "php_errors.log").Replace("\\", "/");
+            Directory.CreateDirectory(Path.GetDirectoryName(phpLog)!);
+            sb.AppendLine($"error_log = \"{phpLog}\"");
+
             var binDir = meta.BinDir!.Replace("\\", "/");
             var extDir = Path.Combine(binDir, "ext").Replace("\\", "/");
-            
             sb.AppendLine($"extension_dir = \"{extDir}\"");
-            
-            // Standard extensions (mysqlnd MUST be loaded before mysqli/pdo_mysql in some builds)
-            sb.AppendLine("extension=mysqlnd");
-            sb.AppendLine("extension=curl");
-            sb.AppendLine("extension=mbstring");
-            sb.AppendLine("extension=openssl");
-            sb.AppendLine("extension=pdo_mysql");
-            sb.AppendLine("extension=mysqli");
-            sb.AppendLine("extension=fileinfo");
-            sb.AppendLine("extension=gettext");
-            sb.AppendLine("extension=gd");
-            sb.AppendLine("extension=sqlite3");
-            sb.AppendLine("extension=pdo_sqlite");
-            sb.AppendLine("extension=zip");
-            sb.AppendLine("extension=exif");
-            sb.AppendLine("extension=sodium");
-            sb.AppendLine("extension=intl");
-            
-            // Windows-specific explicit DLL loading (redundant but safe)
-            sb.AppendLine("extension=php_mysqlnd.dll");
-            sb.AppendLine("extension=php_curl.dll");
-            sb.AppendLine("extension=php_mbstring.dll");
-            sb.AppendLine("extension=php_openssl.dll");
-            sb.AppendLine("extension=php_pdo_mysql.dll");
-            sb.AppendLine("extension=php_mysqli.dll");
-            sb.AppendLine("extension=php_sqlite3.dll");
-            sb.AppendLine("extension=php_pdo_sqlite.dll");
-            sb.AppendLine("extension=php_zip.dll");
-            sb.AppendLine("extension=php_exif.dll");
-            sb.AppendLine("extension=php_sodium.dll");
-            sb.AppendLine("extension=php_intl.dll");
+
+            // Extensions Laravel / WordPress / most PHP apps need. Each is loaded exactly once and only
+            // when its DLL ships with this PHP build (mysqlnd, json, etc. are compiled in on PHP 8).
+            var wanted = new[] { "curl", "mbstring", "openssl", "pdo_mysql", "mysqli", "fileinfo", "gettext", "gd",
+                                 "sqlite3", "pdo_sqlite", "zip", "exif", "sodium", "intl", "bcmath", "ftp", "pdo_pgsql", "pgsql" };
+            foreach (var ext in wanted)
+            {
+                if (File.Exists(Path.Combine(extDir, $"php_{ext}.dll")))
+                    sb.AppendLine($"extension={ext}");
+            }
+            if (File.Exists(Path.Combine(extDir, "php_opcache.dll")))
+                sb.AppendLine("zend_extension=opcache");
 
             return sb.ToString();
         }

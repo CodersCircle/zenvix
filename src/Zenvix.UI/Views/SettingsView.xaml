@@ -12,13 +12,14 @@
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <conv:BoolToVisibilityInvertedConverter x:Key="BoolToVisibilityInvertedConverter" />
+        <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
     </UserControl.Resources>
 
     <Grid Margin="24">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="5*" />
             <ColumnDefinition Width="24" />
-            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="6*" />
         </Grid.ColumnDefinitions>
 
         <!-- LEFT SIDE: Profile & Main Updates (60% space) -->
@@ -134,6 +135,25 @@
                                         <TextBlock Text="{Binding DraftUsername}" Foreground="#94A3B8" FontSize="11" />
                                     </StackPanel>
                                 </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- ZENVIX VERSION (was the Version History list) -->
+                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Margin="0,22,0,0" Padding="0,18,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Zenvix version" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <TextBlock Text="{Binding AppVersion, StringFormat='Running v{0} - pick a build to update or roll back'}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                </StackPanel>
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding GitVersions}" SelectedItem="{Binding SelectedGitVersion}"
+                                          DisplayMemberPath="DisplayName" Height="36" Margin="12,0,8,0" IsEnabled="{Binding IsLoadingVersions, Converter={StaticResource InverseBoolConverter}}" />
+                                <Button Grid.Column="2" Content="Install" Command="{Binding InstallSpecificVersionCommand}" CommandParameter="{Binding SelectedGitVersion}"
+                                        Style="{DynamicResource Zenvix.Button.Primary}" Height="36" Padding="18,0" />
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -271,56 +291,124 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- RIGHT SIDE: Versions History List (40% space) -->
-        <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+        <!-- RIGHT SIDE: Services & Updates -->
+        <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="12" Padding="22"
+                DataContext="{Binding Updates}">
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                        <mah:ProgressRing Width="18" Height="18" Margin="0,0,10,0" Visibility="{Binding IsChecking, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock Text="{Binding LastChecked}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <Button Content="Check now" Command="{Binding CheckNowCommand}" Style="{DynamicResource Zenvix.Button.Ghost}" Height="34" Padding="14,0" />
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="Services &amp; Updates" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                        <TextBlock Text="Zenvix's own copy vs. the one installed on your system - update either." FontSize="11"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+                </DockPanel>
 
-                <TextBlock Grid.Row="0" Text="Version History" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,4" />
-                <TextBlock Grid.Row="1" Text="Roll back or change build" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" Margin="0,0,0,15" />
-
-                <!-- Loading Indicator -->
-                <TextBlock Grid.Row="2" Text="Loading versions..." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Visibility="{Binding IsLoadingVersions, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <!-- Scrollable list of versions -->
-                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                              Visibility="{Binding IsLoadingVersions, Converter={StaticResource BoolToVisibilityInvertedConverter}}">
-                    <ItemsControl ItemsSource="{Binding GitVersions}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,10">
-                                    <Border.Effect>
-                                        <DropShadowEffect Color="#090A0F" BlurRadius="6" ShadowDepth="1.5" Opacity="0.06" Direction="270" />
-                                    </Border.Effect>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding DisplayName}" Foreground="#0F172A" FontSize="12" FontWeight="Bold" />
-                                            <TextBlock Text="{Binding VersionName}" Foreground="#475569" FontSize="10" Margin="0,2,0,0" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding Tools}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,12">
+                                        <StackPanel>
+                                            <!-- name + version picker -->
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <ComboBox Grid.Column="1" ItemsSource="{Binding Versions}" SelectedItem="{Binding SelectedVersion}" Height="32" Margin="8,0"
+                                                          ToolTip="Latest two stable versions" />
+                                                <Button Grid.Column="2" Content="{Binding ActionLabel}" IsEnabled="{Binding CanAct}" Height="32" MinWidth="92" Padding="12,0"
+                                                        Command="{Binding DataContext.ApplyCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource Zenvix.Button.Ghost}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding HasUpdate}" Value="True">
+                                                                    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                                                    <Setter Property="Foreground" Value="White" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </Grid>
+                                            <!-- comparison: Zenvix copy vs your system -->
+                                            <Grid Margin="0,8,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="10,6" Margin="0,0,6,0">
+                                                    <StackPanel>
+                                                        <TextBlock Text="IN ZENVIX" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                                                        <TextBlock Text="{Binding Installed}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Grid.Column="1" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="10,6" Margin="0,0,6,0" ToolTip="{Binding SystemPath}">
+                                                    <StackPanel>
+                                                        <TextBlock Text="ON YOUR SYSTEM" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                                        <TextBlock Text="{Binding SystemVersion}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Button Grid.Column="2" Content="Update system" Command="{Binding DataContext.UpdateSystemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}" IsEnabled="{Binding CanUpdateSystem}" Height="32" Padding="10,0" Style="{DynamicResource Zenvix.Button.Ghost}"
+                                                        Visibility="{Binding HasSystem, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                        ToolTip="Update the copy installed on Windows (outside Zenvix)" />
+                                            </Grid>
+                                            <TextBlock Text="{Binding Status}" FontSize="11" Margin="0,6,0,0" Foreground="{DynamicResource AccentBrush}" TextWrapping="Wrap"
+                                                       Visibility="{Binding Status, Converter={StaticResource StringToVisibilityConverter}}" />
                                         </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
-                                        <Button Grid.Column="1" Content="Install" 
-                                                Command="{Binding DataContext.InstallSpecificVersionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Style="{DynamicResource Zenvix.Button.Primary}"
-                                                Background="#4F46E5" BorderBrush="#6366F1"
-                                                Height="26" Width="60" FontSize="10" FontWeight="Regular" Padding="0" Cursor="Hand" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        <!-- project packages: Laravel, Filament, Livewire -->
+                        <StackPanel Visibility="{Binding HasProjectPackages, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,16,0,0">
+                            <TextBlock Text="YOUR PROJECTS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                            <ItemsControl ItemsSource="{Binding ProjectPackages}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="90" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                    <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}">
+                                                        <Run Text="Installed " /><Run Text="{Binding Installed, Mode=OneWay}" FontWeight="SemiBold" />
+                                                        <Run Text="  ·  latest " /><Run Text="{Binding VersionsLabel, Mode=OneWay}" />
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding Status}" FontSize="11" Foreground="{DynamicResource AccentBrush}" TextWrapping="Wrap"
+                                                               Visibility="{Binding Status, Converter={StaticResource StringToVisibilityConverter}}" />
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="1" Text="{Binding Latest}" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <Button Grid.Column="2" Content="{Binding ActionLabel}" IsEnabled="{Binding CanAct}" Height="32" MinWidth="92" Padding="12,0"
+                                                        Style="{DynamicResource Zenvix.Button.Ghost}"
+                                                        Command="{Binding DataContext.ApplyCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </StackPanel>
                 </ScrollViewer>
-            </Grid>
+            </DockPanel>
         </Border>
     </Grid>
 </UserControl>

@@ -27,7 +27,10 @@ namespace Zenvix.Core.Models
         Static,
         Vite,
         React,
-        Vue
+        Vue,
+        Flutter,
+        ReactNative,
+        Ionic
     }
 
     public class Website : System.ComponentModel.INotifyPropertyChanged
@@ -95,6 +98,20 @@ namespace Zenvix.Core.Models
             }
         }
 
-        public string DisplayUrl => SslEnabled ? $"https://{Domain}" : $"http://{Domain}";
+        /// <summary>Dev-server command for Node / mobile projects (null = served by Nginx + PHP).</summary>
+        public string? DevCommand { get; set; }
+        public int? DevPort { get; set; }
+        /// <summary>Admin panel path (e.g. /admin for Filament, /wp-admin for WordPress).</summary>
+        public string? AdminPath { get; set; }
+        public string? AdminEmail { get; set; }
+        public string? AdminPassword { get; set; }
+        public int? DevProcessId { get; set; }
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool IsDevServerProject => !string.IsNullOrEmpty(DevCommand);
+
+        public string DisplayUrl => IsDevServerProject && DevPort is int p
+            ? $"http://localhost:{p}"
+            : SslEnabled ? $"https://{Domain}" : $"http://{Domain}";
     }
 }

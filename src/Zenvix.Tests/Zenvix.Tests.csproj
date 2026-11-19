@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Zenvix.Core\Zenvix.Core.csproj" />
     <ProjectReference Include="..\Zenvix.Modules\Zenvix.Modules.csproj" />
     <ProjectReference Include="..\Zenvix.Runtime\Zenvix.Runtime.csproj" />
+    <ProjectReference Include="..\Zenvix.ViewModels\Zenvix.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

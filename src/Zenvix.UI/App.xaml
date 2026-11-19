@@ -16,6 +16,15 @@
                 <ResourceDictionary Source="/Styles/ModernTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- Commissioner (SIL OFL 1.1, Assets/Fonts) as the app-wide UI font -->
+            <FontFamily x:Key="Zenvix.Font">pack://application:,,,/Assets/Fonts/#Commissioner</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Control">pack://application:,,,/Assets/Fonts/#Commissioner</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Button">pack://application:,,,/Assets/Fonts/#Commissioner</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Header">pack://application:,,,/Assets/Fonts/#Commissioner</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Window.Title">pack://application:,,,/Assets/Fonts/#Commissioner</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.ToggleSwitch">pack://application:,,,/Assets/Fonts/#Commissioner</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.ToggleSwitch.Header">pack://application:,,,/Assets/Fonts/#Commissioner</FontFamily>
+
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <conv:StatusToColorConverter x:Key="StatusToColorConverter" />
             <conv:StatusToButtonTextConverter x:Key="StatusToButtonTextConverter" />
@@ -26,6 +35,8 @@
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
             <conv:TechIconConverter x:Key="TechIconConverter" />
+            <conv:EqualityMultiConverter x:Key="EqualityMultiConverter" />
+            <conv:PositiveToVisibilityConverter x:Key="PositiveToVisibilityConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>

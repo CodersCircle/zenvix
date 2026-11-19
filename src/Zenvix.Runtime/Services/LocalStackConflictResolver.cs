@@ -102,6 +102,10 @@ namespace Zenvix.Runtime.Services
                     running, IsProtected: running.Count == 0);
             }
 
+            // Zenvix containers run from the Zenvix folder but are the user's on purpose – never stop them.
+            if (GetContainerPids().Contains(pid))
+                return new PortConflict(port, pid, name, path, "a Zenvix container", services, IsProtected: true);
+
             var stack = IdentifyStack(name, path, services);
             // svchost hosts many unrelated services – stopping all of them would hurt the system.
             var isProtected = name.Equals("svchost", StringComparison.OrdinalIgnoreCase)
@@ -207,15 +211,33 @@ namespace Zenvix.Runtime.Services
                 $"Port {port} is still in use by {still?.StackName ?? conflict.StackName} (PID {still?.Pid ?? conflict.Pid}).");
         }
 
+        /// <summary>PIDs of Zenvix containers (they run from the Zenvix folder but must keep running).</summary>
+        private HashSet<int> GetContainerPids()
+        {
+            var pids = new HashSet<int>();
+            try
+            {
+                var store = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "containers.json");
+                if (!File.Exists(store)) return pids;
+                using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllText(store));
+                foreach (var el in doc.RootElement.EnumerateArray())
+                    if (el.TryGetProperty("Pid", out var pid) && pid.ValueKind == System.Text.Json.JsonValueKind.Number)
+                        pids.Add(pid.GetInt32());
+            }
+            catch (Exception ex) { Log.Debug(ex, "[ConflictResolver] could not read container PIDs"); }
+            return pids;
+        }
+
         public int KillStaleZenvixProcesses(IEnumerable<string> processNames)
         {
             int killed = 0;
+            var containerPids = GetContainerPids();
             foreach (var name in processNames.Distinct(StringComparer.OrdinalIgnoreCase))
             {
                 foreach (var p in Process.GetProcessesByName(name))
                 {
                     var path = GetProcessPath(p.Id);
-                    if (path != null && path.StartsWith(_zenvixRoot, StringComparison.OrdinalIgnoreCase))
+                    if (path != null && path.StartsWith(_zenvixRoot, StringComparison.OrdinalIgnoreCase) && !containerPids.Contains(p.Id))
                     {
                         if (TryKill(p)) killed++;
                     }

@@ -4,14 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:ct="clr-namespace:Zenvix.Modules.Containers;assembly=Zenvix.Modules"
              mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="1000">
 
     <UserControl.Resources>
         <Style x:Key="Card" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
-            <Setter Property="CornerRadius" Value="16" />
-            <Setter Property="Padding" Value="20" />
-            <Setter Property="Margin" Value="0,0,0,14" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Padding" Value="18" />
+            <Setter Property="Margin" Value="0,0,0,12" />
         </Style>
         <Style x:Key="Caps" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11" />
@@ -22,12 +25,18 @@
             <Setter Property="Background" Value="{DynamicResource CardBrush}" />
             <Setter Property="CornerRadius" Value="6" />
             <Setter Property="Padding" Value="8,3" />
-            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="Margin" Value="0,0,6,0" />
         </Style>
-        <Style x:Key="SmallBtn" TargetType="Button" BasedOn="{StaticResource Zenvix.Button.Ghost}">
-            <Setter Property="Padding" Value="12,6" />
+        <Style x:Key="Act" TargetType="Button" BasedOn="{StaticResource Zenvix.Button.Ghost}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Padding" Value="12,0" />
             <Setter Property="Margin" Value="0,0,6,0" />
             <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style x:Key="Label" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="Margin" Value="0,0,0,5" />
         </Style>
     </UserControl.Resources>
 
@@ -35,77 +44,79 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="150" />
+            <RowDefinition Height="130" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Margin="0,0,0,16">
             <StackPanel>
                 <TextBlock Text="Container" Style="{DynamicResource Zenvix.Title}" />
-                <TextBlock Text="{Binding DockerDetail}" Style="{DynamicResource Zenvix.Subtitle}" Margin="0,4,0,0" />
+                <TextBlock Text="Isolated database and service instances, built into Zenvix. No Docker needed."
+                           Style="{DynamicResource Zenvix.Subtitle}" Margin="0,4,0,0" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
-                        Visibility="{Binding IsDockerReady, Converter={StaticResource BoolToVisibilityConverter}}">
-                <mah:ProgressRing Width="20" Height="20" Margin="0,0,12,0"
-                                  Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{DynamicResource Zenvix.Button.Ghost}" Padding="16,9" Margin="0,0,8,0" />
-                <Button Content="+ Custom container" Command="{Binding ToggleCustomFormCommand}" Style="{DynamicResource Zenvix.Button.Primary}" Padding="16,9" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <mah:ProgressRing Width="20" Height="20" Margin="0,0,12,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <Button Command="{Binding OpenCreateCommand}" Style="{DynamicResource Zenvix.Button.Primary}" Height="40" Padding="18,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource Icon.Plus}" Stroke="White" StrokeThickness="2" Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" />
+                        <TextBlock Text="New container" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 
-        <!-- Docker not available -->
-        <Border Grid.Row="1" Style="{StaticResource Card}" VerticalAlignment="Top" Padding="30"
-                Visibility="{Binding IsDockerReady, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}">
-            <StackPanel HorizontalAlignment="Center">
-                <Path Data="{StaticResource HeroIcon.Cube}" Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.5" Width="48" Height="48" Stretch="Uniform" />
-                <mah:ProgressRing Width="26" Height="26" Margin="0,16,0,0"
-                                  Visibility="{Binding IsChecking, Converter={StaticResource BoolToVisibilityConverter}}" />
-
-                <StackPanel Visibility="{Binding IsDockerMissing, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,14,0,0">
-                    <TextBlock Text="Docker is not installed" FontSize="17" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
-                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" MaxWidth="520" Margin="0,8,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
-                               Text="Containers run on Docker. Install Docker Desktop (free for personal use and small teams), start it once, and this page will light up automatically." />
-                    <Button Content="Get Docker Desktop" Command="{Binding InstallDockerCommand}" Style="{DynamicResource Zenvix.Button.Primary}"
-                            Padding="18,9" Margin="0,16,0,0" HorizontalAlignment="Center" />
-                </StackPanel>
-
-                <StackPanel Visibility="{Binding IsDockerStopped, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,14,0,0">
-                    <TextBlock Text="Docker is installed but not running" FontSize="17" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
-                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" MaxWidth="520" Margin="0,8,0,0" Foreground="{DynamicResource TextSecondaryBrush}"
-                               Text="Start the Docker engine. Zenvix checks again every few seconds." />
-                    <Button Content="Start Docker Desktop" Command="{Binding StartDockerCommand}" Style="{DynamicResource Zenvix.Button.Primary}"
-                            Padding="18,9" Margin="0,16,0,0" HorizontalAlignment="Center" />
-                </StackPanel>
-            </StackPanel>
-        </Border>
-
-        <!-- Docker ready -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
-                      Visibility="{Binding IsDockerReady, Converter={StaticResource BoolToVisibilityConverter}}">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
 
-                <!-- Custom container form -->
-                <Border Style="{StaticResource Card}" Visibility="{Binding IsCustomFormOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                <!-- Create form -->
+                <Border Style="{StaticResource Card}" BorderBrush="{DynamicResource AccentBrush}"
+                        Visibility="{Binding IsCreateOpen, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel>
-                        <TextBlock Text="RUN ANY IMAGE" Style="{StaticResource Caps}" Margin="0,0,0,10" />
+                        <TextBlock Text="NEW CONTAINER" Style="{StaticResource Caps}" Margin="0,0,0,12" />
                         <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="0.7*" />
+                                <ColumnDefinition Width="12" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="12" />
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="12" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="0.8*" />
                             </Grid.ColumnDefinitions>
-                            <TextBox Text="{Binding CustomName, UpdateSourceTrigger=PropertyChanged}" Padding="10,7" mah:TextBoxHelper.Watermark="Name (optional)" />
-                            <TextBox Grid.Column="2" Text="{Binding CustomImage, UpdateSourceTrigger=PropertyChanged}" Padding="10,7" mah:TextBoxHelper.Watermark="Image, e.g. wordpress:latest" />
-                            <TextBox Grid.Column="4" Text="{Binding CustomPorts, UpdateSourceTrigger=PropertyChanged}" Padding="10,7" mah:TextBoxHelper.Watermark="host:container" />
+                            <StackPanel>
+                                <TextBlock Text="Engine" Style="{StaticResource Label}" />
+                                <ComboBox ItemsSource="{Binding Templates}" SelectedItem="{Binding NewTemplate}" DisplayMemberPath="Title" Height="36" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Name" Style="{StaticResource Label}" />
+                                <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Height="36" Padding="8,0" VerticalContentAlignment="Center" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Port" Style="{StaticResource Label}" />
+                                <TextBox Text="{Binding NewPort, UpdateSourceTrigger=PropertyChanged}" Height="36" Padding="8,0" VerticalContentAlignment="Center"
+                                         mah:TextBoxHelper.Watermark="{Binding NewTemplate.DefaultPort, StringFormat='auto ({0})'}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="6">
+                                <TextBlock Text="Password" Style="{StaticResource Label}" />
+                                <TextBox Text="{Binding NewPassword, UpdateSourceTrigger=PropertyChanged}" Height="36" Padding="8,0" VerticalContentAlignment="Center"
+                                         mah:TextBoxHelper.Watermark="optional" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="8">
+                                <TextBlock Text="Memory limit (MB)" Style="{StaticResource Label}" />
+                                <TextBox Text="{Binding NewMemoryMb, UpdateSourceTrigger=PropertyChanged}" Height="36" Padding="8,0" VerticalContentAlignment="Center"
+                                         ToolTip="0 = no limit" />
+                            </StackPanel>
                         </Grid>
-                        <TextBox Text="{Binding CustomEnv, UpdateSourceTrigger=PropertyChanged}" Padding="10,7" Margin="0,10,0,0" AcceptsReturn="True" MinHeight="56"
-                                 FontFamily="Consolas" mah:TextBoxHelper.Watermark="Environment variables, one per line: KEY=value" />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-                            <Button Content="Cancel" Command="{Binding ToggleCustomFormCommand}" Style="{DynamicResource Zenvix.Button.Ghost}" Padding="16,8" Margin="0,0,8,0" />
-                            <Button Content="Run container" Command="{Binding RunCustomCommand}" Style="{DynamicResource Zenvix.Button.Primary}" Padding="16,8" />
-                        </StackPanel>
+                        <DockPanel Margin="0,14,0,0">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button Content="Cancel" Command="{Binding CancelCreateCommand}" Style="{StaticResource Act}" />
+                                <Button Content="Create &amp; start" Command="{Binding CreateCommand}" Style="{DynamicResource Zenvix.Button.Primary}" Height="34" Padding="16,0" />
+                            </StackPanel>
+                            <TextBlock VerticalAlignment="Center" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                       Text="{Binding NewTemplate.Version, StringFormat='Version {0}. The engine is downloaded once, then every container gets its own data folder.'}" />
+                        </DockPanel>
                     </StackPanel>
                 </Border>
 
@@ -113,109 +124,145 @@
                 <Border Style="{StaticResource Card}" Visibility="{Binding LogsFor, Converter={StaticResource NullToVisibilityConverter}}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
-                            <Button DockPanel.Dock="Right" Content="Close" Command="{Binding CloseLogsCommand}" Style="{StaticResource SmallBtn}" />
-                            <TextBlock Text="{Binding LogsFor.Name, StringFormat='LOGS — {0}'}" Style="{StaticResource Caps}" VerticalAlignment="Center" />
+                            <Button DockPanel.Dock="Right" Content="Close" Command="{Binding CloseLogsCommand}" Style="{StaticResource Act}" Margin="0" />
+                            <TextBlock Text="{Binding LogsFor.Name, StringFormat='LOGS — {0}  (live)'}" Style="{StaticResource Caps}" VerticalAlignment="Center" />
                         </DockPanel>
-                        <TextBox Text="{Binding LogsText, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="11" MaxHeight="260"
-                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap" />
+                        <Border Background="#0F172A" CornerRadius="10">
+                            <TextBox Text="{Binding LogsText, Mode=OneWay}" IsReadOnly="True" FontFamily="Consolas" FontSize="12" MaxHeight="260" Padding="10"
+                                     Background="Transparent" Foreground="#CBD5E1" BorderThickness="0"
+                                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap" />
+                        </Border>
                     </DockPanel>
                 </Border>
 
-                <!-- Containers -->
-                <TextBlock Text="YOUR CONTAINERS" Style="{StaticResource Caps}" Margin="4,0,0,10" />
-                <TextBlock Margin="4,0,0,16" Foreground="{DynamicResource TextSecondaryBrush}" Text="No containers yet — start one from a template below.">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Containers.Count}" Value="0">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                <!-- Empty state + templates -->
+                <Border Style="{StaticResource Card}" Padding="24"
+                        Visibility="{Binding HasContainers, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}">
+                    <StackPanel>
+                        <TextBlock Text="Start your first container" FontSize="17" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                        <TextBlock Text="Pick an engine. Each container is isolated: its own version, port, data folder, password and logs."
+                                   Margin="0,4,0,16" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                        <ItemsControl ItemsSource="{Binding Templates}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.OpenCreateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" Width="200" Height="86" Margin="0,0,12,12" Padding="14,10"
+                                            HorizontalContentAlignment="Left" Style="{DynamicResource Zenvix.Button.Ghost}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                        <StackPanel HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0" />
+                                            <TextBlock Text="{Binding Version, StringFormat='v{0}'}" FontSize="11" Foreground="{DynamicResource AccentBrush}" Margin="0,4,0,0" />
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
 
+                <!-- Containers -->
                 <ItemsControl ItemsSource="{Binding Containers}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Style="{StaticResource Card}" Padding="18,14">
+                        <DataTemplate DataType="{x:Type ct:ContainerInstance}">
+                            <Border Style="{StaticResource Card}">
                                 <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
+
                                     <StackPanel VerticalAlignment="Center">
                                         <StackPanel Orientation="Horizontal">
-                                            <Ellipse Width="9" Height="9" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <Ellipse Width="10" Height="10" Margin="0,0,10,0" VerticalAlignment="Center">
                                                 <Ellipse.Style>
                                                     <Style TargetType="Ellipse">
-                                                        <Setter Property="Fill" Value="{DynamicResource ErrorBrush}" />
+                                                        <Setter Property="Fill" Value="#94A3B8" />
                                                         <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                                            <DataTrigger Binding="{Binding State}" Value="{x:Static ct:ContainerState.Running}">
                                                                 <Setter Property="Fill" Value="{DynamicResource SuccessBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding State}" Value="{x:Static ct:ContainerState.Starting}">
+                                                                <Setter Property="Fill" Value="#F59E0B" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding State}" Value="{x:Static ct:ContainerState.Stopping}">
+                                                                <Setter Property="Fill" Value="#F59E0B" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding State}" Value="{x:Static ct:ContainerState.Error}">
+                                                                <Setter Property="Fill" Value="#EF4444" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Ellipse.Style>
                                             </Ellipse>
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding State}" FontSize="12" Margin="10,2,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
                                         </StackPanel>
-                                        <WrapPanel Margin="17,8,0,0">
+                                        <WrapPanel Margin="20,8,0,0">
                                             <Border Style="{StaticResource Pill}">
-                                                <TextBlock Text="{Binding Image}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                                                <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}">
+                                                    <Run Text="{Binding Title, Mode=OneWay}" /> <Run Text="{Binding Version, Mode=OneWay}" />
+                                                </TextBlock>
                                             </Border>
                                             <Border Style="{StaticResource Pill}">
-                                                <TextBlock Text="{Binding Status}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                                <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Text="{Binding Port, StringFormat='127.0.0.1:{0}'}" />
                                             </Border>
-                                            <Border Style="{StaticResource Pill}" Visibility="{Binding Ports, Converter={StaticResource StringToVisibilityConverter}}">
-                                                <TextBlock Text="{Binding Ports}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                            <Border Style="{StaticResource Pill}">
+                                                <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Text="{Binding MemoryLabel}" />
+                                            </Border>
+                                            <Border Style="{StaticResource Pill}" Visibility="{Binding Usage, Converter={StaticResource StringToVisibilityConverter}}">
+                                                <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Text="{Binding Usage}" />
                                             </Border>
                                         </WrapPanel>
+                                        <TextBlock Text="{Binding Message}" FontSize="11" Margin="20,8,0,0" TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}" />
                                     </StackPanel>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Button Content="Open" Style="{StaticResource SmallBtn}"
-                                                Command="{Binding DataContext.OpenInBrowserCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
-                                                Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                        <Button Content="Logs" Style="{StaticResource SmallBtn}"
-                                                Command="{Binding DataContext.ShowLogsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
-                                        <Button Content="Restart" Style="{StaticResource SmallBtn}"
-                                                Command="{Binding DataContext.RestartContainerCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
-                                                Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                        <Button Content="Stop" Style="{StaticResource SmallBtn}"
-                                                Command="{Binding DataContext.StopContainerCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
-                                                Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                        <Button Content="Start" Style="{DynamicResource Zenvix.Button.Primary}" Padding="14,6" Margin="0,0,6,0"
-                                                Command="{Binding DataContext.StartContainerCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
-                                                Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}" />
-                                        <Button Content="Remove" Style="{DynamicResource Zenvix.Button.Danger}" Padding="12,6"
-                                                Command="{Binding DataContext.RemoveContainerCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
 
-                <!-- Templates -->
-                <TextBlock Text="ONE-CLICK TEMPLATES" Style="{StaticResource Caps}" Margin="4,10,0,10" />
-                <ItemsControl ItemsSource="{Binding Templates}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Style="{StaticResource Card}" Width="215" Margin="0,0,12,12" Padding="16">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                    <TextBlock Text="{Binding Description}" FontSize="11" Margin="0,3,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
-                                    <TextBlock Text="{Binding Image}" FontSize="10" Margin="0,8,0,0" FontFamily="Consolas" Foreground="{DynamicResource AccentBrush}" />
-                                    <Button Content="Run" Style="{DynamicResource Zenvix.Button.Primary}" Padding="12,6" Margin="0,12,0,0" HorizontalAlignment="Left"
-                                            Command="{Binding DataContext.CreateFromTemplateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}" />
-                                </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                                        <Button Content="Start" Style="{DynamicResource Zenvix.Button.Primary}" Height="34" Padding="16,0" Margin="0,0,6,0"
+                                                Command="{Binding DataContext.StartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                                Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}" />
+                                        <Button Content="Stop" Style="{StaticResource Act}"
+                                                Command="{Binding DataContext.StopCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                                Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <Button Content="Restart" Style="{StaticResource Act}"
+                                                Command="{Binding DataContext.RestartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                                Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <Button Content="Logs" Style="{StaticResource Act}"
+                                                Command="{Binding DataContext.ShowLogsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                        <Button Style="{StaticResource Act}" ToolTip="Remove container" Margin="0"
+                                                Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                            <Path Data="{StaticResource Icon.Trash}" Stroke="#EF4444" StrokeThickness="1.5" Width="14" Height="14" Stretch="Uniform" />
+                                        </Button>
+                                    </StackPanel>
+
+                                    <!-- Connection row -->
+                                    <Border Grid.Row="1" Grid.ColumnSpan="2" Background="{DynamicResource CardBrush}" CornerRadius="10" Padding="12,8" Margin="20,12,0,0">
+                                        <DockPanel>
+                                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                                <Button Content="Copy" Style="{StaticResource Act}" Height="30"
+                                                        Command="{Binding DataContext.CopyConnectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                                <Button Content="Copy .env" Style="{StaticResource Act}" Height="30"
+                                                        Command="{Binding DataContext.CopyEnvCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                                <Button Content="Inbox" Style="{StaticResource Act}" Height="30"
+                                                        Command="{Binding DataContext.OpenInboxCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                                        Visibility="{Binding Spec.ExtraPort, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                <Button Style="{StaticResource Act}" Height="30" ToolTip="Open data folder" Margin="0"
+                                                        Command="{Binding DataContext.OpenFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                                    <Path Data="{StaticResource Icon.Folder}" Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.5" Width="14" Height="14" Stretch="Uniform" />
+                                                </Button>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding ConnectionString}" FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                        </DockPanel>
+                                    </Border>
+                                </Grid>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

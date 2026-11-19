@@ -33,7 +33,6 @@ namespace Zenvix.ViewModels
 
 
 
-    public partial class LogsViewModel : ObservableObject { }
     public partial class SettingsViewModel : ObservableObject
     {
         private readonly IAppUpdaterService? _updater;
@@ -53,6 +52,7 @@ namespace Zenvix.ViewModels
         [ObservableProperty] private string _updateButtonText = "Update Now";
         [ObservableProperty] private bool _isDownloadComplete = false;
         [ObservableProperty] private ObservableCollection<GitVersionItem> _gitVersions = new();
+        [ObservableProperty] private GitVersionItem? _selectedGitVersion;
         [ObservableProperty] private bool _isLoadingVersions = false;
 
         public bool IsNotCheckingUpdate => !IsCheckingUpdate;
@@ -65,9 +65,13 @@ namespace Zenvix.ViewModels
 
         public SettingsViewModel() { } // Design-time constructor
 
-        public SettingsViewModel(IAppUpdaterService updater)
+        /// <summary>Settings → SDKs & Updates panel.</summary>
+        public UpdatesViewModel? Updates { get; }
+
+        public SettingsViewModel(IAppUpdaterService updater, UpdatesViewModel updates)
         {
             _updater = updater;
+            Updates = updates;
             _syncContext = SynchronizationContext.Current;
             _ = LoadVersionsHistoryAsync();
         }
@@ -88,6 +92,7 @@ namespace Zenvix.ViewModels
                         {
                             GitVersions.Add(item);
                         }
+                        SelectedGitVersion = GitVersions.FirstOrDefault();
                     }, null);
                 }
                 else
@@ -97,6 +102,7 @@ namespace Zenvix.ViewModels
                     {
                         GitVersions.Add(item);
                     }
+                    SelectedGitVersion = GitVersions.FirstOrDefault();
                 }
             }
             catch (System.Exception ex)

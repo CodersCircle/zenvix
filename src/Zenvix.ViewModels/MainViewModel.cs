@@ -33,6 +33,7 @@ namespace Zenvix.ViewModels
         private readonly IDatabaseCredentialsManager _credentialsManager;
         private readonly ISSLManager _sslManager;
         private Timer? _monitoringTimer;
+        private readonly SystemMetrics _metrics = new();
 
         [ObservableProperty] private string _statusText = "Ready";
         [ObservableProperty] private string _searchQuery = string.Empty;
@@ -50,7 +51,7 @@ namespace Zenvix.ViewModels
         private readonly WebsitesViewModel _websitesVm;
         private readonly DatabasesViewModel _databasesVm;
         private readonly ServicesViewModel _servicesVm;
-        private readonly LogsViewModel _logsVm = new();
+        private readonly LogsViewModel _logsVm;
         private readonly SettingsViewModel _settingsVm;
         private readonly DeploymentViewModel _deploymentVm;
         private readonly ContainersViewModel _containersVm;
@@ -74,8 +75,10 @@ namespace Zenvix.ViewModels
             IAppUpdaterService updater,
             ISSLManager sslManager,
             DeploymentViewModel deploymentViewModel,
-            ContainersViewModel containersViewModel)
+            ContainersViewModel containersViewModel,
+            LogsViewModel logsViewModel)
         {
+            _logsVm = logsViewModel;
             _deploymentVm = deploymentViewModel;
             _containersVm = containersViewModel;
             _runtimeEngine = runtimeEngine;
@@ -199,6 +202,7 @@ namespace Zenvix.ViewModels
                 _ => _dashboardVm
             };
             _containersVm.SetActive(CurrentViewModel == _containersVm);
+            _logsVm.SetActive(CurrentViewModel == _logsVm);
             StatusText = $"Zenvix - {viewName}";
         }
 
@@ -411,11 +415,13 @@ namespace Zenvix.ViewModels
 
         private void OnMonitoringTick(object? state)
         {
-            var rand = new Random();
-            _dispatcher.Invoke(() =>
+            // Real machine readings, sampled off the UI thread; UI update is non-blocking.
+            var cpu = _metrics.SampleCpuPercent();
+            var (usedGb, _) = _metrics.SampleMemory();
+            _dispatcher.BeginInvoke(() =>
             {
-                _stateManager.CpuUsage = $"{rand.Next(2, 8)}%";
-                _stateManager.RamUsage = $"{rand.NextDouble() * 2 + 1:F1} GB";
+                _stateManager.CpuUsage = $"{cpu:F0}%";
+                _stateManager.RamUsage = $"{usedGb:F1} GB";
                 OnPropertyChanged(nameof(State)); // Notify UI to refresh metrics bindings
             });
         }

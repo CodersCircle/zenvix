@@ -19,7 +19,7 @@
         WindowStartupLocation="CenterScreen"
         WindowTitleBrush="#4F46E5"
         TitleForeground="#fdfdfdff"
-        ShowTitleBar="True">
+        ShowTitleBar="True" FontFamily="{StaticResource Zenvix.Font}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType">
 
     <Window.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
@@ -37,6 +37,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:DatabasesViewModel}">
             <views:DatabasesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LogsViewModel}">
+            <views:LogsView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
             <views:SettingsView />
@@ -69,56 +72,56 @@
                 <StackPanel Grid.Row="1">
                     <RadioButton IsChecked="True" Command="{Binding NavigateCommand}" CommandParameter="Dashboard" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource HeroIcon.Dashboard}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Path Data="{StaticResource Icon.Dashboard}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="Dashboard" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
                     
                     <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Websites" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource HeroIcon.Website}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Path Data="{StaticResource Icon.Website}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="Websites" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
 
                     <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Deployment" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource HeroIcon.Rocket}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Path Data="{StaticResource Icon.Rocket}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="Deployment" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
 
                     <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Databases" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource HeroIcon.Database}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Path Data="{StaticResource Icon.Database}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="Databases" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
 
                     <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Services" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource HeroIcon.Server}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Path Data="{StaticResource Icon.Server}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="Services" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
 
                     <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Container" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource HeroIcon.Cube}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Path Data="{StaticResource Icon.Cube}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="Container" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
 
                     <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Logs" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource HeroIcon.Logs}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Path Data="{StaticResource Icon.Logs}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="Logs" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
 
                     <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Settings" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource HeroIcon.Settings}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <Path Data="{StaticResource Icon.Settings}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="Settings" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
@@ -141,7 +144,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" /> <!-- Topbar -->
                 <RowDefinition Height="*" />  <!-- Content -->
-                <RowDefinition Height="Auto" /> <!-- Resizable Log Panel -->
             </Grid.RowDefinitions>
 
             <!-- TOPBAR -->
@@ -151,33 +153,24 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox MaxWidth="450" MinWidth="320" HorizontalAlignment="Left" VerticalAlignment="Center" 
-                         Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                         mah:TextBoxHelper.Watermark="Search projects or run command..."
-                         mah:TextBoxHelper.ClearTextButton="True"
-                         mah:TextBoxHelper.SelectAllOnFocus="True"
-                         mah:TextBoxHelper.ButtonContent=""
-                         mah:TextBoxHelper.ButtonFontFamily="Segoe MDL2 Assets"
-                         mah:TextBoxHelper.ButtonWidth="35"
-                         mah:ControlsHelper.CornerRadius="14"
-                         mah:ControlsHelper.FocusBorderBrush="{StaticResource AccentBrush}"
-                         mah:ControlsHelper.MouseOverBorderBrush="{StaticResource AccentBrush}"
-                         Background="{StaticResource SurfaceBrush}" 
-                         Foreground="{StaticResource TextPrimaryBrush}" 
-                         BorderThickness="1" 
-                         BorderBrush="{StaticResource BorderBrush}" 
-                         FontSize="14"
-                         VerticalContentAlignment="Center"
-                         Height="42" Padding="15,0,10,0" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Update notification: shown when SDK or project updates are available -->
+                    <Button Command="{Binding NavigateCommand}" CommandParameter="Settings" Height="34" Padding="14,0" Margin="0,0,8,0"
+                            ToolTip="New versions are available - open Settings &gt; SDKs &amp; Updates" Style="{DynamicResource Zenvix.Button.Primary}"
+                            Visibility="{Binding Settings.Updates.AvailableCount, Converter={StaticResource PositiveToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource Icon.Bolt}" Stroke="White" StrokeThickness="1.6" Width="13" Height="13" Stretch="Uniform" Margin="0,0,8,0" />
+                            <TextBlock Text="{Binding Settings.Updates.AvailableCount, StringFormat='{}{0} updates available'}" FontSize="12" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                     <StackPanel Margin="20,0">
                         <TextBlock Text="CPU" HorizontalAlignment="Right" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" />
-                        <TextBlock Text="12.4%" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
+                        <TextBlock Text="{Binding State.CpuUsage}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
                     </StackPanel>
                     <StackPanel Margin="20,0">
                         <TextBlock Text="MEMORY" HorizontalAlignment="Right" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" />
-                        <TextBlock Text="1.8 GB" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
+                        <TextBlock Text="{Binding State.RamUsage}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
                     </StackPanel>
                     <Border Width="45" Height="45" CornerRadius="22" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2">
                         <TextBlock Text="{Binding Settings.AvatarText}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -188,19 +181,6 @@
             <!-- CONTENT HOST -->
             <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}" Margin="40,10,40,40" />
 
-            <!-- LOG PANEL -->
-            <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
-                <Expander Header="RUNTIME TERMINAL" ExpandDirection="Up" IsExpanded="False" Foreground="{StaticResource TextSecondaryBrush}" BorderThickness="0">
-                    <Border Height="250" Background="#0F172A" Padding="25">
-                        <ScrollViewer>
-                            <TextBlock FontFamily="Consolas" FontSize="13" Foreground="#94A3B8" LineHeight="20">
-                                <Run Foreground="{StaticResource AccentBrush}" FontWeight="Bold">[19:16:10]</Run> Orchestrator: System ready.<LineBreak/>
-                                <Run Foreground="{StaticResource SuccessBrush}" FontWeight="Bold">[19:16:11]</Run> Engine: All hooks initialized.
-                            </TextBlock>
-                        </ScrollViewer>
-                    </Border>
-                </Expander>
-            </Border>
         </Grid>
     </Grid>
     <mah:MetroWindow.Flyouts>

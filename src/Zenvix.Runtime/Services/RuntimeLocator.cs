@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Zenvix.Core.Models;
 using Zenvix.Core.Services;
@@ -20,7 +21,36 @@ namespace Zenvix.Runtime.Services
             _runtimesRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runtimes");
         }
 
+        // Scans are cached until the runtimes folder layout changes (a runtime installed or removed).
+        private List<RuntimeMetadata>? _cache;
+        private string? _cacheFingerprint;
+        private readonly SemaphoreSlim _scanLock = new(1, 1);
+
+        private string ComputeFingerprint()
+        {
+            if (!Directory.Exists(_runtimesRoot)) return "";
+            // runtimes/<type>/<version> folder names + binary presence are enough to detect installs.
+            return string.Join("|", Directory.GetDirectories(_runtimesRoot)
+                .SelectMany(t => Directory.GetDirectories(t).Select(v => v + ":" + Directory.GetFileSystemEntries(v).Length))
+                .OrderBy(x => x, StringComparer.OrdinalIgnoreCase));
+        }
+
         public async Task<List<RuntimeMetadata>> DiscoverAllAsync()
+        {
+            await _scanLock.WaitAsync();
+            try
+            {
+                var fingerprint = ComputeFingerprint();
+                if (_cache != null && fingerprint == _cacheFingerprint) return _cache.ToList();
+
+                _cache = await ScanAllAsync();
+                _cacheFingerprint = fingerprint;
+                return _cache.ToList();
+            }
+            finally { _scanLock.Release(); }
+        }
+
+        private async Task<List<RuntimeMetadata>> ScanAllAsync()
         {
             _discoveryLogs.Clear();
             var results = new List<RuntimeMetadata>();

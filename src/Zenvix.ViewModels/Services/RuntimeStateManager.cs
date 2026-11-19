@@ -23,8 +23,14 @@ namespace Zenvix.ViewModels.Services
         void UpdateService(Service service);
     }
 
-    public class RuntimeStateManager : IRuntimeStateManager
+    public class RuntimeStateManager : IRuntimeStateManager, System.ComponentModel.INotifyPropertyChanged
     {
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+        private void Notify([System.Runtime.CompilerServices.CallerMemberName] string? name = null)
+            => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+
+        private string _cpuUsage = "0%";
+        private string _ramUsage = "0 GB";
         private readonly IDispatcherService _dispatcher;
 
         public ObservableCollection<Service> ActiveServices   { get; } = new();
@@ -32,8 +38,9 @@ namespace Zenvix.ViewModels.Services
         public ObservableCollection<Website> RunningWebsites  { get; } = new();
         public ObservableCollection<string>  RuntimeEvents    { get; } = new();
 
-        public string CpuUsage           { get; set; } = "0%";
-        public string RamUsage           { get; set; } = "0 GB";
+        // Notify so Dashboard and top bar update live.
+        public string CpuUsage { get => _cpuUsage; set { if (_cpuUsage != value) { _cpuUsage = value; Notify(); } } }
+        public string RamUsage { get => _ramUsage; set { if (_ramUsage != value) { _ramUsage = value; Notify(); } } }
         public string InfrastructureState { get; set; } = "Idle";
         public string SystemHealthStatus  { get; set; } = "Healthy";
 

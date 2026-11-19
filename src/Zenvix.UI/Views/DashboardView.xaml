@@ -421,16 +421,16 @@
                         <StackPanel>
                             <TextBlock Text="QUICK ACTIONS" FontSize="11" FontWeight="Bold"
                                 Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15" />
-                            <UniformGrid Columns="2">
+                            <UniformGrid Columns="1">
                                 <Button Content="Stop All Services"
                                     Command="{Binding DataContext.StopAllServicesCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    Style="{DynamicResource Zenvix.Button.Danger}" Margin="0,0,10,10" />
+                                    Style="{DynamicResource Zenvix.Button.Danger}" Margin="0,0,0,10" />
                                 <Button Content="Flush DNS Cache"
                                     Command="{Binding DataContext.FlushDNSCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                     Style="{DynamicResource Zenvix.Button}" Margin="0,0,0,10" />
                                 <Button Content="Trust SSL"
                                     Command="{Binding DataContext.TrustRootCACommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    Style="{DynamicResource Zenvix.Button}" Margin="0,0,10,0"
+                                    Style="{DynamicResource Zenvix.Button}" Margin="0,0,0,10"
                                     Background="{DynamicResource AccentBrush}" Foreground="White" BorderThickness="0" FontWeight="Bold" />
                                 <Button Content="Clear Cache"
                                     Command="{Binding DataContext.ClearCacheCommand, RelativeSource={RelativeSource AncestorType=Window}}"

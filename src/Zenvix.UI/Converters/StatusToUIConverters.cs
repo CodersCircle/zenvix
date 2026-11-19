@@ -269,3 +269,37 @@ namespace Zenvix.UI.Converters
             => throw new NotImplementedException();
     }
 }
+
+namespace Zenvix.UI.Converters
+{
+    /// <summary>True when all bound values are equal (e.g. item == SelectedItem).</summary>
+    public class EqualityMultiConverter : System.Windows.Data.IMultiValueConverter
+    {
+        public object Convert(object[] values, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            => values.Length >= 2 && Equals(values[0]?.ToString(), values[1]?.ToString());
+
+        public object[] ConvertBack(object value, System.Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+            => throw new System.NotSupportedException();
+    }
+}
+
+namespace Zenvix.UI.Converters
+{
+    /// <summary>Visible when the bound number is greater than zero.</summary>
+    public class PositiveToVisibilityConverter : System.Windows.Data.IValueConverter
+    {
+        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            => value is int n && n > 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            => throw new System.NotSupportedException();
+    }
+}
+
+namespace Zenvix.UI.Converters
+{
+    public class InverseBoolConverter : System.Windows.Data.IValueConverter
+    {
+        public object Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture) => value is not true;
+        public object ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture) => value is not true;
+    }
+}

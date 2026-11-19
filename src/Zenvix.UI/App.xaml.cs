@@ -36,15 +36,32 @@ namespace Zenvix.UI
             mainWindow.Show();
         }
 
+        private bool _errorDialogOpen;
+        private string? _lastErrorMessage;
+        private DateTime _lastErrorShown;
+
         private void RegisterGlobalExceptionHandlers()
         {
             DispatcherUnhandledException += (_, args) =>
             {
                 Serilog.Log.Error(args.Exception, "Unhandled UI exception");
-                System.Windows.MessageBox.Show(
-                    $"Something went wrong:\n\n{args.Exception.Message}\n\nDetails were written to logs\\zenvix.log.",
-                    "Zenvix", MessageBoxButton.OK, MessageBoxImage.Error);
                 args.Handled = true;
+
+                // One error can repeat for every item in a list – show a single dialog, never a pile.
+                var message = args.Exception.InnerException?.Message ?? args.Exception.Message;
+                if (_errorDialogOpen || (message == _lastErrorMessage && DateTime.Now - _lastErrorShown < TimeSpan.FromSeconds(30)))
+                    return;
+
+                _errorDialogOpen = true;
+                _lastErrorMessage = message;
+                _lastErrorShown = DateTime.Now;
+                try
+                {
+                    System.Windows.MessageBox.Show(
+                        $"Something went wrong:\n\n{message}\n\nDetails were written to logs\\zenvix.log.",
+                        "Zenvix", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally { _errorDialogOpen = false; }
             };
 
             AppDomain.CurrentDomain.UnhandledException += (_, args) =>
@@ -64,6 +81,7 @@ namespace Zenvix.UI
         {
             Serilog.Log.Information("Zenvix shutting down – stopping managed services.");
             try { ServiceProvider?.GetService<Zenvix.Modules.Deployment.IShareTunnelService>()?.StopAll(); } catch { }
+            try { ServiceProvider?.GetService<Zenvix.Modules.Containers.IContainerEngine>()?.StopAllAsync().Wait(TimeSpan.FromSeconds(20)); } catch { }
             try
             {
                 // Don't leave orphaned nginx/mysqld/php-cgi holding ports after the window closes.
@@ -121,11 +139,16 @@ namespace Zenvix.UI
             services.AddSingleton<Zenvix.Modules.Deployment.ISshDeployService, Zenvix.Modules.Deployment.SshDeployService>();
             services.AddSingleton<Zenvix.Modules.Deployment.IGitDeployService, Zenvix.Modules.Deployment.GitDeployService>();
             services.AddSingleton<Zenvix.Modules.Deployment.IShareTunnelService, Zenvix.Modules.Deployment.ShareTunnelService>();
-            services.AddSingleton<Zenvix.Modules.Containers.IDockerService, Zenvix.Modules.Containers.DockerService>();
+            services.AddSingleton<Zenvix.Modules.Containers.IContainerEngine, Zenvix.Modules.Containers.ContainerEngine>();
+            services.AddSingleton<Zenvix.Modules.Toolchain.IToolchainManager, Zenvix.Modules.Toolchain.ToolchainManager>();
+            services.AddSingleton<Zenvix.Modules.Toolchain.IProjectScaffolder, Zenvix.Modules.Toolchain.ProjectScaffolder>();
+            services.AddSingleton<Zenvix.Modules.Toolchain.IUpdateService, Zenvix.Modules.Toolchain.UpdateService>();
+            services.AddSingleton<UpdatesViewModel>();
 
             // ViewModels
             services.AddSingleton<Zenvix.ViewModels.Deployment.DeploymentViewModel>();
             services.AddSingleton<Zenvix.ViewModels.Containers.ContainersViewModel>();
+            services.AddSingleton<LogsViewModel>();
             services.AddSingleton<DatabasesViewModel>();
             services.AddSingleton<ServicesViewModel>();
             services.AddSingleton<WebsitesViewModel>();

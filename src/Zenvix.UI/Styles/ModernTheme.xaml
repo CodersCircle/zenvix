@@ -139,11 +139,6 @@
         <Setter Property="Padding" Value="24" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.05" Color="Black" />
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!-- ToggleSwitch (Mockup Style) - Stable and Interactive Template -->

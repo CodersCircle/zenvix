@@ -23,6 +23,7 @@ Desktop.ini
 # Ignore all root .md files except README and DEVELOPER-NOTES
 /*.md
 !README.md
+!THIRD-PARTY-NOTICES.md
 !DEVELOPER-NOTES.md
 
 # Project scratch/config files

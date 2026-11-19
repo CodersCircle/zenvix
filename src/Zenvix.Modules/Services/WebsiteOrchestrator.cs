@@ -31,6 +31,7 @@ namespace Zenvix.Runtime.Services
         public ObservableCollection<Website> Websites { get; } = new ObservableCollection<Website>();
         
         private readonly string _storagePath;
+        private readonly Zenvix.Modules.Toolchain.IToolchainManager _tools;
         private readonly IServicesOrchestrator _services;
         private readonly IRuntimeConfigGenerator _config;
         private readonly IDomainManager _domainManager;
@@ -40,8 +41,10 @@ namespace Zenvix.Runtime.Services
             IServicesOrchestrator services,
             IRuntimeConfigGenerator config,
             IDomainManager domainManager,
-            ISSLManager ssl)
+            ISSLManager ssl,
+            Zenvix.Modules.Toolchain.IToolchainManager? tools = null)
         {
+            _tools = tools ?? new Zenvix.Modules.Toolchain.ToolchainManager();
             _services = services;
             _config = config;
             _domainManager = domainManager;
@@ -84,15 +87,36 @@ namespace Zenvix.Runtime.Services
                     }
                 }
                 catch (Exception ex) { Log.Error(ex, "Failed to load projects"); }
+                PruneStaleVHosts();
             }
+        }
+
+        /// <summary>Deletes generated vhost files for sites that are no longer in the list.</summary>
+        private void PruneStaleVHosts()
+        {
+            try
+            {
+                var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config", "generated", "vhosts");
+                if (!Directory.Exists(dir)) return;
+                var keep = new HashSet<string>(Websites.Select(w => w.Domain + ".conf"), StringComparer.OrdinalIgnoreCase);
+                foreach (var f in Directory.GetFiles(dir, "*.conf"))
+                    if (!keep.Contains(Path.GetFileName(f))) File.Delete(f);
+            }
+            catch (Exception ex) { Log.Warning(ex, "[WebOrchestrator] could not prune stale vhosts"); }
         }
 
         public async Task SaveAsync()
         {
+            PruneStaleVHosts();
             try
             {
                 var json = JsonSerializer.Serialize(Websites.ToList(), new JsonSerializerOptions { WriteIndented = true });
-                await File.WriteAllTextAsync(_storagePath, json);
+                // Keep the previous list and write atomically, so a crash or mistake never loses it.
+                if (File.Exists(_storagePath)) File.Copy(_storagePath, _storagePath + ".bak", overwrite: true);
+                var tmp = _storagePath + ".tmp";
+                await File.WriteAllTextAsync(tmp, json);
+                File.Move(tmp, _storagePath, overwrite: true);
+                Log.Information("[WebOrchestrator] Saved {Count} website(s).", Websites.Count);
             }
             catch (Exception ex) { Log.Error(ex, "Failed to save projects"); }
         }
@@ -124,6 +148,10 @@ namespace Zenvix.Runtime.Services
                 website.Status = WebsiteStatus.Starting;
 
                 if (!Websites.Contains(website)) Websites.Add(website);
+
+                // Node / mobile projects run their own dev server instead of Nginx + PHP.
+                if (website.IsDevServerProject)
+                    return await StartDevServerAsync(website);
 
                 // 1. Get Nginx Metadata
                 var nginx = await _services.GetRuntimeMetadataAsync(RuntimeServiceType.Nginx);
@@ -221,8 +249,8 @@ namespace Zenvix.Runtime.Services
                 ServerCertificateCustomValidationCallback = (m, c, ch, e) => true 
             });
             
-            // Modern browsers and PHP need a bit more time to initialize sockets
-            client.Timeout = TimeSpan.FromSeconds(5);
+            // The first request to a framework app (Laravel/Filament cold boot, OPcache warm-up) can take 10-20s.
+            client.Timeout = TimeSpan.FromSeconds(30);
             
             // CRITICAL: Wait for Nginx to actually bind and start listening
             await Task.Delay(2000); 
@@ -235,11 +263,10 @@ namespace Zenvix.Runtime.Services
                     
                     var response = await client.GetAsync(website.DisplayUrl);
                     
-                    // 1. Verify HTTP Response Code (200, 404, 403, 500 are "alive")
-                    if (response.IsSuccessStatusCode || 
-                        response.StatusCode == System.Net.HttpStatusCode.NotFound ||
-                        response.StatusCode == System.Net.HttpStatusCode.Forbidden ||
-                        response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                    // 1. Any answer from the app means the site is served (the app may legitimately 404 on "/").
+                    //    Only gateway errors mean Nginx could not reach PHP.
+                    var code = (int)response.StatusCode;
+                    if (code != 502 && code != 503 && code != 504)
                     {
                         // 2. Verify PHP Execution (Response Body check)
                         var content = await response.Content.ReadAsStringAsync();
@@ -358,8 +385,70 @@ namespace Zenvix.Runtime.Services
             }
         }
 
+        /// <summary>
+        /// Starts "npm run dev", "flutter run", "expo start"... in its own console window (so hot reload,
+        /// QR codes and errors stay visible) with Zenvix's Node/Flutter/PHP on PATH.
+        /// </summary>
+        private async Task<bool> StartDevServerAsync(Website website)
+        {
+            try
+            {
+                if (website.DevProcessId is int old && IsAlive(old)) { website.Status = WebsiteStatus.Running; return true; }
+
+                var psi = new ProcessStartInfo("cmd.exe", $"/d /k \"title {website.Name} - Zenvix && {website.DevCommand}\"")
+                {
+                    WorkingDirectory = website.LocalPath,
+                    UseShellExecute = false,
+                    CreateNoWindow = false,
+                };
+                foreach (var kv in _tools.BuildEnvironment()) psi.Environment[kv.Key] = kv.Value;
+                psi.Environment["CI"] = "";          // dev servers should be interactive (Expo QR, hot reload keys)
+                psi.Environment["BROWSER"] = "none"; // we open the browser ourselves once the port answers
+
+                var proc = Process.Start(psi)!;
+                website.DevProcessId = proc.Id;
+                Log.Information("[WebOrchestrator] Dev server for {Name}: {Cmd} (PID {Pid})", website.Name, website.DevCommand, proc.Id);
+
+                // Wait for the dev server port (first Flutter/Next build can take a while).
+                var ready = false;
+                if (website.DevPort is int port)
+                {
+                    var sw = Stopwatch.StartNew();
+                    while (sw.Elapsed < TimeSpan.FromMinutes(3) && !proc.HasExited)
+                    {
+                        if (System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners().Any(e => e.Port == port))
+                        { ready = true; break; }
+                        await Task.Delay(1000);
+                    }
+                }
+
+                website.Status = proc.HasExited ? WebsiteStatus.Error : WebsiteStatus.Running;
+                website.Notes = proc.HasExited ? "Dev server exited – see its console window."
+                              : ready ? $"Dev server on {website.DisplayUrl}" : "Dev server starting – watch its console window.";
+                await SaveAsync();
+                return !proc.HasExited;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[WebOrchestrator] dev server failed for {Name}", website.Name);
+                website.Status = WebsiteStatus.Error;
+                website.Notes = ex.Message;
+                return false;
+            }
+        }
+
+        private static bool IsAlive(int pid)
+        {
+            try { using var p = Process.GetProcessById(pid); return !p.HasExited; } catch { return false; }
+        }
+
         public async Task<bool> StopWebsiteAsync(Website website)
         {
+            if (website.DevProcessId is int pid)
+            {
+                try { using var p = Process.GetProcessById(pid); p.Kill(entireProcessTree: true); } catch { }
+                website.DevProcessId = null;
+            }
             website.Status = WebsiteStatus.Stopped;
             await SaveAsync();
             return true;

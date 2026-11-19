@@ -59,7 +59,7 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Path Data="{StaticResource HeroIcon.Globe}" Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.5"
+                                <Path Data="{StaticResource Icon.Globe}" Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.5"
                                       Width="30" Height="30" Stretch="Uniform" Margin="0,2,18,0" VerticalAlignment="Top" />
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Text="Show your local site to anyone — no hosting needed" FontWeight="Bold" FontSize="15"
@@ -199,7 +199,7 @@
                     <Border Grid.Column="1" Style="{StaticResource SectionCard}"
                             Visibility="{Binding HasProfile, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,40">
-                            <Path Data="{StaticResource HeroIcon.Rocket}" Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.5" Width="44" Height="44" Stretch="Uniform" />
+                            <Path Data="{StaticResource Icon.Rocket}" Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.5" Width="44" Height="44" Stretch="Uniform" />
                             <TextBlock Text="Publish a project to your server" FontWeight="Bold" FontSize="16" Margin="0,14,0,6"
                                        HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
                             <TextBlock Text="Upload over SSH/SFTP, or push to GitHub/GitLab so your host deploys it."

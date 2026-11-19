@@ -22,6 +22,8 @@ namespace Zenvix.ViewModels
         private readonly IRuntimeInstaller _runtimeInstaller;
         private readonly IServicesOrchestrator _servicesOrchestrator;
         private readonly IProcessManager _processManager;
+        private readonly Zenvix.Modules.Toolchain.IProjectScaffolder? _scaffolder;
+        private readonly IClipboardService? _clipboard;
 
         [ObservableProperty]
         private bool _isCooking;
@@ -132,12 +134,27 @@ namespace Zenvix.ViewModels
                 {
                     return NewWebsitePath;
                 }
-                var slug = NewWebsiteName.ToLower().Replace(" ", "-").Trim();
+                var slug = Slugify(NewWebsiteName);
                 return Path.Combine(NewWebsitePath, slug);
             }
         }
 
         public ObservableCollection<Website> Websites => _orchestrator.Websites;
+
+        /// <summary>
+        /// Turns a name into a safe folder/host label: lower-case letters, digits and single dashes only.
+        /// ("HTML/CSS" → "html-css", "new_penal" → "new-penal"; "/" or "_" would break paths, hosts and SSL certs.)
+        /// </summary>
+        public static string Slugify(string? text)
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach (var ch in (text ?? "").Trim().ToLowerInvariant())
+            {
+                if ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9')) sb.Append(ch);
+                else if (sb.Length > 0 && sb[^1] != '-') sb.Append('-');
+            }
+            return sb.ToString().Trim('-');
+        }
 
         public WebsitesViewModel(
             IWebsiteOrchestrator orchestrator,
@@ -145,8 +162,12 @@ namespace Zenvix.ViewModels
             IDialogService dialogService,
             IRuntimeInstaller runtimeInstaller,
             IServicesOrchestrator servicesOrchestrator,
-            IProcessManager processManager)
+            IProcessManager processManager,
+            Zenvix.Modules.Toolchain.IProjectScaffolder scaffolder,
+            IClipboardService clipboard)
         {
+            _scaffolder = scaffolder;
+            _clipboard = clipboard;
             _orchestrator = orchestrator;
             _stateManager = stateManager;
             _dialogService = dialogService;
@@ -173,7 +194,7 @@ namespace Zenvix.ViewModels
             OnPropertyChanged(nameof(FullCreatedPathDisplay));
 
             // Auto-generate domain if not manually overridden or just starting
-            var slug = value.ToLower().Replace(" ", "-").Trim();
+            var slug = Slugify(value);
             if (!string.IsNullOrEmpty(slug))
             {
                 NewWebsiteDomain = slug + SelectedSuffix;
@@ -182,7 +203,7 @@ namespace Zenvix.ViewModels
 
         partial void OnSelectedSuffixChanged(string value)
         {
-            var slug = NewWebsiteName.ToLower().Replace(" ", "-").Trim();
+            var slug = Slugify(NewWebsiteName);
             if (!string.IsNullOrEmpty(slug))
             {
                 NewWebsiteDomain = slug + value;
@@ -214,7 +235,6 @@ namespace Zenvix.ViewModels
                     Frameworks.Add("Ionic");
                     break;
                 case "Admin Panel":
-                    Frameworks.Add("Laravel");
                     Frameworks.Add("FilamentPHP");
                     Frameworks.Add("React Admin");
                     Frameworks.Add("Vue Admin");
@@ -259,7 +279,7 @@ namespace Zenvix.ViewModels
             // Auto-populate Project Name or Domain based on selected framework if empty
             if (string.IsNullOrEmpty(NewWebsiteName) || NewWebsiteName.StartsWith("my-"))
             {
-                NewWebsiteName = $"my-{framework.ToLower().Replace(" ", "-").Replace(".", "")}";
+                NewWebsiteName = $"my-{Slugify(framework)}";
             }
         }
 
@@ -338,7 +358,7 @@ namespace Zenvix.ViewModels
             if (string.IsNullOrWhiteSpace(NewWebsiteName) || string.IsNullOrWhiteSpace(NewWebsitePath)) return;
 
             var isImport = SelectedCategory != null && SelectedCategory.Equals("Import Project", StringComparison.OrdinalIgnoreCase);
-            var projectSlug = NewWebsiteName.ToLower().Replace(" ", "-").Trim();
+            var projectSlug = Slugify(NewWebsiteName);
             var targetPath = isImport ? NewWebsitePath : Path.Combine(NewWebsitePath, projectSlug);
 
             IsCooking = true;
@@ -402,209 +422,102 @@ namespace Zenvix.ViewModels
 
                 var framework = string.IsNullOrEmpty(SelectedFramework) ? "Tailwind Starter" : SelectedFramework;
 
+                Zenvix.Modules.Toolchain.ScaffoldResult? scaffold = null;
+
                 if (!isImport)
                 {
                     CookingStatus = "Scaffolding...";
-                    _stateManager.AddEvent($"[Cooking] Scaffolding {framework} skeleton...");
+                    _stateManager.AddEvent($"[Cooking] Creating {framework} project...");
 
-                    if (framework == "Laravel" || framework == "FilamentPHP" || framework == "Laravel API")
+                    if (_scaffolder != null && _scaffolder.Handles(framework))
                     {
-                        CookingStatus = "Scaffolding Laravel...";
-                        if (Directory.Exists(targetPath))
+                        // PHP apps get Zenvix MySQL when it can run; otherwise Laravel falls back to SQLite.
+                        int? mysqlPort = null;
+                        if (framework is "Laravel" or "FilamentPHP" or "Laravel API" or "WordPress")
                         {
-                            try { Directory.Delete(targetPath, true); } catch { }
-                        }
-                        Directory.CreateDirectory(targetPath);
-
-                        await RunCommandWithOutputAsync("cmd.exe", $"/c composer create-project laravel/laravel . --prefer-dist --no-interaction", targetPath);
-
-                        var dbName = projectSlug.Replace("-", "_");
-                        var dbPort = _servicesOrchestrator.Instances.FirstOrDefault(i => i.Type == RuntimeServiceType.MySQL || i.Type == RuntimeServiceType.MariaDB)?.Port ?? 3306;
-
-                        // Configure .env
-                        var envPath = Path.Combine(targetPath, ".env");
-                        if (File.Exists(envPath))
-                        {
-                            SetEnvValue(envPath, "DB_CONNECTION", "mysql");
-                            SetEnvValue(envPath, "DB_HOST", "127.0.0.1");
-                            SetEnvValue(envPath, "DB_PORT", dbPort.ToString());
-                            SetEnvValue(envPath, "DB_DATABASE", dbName);
-                            SetEnvValue(envPath, "DB_USERNAME", "root");
-                            SetEnvValue(envPath, "DB_PASSWORD", "");
-                            SetEnvValue(envPath, "APP_URL", $"http://{domain}");
+                            CookingStatus = "Starting MySQL...";
+                            var db = _servicesOrchestrator.Instances.FirstOrDefault(i => i.Type == RuntimeServiceType.MySQL);
+                            if (db != null && (db.Status == ServiceStatus.Running || await _servicesOrchestrator.StartAsync(db.Id)))
+                                mysqlPort = db.Port;
                         }
 
-                        if (framework == "FilamentPHP")
+                        var progress = new Progress<string>(line =>
                         {
-                            CookingStatus = "Adding Filament...";
-                            var filVer = "3.2";
-                            if (FilamentVersion.Contains("5.x")) filVer = "5.0";
-                            else if (FilamentVersion.Contains("4.x")) filVer = "4.0";
-
-                            await RunCommandWithOutputAsync("cmd.exe", $"/c composer require filament/filament:\"^{filVer}\" -W --no-interaction", targetPath);
-
-                            CookingStatus = "Installing panels...";
-                            await RunCommandWithOutputAsync("cmd.exe", "/c php artisan filament:install --panels --no-interaction", targetPath);
-                        }
-                    }
-                    else if (framework == "React" || framework == "Vue" || framework == "React Admin" || framework == "Vue Admin")
-                    {
-                        CookingStatus = "Scaffolding Vite...";
-                        if (Directory.Exists(targetPath))
+                            CookingStatus = line.Length > 90 ? line.Substring(0, 90) + "…" : line;
+                            _stateManager.AddEvent($"[Build] {line}");
+                        });
+                        scaffold = await _scaffolder.CreateAsync(new Zenvix.Modules.Toolchain.ScaffoldRequest
                         {
-                            try { Directory.Delete(targetPath, true); } catch { }
-                        }
-                        Directory.CreateDirectory(targetPath);
+                            Framework = framework,
+                            Name = NewWebsiteName,
+                            Slug = projectSlug,
+                            ParentDir = NewWebsitePath,
+                            Domain = domain,
+                            Https = NewWebsiteSslEnabled,
+                            MySqlPort = mysqlPort,
+                            FilamentVersion = FilamentVersion,
+                            ReservedPorts = Websites.Where(w => w.DevPort.HasValue).Select(w => w.DevPort!.Value).ToList(),
+                        }, progress);
 
-                        var template = "react";
-                        if (framework == "Vue") template = "vue";
-                        else if (framework == "React Admin") template = "react-ts";
-                        else if (framework == "Vue Admin") template = "vue-ts";
-
-                        await RunCommandWithOutputAsync("cmd.exe", $"/c npm create vite@latest . -- --template {template}", targetPath);
-
-                        CookingStatus = "Installing packages...";
-                        await RunCommandWithOutputAsync("cmd.exe", "/c npm install", targetPath);
-
-                        if (framework == "React Admin")
+                        if (!scaffold.Success)
                         {
-                            CookingStatus = "Installing react-admin...";
-                            await RunCommandWithOutputAsync("cmd.exe", $"/c npm install react-admin@{ReactAdminVersion}", targetPath);
+                            _stateManager.AddEvent($"Error: {scaffold.Message}");
+                            _dialogService.ShowMessage("Project not created",
+                                $"{scaffold.Message}\n\nThe full output is in Logs (Zenvix log) and the activity panel.");
+                            return;
                         }
-                    }
-                    else if (framework == "Next.js")
-                    {
-                        CookingStatus = "Scaffolding Next.js...";
-                        if (Directory.Exists(targetPath))
-                        {
-                            try { Directory.Delete(targetPath, true); } catch { }
-                        }
-                        Directory.CreateDirectory(targetPath);
-
-                        await RunCommandWithOutputAsync("cmd.exe", "/c npx -y create-next-app@latest . --ts --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --use-npm --no-git", targetPath);
-                    }
-                    else if (framework == "WordPress")
-                    {
-                        CookingStatus = "Downloading WordPress...";
-                        var zipPath = Path.Combine(Path.GetTempPath(), "wordpress-latest.zip");
-                        using (var client = new System.Net.Http.HttpClient())
-                        {
-                            var data = await client.GetByteArrayAsync("https://wordpress.org/latest.zip");
-                            await File.WriteAllBytesAsync(zipPath, data);
-                        }
-
-                        CookingStatus = "Extracting WordPress...";
-                        var extractPath = Path.Combine(Path.GetTempPath(), "wp_extract_" + Guid.NewGuid().ToString("N"));
-                        if (Directory.Exists(extractPath)) Directory.Delete(extractPath, true);
-                        System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, extractPath);
-
-                        var wpSourceDir = Path.Combine(extractPath, "wordpress");
-                        if (Directory.Exists(wpSourceDir))
-                        {
-                            if (Directory.Exists(targetPath))
-                            {
-                                try { Directory.Delete(targetPath, true); } catch { }
-                            }
-                            Directory.CreateDirectory(targetPath);
-
-                            foreach (var dir in Directory.GetDirectories(wpSourceDir, "*", SearchOption.AllDirectories))
-                            {
-                                Directory.CreateDirectory(dir.Replace(wpSourceDir, targetPath));
-                            }
-                            foreach (var file in Directory.GetFiles(wpSourceDir, "*.*", SearchOption.AllDirectories))
-                            {
-                                File.Copy(file, file.Replace(wpSourceDir, targetPath), true);
-                            }
-                        }
-                        try { Directory.Delete(extractPath, true); } catch { }
-                        try { File.Delete(zipPath); } catch { }
                     }
                     else
                     {
+                        if (Directory.Exists(targetPath) && Directory.EnumerateFileSystemEntries(targetPath).Any())
+                        {
+                            _dialogService.ShowMessage("Folder not empty", $"{targetPath} already contains files. Pick another name or folder.");
+                            return;
+                        }
                         BootstrapProjectTemplates(targetPath, framework);
                     }
 
-                    if (CreateDocsSite)
+                    if (CreateDocsSite && (scaffold == null || scaffold.ServedByWebServer))
                     {
                         GenerateDocsSite(targetPath, domain, framework, missingServices);
                     }
                 }
 
-                CookingStatus = "Deploying proxy...";
+                CookingStatus = scaffold?.ServedByWebServer == false ? "Starting dev server..." : "Deploying proxy...";
                 var website = new Website
                 {
                     Name = NewWebsiteName,
                     LocalPath = targetPath,
-                    Domain = domain,
-                    SslEnabled = NewWebsiteSslEnabled,
-                    Type = _orchestrator.DetectProjectType(targetPath)
+                    Domain = scaffold?.DevPort is int devPort ? $"localhost:{devPort}" : domain,
+                    SslEnabled = scaffold?.ServedByWebServer == false ? false : NewWebsiteSslEnabled,
+                    Type = scaffold?.Type ?? _orchestrator.DetectProjectType(targetPath),
+                    DevCommand = scaffold?.DevCommand,
+                    DevPort = scaffold?.DevPort,
+                    AdminPath = scaffold?.AdminPath,
+                    AdminEmail = scaffold?.AdminEmail,
+                    AdminPassword = scaffold?.AdminPassword,
                 };
-                if (website.Type == ProjectType.Laravel && !isImport)
-                {
-                    var envPath = Path.Combine(targetPath, ".env");
-                    if (File.Exists(envPath))
-                    {
-                        var dbName = projectSlug.Replace("-", "_");
-                        var dbPort = _servicesOrchestrator.Instances.FirstOrDefault(i => i.Type == RuntimeServiceType.MySQL || i.Type == RuntimeServiceType.MariaDB)?.Port ?? 3306;
-
-                        SetEnvValue(envPath, "DB_CONNECTION", "mysql");
-                        SetEnvValue(envPath, "DB_HOST", "127.0.0.1");
-                        SetEnvValue(envPath, "DB_PORT", dbPort.ToString());
-                        SetEnvValue(envPath, "DB_DATABASE", dbName);
-                        SetEnvValue(envPath, "DB_USERNAME", "root");
-                        SetEnvValue(envPath, "DB_PASSWORD", "");
-                        SetEnvValue(envPath, "APP_URL", $"{(website.SslEnabled ? "https" : "http")}://{domain}");
-                    }
-                }
 
                 await _orchestrator.DeployWebsiteAsync(website);
 
-                if (!isImport)
+                if (scaffold?.AdminEmail != null)
                 {
-                    if (framework == "Laravel" || framework == "FilamentPHP" || framework == "Laravel API")
-                    {
-                        if (laravelServicesRunning)
-                        {
-                            try
-                            {
-                                CookingStatus = "Artisan: Migrating...";
-                                await RunCommandWithOutputAsync("cmd.exe", "/c php artisan key:generate", targetPath);
-                                await RunCommandWithOutputAsync("cmd.exe", "/c php artisan migrate --force", targetPath);
-
-                                if (framework == "FilamentPHP")
-                                {
-                                    CookingStatus = "Artisan: Creating Admin...";
-                                    var adminEmail = $"admin@{domain}";
-                                    await RunCommandWithOutputAsync("cmd.exe", $"/c php artisan make:filament-user --name=Admin --email={adminEmail} --password=admin12345 --no-interaction", targetPath);
-
-                                    CookingStatus = "Publishing Filament Config...";
-                                    await RunCommandWithOutputAsync("cmd.exe", "/c php artisan vendor:publish --tag=filament-config --no-interaction", targetPath);
-                                }
-
-                                CookingStatus = "Polishing welcome page...";
-                                var dbName = projectSlug.Replace("-", "_");
-                                var dbPort = _servicesOrchestrator.Instances.FirstOrDefault(i => i.Type == RuntimeServiceType.MySQL || i.Type == RuntimeServiceType.MariaDB)?.Port ?? 3306;
-                                AmendLaravelWelcomePage(targetPath, domain, dbName, dbPort, framework);
-                            }
-                            catch (Exception migrationEx)
-                            {
-                                Log.Error(migrationEx, "Laravel migration/artisan tasks failed");
-                                _stateManager.AddEvent($"Warning: Laravel automated setup failed: {migrationEx.Message}. Commands will be listed in documentation site.");
-                                missingServices.Add("Artisan Automation/Migration (failed/timeout)");
-                                shouldOpenDocs = true;
-                                shouldOpenProject = false;
-                            }
-                        }
-                        else
-                        {
-                            _stateManager.AddEvent($"[Cooking] Laravel services offline. Skipping automated database migrations.");
-                            shouldOpenDocs = true;
-                            shouldOpenProject = false;
-                        }
-                    }
+                    _dialogService.ShowMessage("Admin panel ready",
+                        $"{NewWebsiteName} admin panel:\n\n{website.DisplayUrl}{scaffold.AdminPath}\n\n" +
+                        $"Email:     {scaffold.AdminEmail}\nPassword: {scaffold.AdminPassword}\n\n(Also saved on the project card.)");
+                }
+                if (scaffold?.ServedByWebServer == false)
+                {
+                    shouldOpenDocs = false;
+                    shouldOpenProject = website.Status == WebsiteStatus.Running;
+                }
+                else if (scaffold != null)
+                {
+                    shouldOpenDocs = false;
+                    shouldOpenProject = true;
                 }
 
-                if (CreateDocsSite && !isImport)
+                if (CreateDocsSite && !isImport && website.IsDevServerProject == false)
                 {
                     var docsDomain = $"docs.{domain}";
                     if (!Websites.Any(w => w.Domain.Equals(docsDomain, StringComparison.OrdinalIgnoreCase)))
@@ -661,7 +574,7 @@ namespace Zenvix.ViewModels
         private void BootstrapProjectTemplates(string targetPath, string framework)
         {
             if (!Directory.Exists(targetPath)) Directory.CreateDirectory(targetPath);
-            var projectSlug = NewWebsiteName.ToLower().Replace(" ", "-").Trim();
+            var projectSlug = Slugify(NewWebsiteName);
 
             switch (framework)
             {
@@ -1186,6 +1099,22 @@ DB_CONNECTION=sqlite</pre>
             {
                 await _orchestrator.DeployWebsiteAsync(website);
             }
+        }
+
+        [RelayCommand]
+        private void OpenAdmin(Website website)
+        {
+            if (website?.AdminPath == null) return;
+            try
+            {
+                if (!string.IsNullOrEmpty(website.AdminPassword))
+                {
+                    _clipboard?.SetText(website.AdminPassword);
+                    _stateManager.AddEvent($"Admin password for {website.Name} copied to clipboard ({website.AdminEmail}).");
+                }
+                Process.Start(new ProcessStartInfo(website.DisplayUrl.TrimEnd('/') + website.AdminPath) { UseShellExecute = true });
+            }
+            catch (Exception ex) { Log.Error(ex, "Failed to open admin panel"); }
         }
 
         [RelayCommand]
