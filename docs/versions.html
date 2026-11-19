@@ -507,7 +507,8 @@
                 if (setupFiles.length > 0) {
                     setupFiles.sort((a, b) => b.name.localeCompare(a.name));
                     const latestFile = setupFiles[0];
-                    const downloadUrl = `https://github.com/CodersCircle/zenvix/raw/main/${latestFile.name}`;
+                    // Installers live in the versions/ folder (raw/main/<file> at the repo root is a 404).
+                    const downloadUrl = `https://github.com/CodersCircle/zenvix/raw/main/versions/${latestFile.name}`;
                     
                     const elements = document.querySelectorAll("[download]");
                     elements.forEach(el => {
