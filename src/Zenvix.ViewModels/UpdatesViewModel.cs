@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Zenvix.Core.Models;
 using Zenvix.Modules.Toolchain;
 using Zenvix.Runtime.Services;
 using Zenvix.ViewModels.Services;
@@ -70,6 +71,23 @@ namespace Zenvix.ViewModels
         [ObservableProperty] private string _status = "";
     }
 
+    /// <summary>One PHP extension switch in Settings.</summary>
+    public partial class PhpExtensionRow : ObservableObject
+    {
+        private readonly Action<PhpExtensionRow> _changed;
+        public PhpExtensionRow(string name, bool on, Action<PhpExtensionRow> changed)
+        {
+            Name = name;
+            _isEnabled = on;
+            _changed = changed;
+            Description = PhpExtensions.Descriptions.TryGetValue(name, out var d) ? d : name;
+        }
+        public string Name { get; }
+        public string Description { get; }
+        [ObservableProperty] private bool _isEnabled;
+        partial void OnIsEnabledChanged(bool value) => _changed(this);
+    }
+
     /// <summary>Settings → Services &amp; Updates.</summary>
     public partial class UpdatesViewModel : ObservableObject
     {
@@ -77,10 +95,15 @@ namespace Zenvix.ViewModels
         private readonly IWebsiteOrchestrator _websites;
         private readonly IDispatcherService _dispatcher;
         private readonly IRuntimeStateManager _state;
+        private readonly IServicesOrchestrator _services;
 
         public ObservableCollection<UpdateRow> Tools { get; } = new();
         public ObservableCollection<UpdateRow> ProjectPackages { get; } = new();
         public ObservableCollection<string> Log { get; } = new();
+        public ObservableCollection<PhpExtensionRow> PhpExtensionList { get; } = new();
+
+        [ObservableProperty] private string _phpVersionLabel = "";
+        [ObservableProperty] private string _extensionsStatus = "";
 
         [ObservableProperty] private bool _isChecking;
         [ObservableProperty] private int _availableCount;
@@ -88,8 +111,10 @@ namespace Zenvix.ViewModels
 
         public bool HasProjectPackages => ProjectPackages.Count > 0;
 
-        public UpdatesViewModel(IUpdateService updates, IWebsiteOrchestrator websites, IDispatcherService dispatcher, IRuntimeStateManager state)
+        public UpdatesViewModel(IUpdateService updates, IWebsiteOrchestrator websites, IDispatcherService dispatcher, IRuntimeStateManager state,
+                                IServicesOrchestrator services)
         {
+            _services = services;
             _updates = updates;
             _websites = websites;
             _dispatcher = dispatcher;
@@ -98,6 +123,46 @@ namespace Zenvix.ViewModels
             _updates.UpdatesFound += items => _dispatcher.BeginInvoke(() => Show(items));
             // Startup + every 12 hours.
             _updates.StartBackgroundChecks(() => _websites.Websites.ToList(), TimeSpan.FromHours(12));
+            _ = LoadExtensionsAsync();
+        }
+
+        /// <summary>Lists the extensions of the active PHP with their on/off state.</summary>
+        private async Task LoadExtensionsAsync()
+        {
+            try
+            {
+                var meta = await _services.GetRuntimeMetadataAsync(RuntimeServiceType.PhpFpm);
+                if (meta?.BinDir == null) return;
+                var available = PhpExtensions.Available(System.IO.Path.Combine(meta.BinDir, "ext"));
+                var enabled = PhpExtensions.Enabled();
+                _dispatcher.BeginInvoke(() =>
+                {
+                    PhpVersionLabel = $"PHP {meta.Version}";
+                    PhpExtensionList.Clear();
+                    foreach (var n in available)
+                        PhpExtensionList.Add(new PhpExtensionRow(n, enabled.Contains(n), OnExtensionToggled));
+                });
+            }
+            catch (Exception ex) { AddLog($"✖ Could not read PHP extensions: {ex.Message}"); }
+        }
+
+        private async void OnExtensionToggled(PhpExtensionRow row)
+        {
+            try
+            {
+                PhpExtensions.SetEnabled(row.Name, row.IsEnabled);
+                ExtensionsStatus = $"{(row.IsEnabled ? "Enabling" : "Disabling")} {row.Name}, restarting PHP...";
+                await RestartPhpAsync();
+                ExtensionsStatus = $"✔ {row.Name} {(row.IsEnabled ? "enabled" : "disabled")}.";
+            }
+            catch (Exception ex) { ExtensionsStatus = $"✖ {ex.Message}"; }
+        }
+
+        /// <summary>Restarts running PHP so a new php.ini / PHP version takes effect.</summary>
+        private async Task RestartPhpAsync()
+        {
+            var running = _services.Instances.Where(i => i.Type == RuntimeServiceType.PhpFpm && i.Status == ServiceStatus.Running).ToList();
+            foreach (var php in running) await _services.RestartAsync(php.Id);
         }
 
         private void Show(IReadOnlyList<UpdateItem> items)
@@ -145,6 +210,12 @@ namespace Zenvix.ViewModels
             row.Status = "Working...";
             var progress = new Progress<string>(line => { row.Status = line.Length > 80 ? line[..80] + "…" : line; AddLog(line); });
             var ok = await action(row, progress);
+            if (ok && row.Item.Tool == ToolKind.Php)
+            {
+                AddLog("Restarting PHP with the selected version...");
+                await RestartPhpAsync();
+                await LoadExtensionsAsync();
+            }
             row.Status = ok ? "✔ Done" : row.Status.StartsWith("✖") ? row.Status : "✖ Not completed – see details above";
             row.IsBusy = false;
             if (ok) await CheckNow();

@@ -374,6 +374,34 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
+                        <!-- PHP extensions: on/off switches, PHP restarts on change -->
+                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,14,0,4" Margin="0,4,0,0">
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding PhpVersionLabel}" FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                                    <TextBlock Text="PHP extensions" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                </DockPanel>
+                                <TextBlock Text="Turn on what your projects need. PHP restarts automatically." FontSize="11"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,8" TextWrapping="Wrap" />
+                                <ItemsControl ItemsSource="{Binding PhpExtensionList}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsEnabled}" ToolTip="{Binding Description}"
+                                                      Width="132" Margin="0,3" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="{Binding ExtensionsStatus}" FontSize="11" Margin="0,6,0,0" Foreground="{DynamicResource AccentBrush}" TextWrapping="Wrap"
+                                           Visibility="{Binding ExtensionsStatus, Converter={StaticResource StringToVisibilityConverter}}" />
+                            </StackPanel>
+                        </Border>
+
                         <!-- project packages: Laravel, Filament, Livewire -->
                         <StackPanel Visibility="{Binding HasProjectPackages, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,16,0,0">
                             <TextBlock Text="YOUR PROJECTS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />

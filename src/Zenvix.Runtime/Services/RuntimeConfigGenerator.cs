@@ -479,17 +479,9 @@ namespace Zenvix.Runtime.Services
             var extDir = Path.Combine(binDir, "ext").Replace("\\", "/");
             sb.AppendLine($"extension_dir = \"{extDir}\"");
 
-            // Extensions Laravel / WordPress / most PHP apps need. Each is loaded exactly once and only
-            // when its DLL ships with this PHP build (mysqlnd, json, etc. are compiled in on PHP 8).
-            var wanted = new[] { "curl", "mbstring", "openssl", "pdo_mysql", "mysqli", "fileinfo", "gettext", "gd",
-                                 "sqlite3", "pdo_sqlite", "zip", "exif", "sodium", "intl", "bcmath", "ftp", "pdo_pgsql", "pgsql" };
-            foreach (var ext in wanted)
-            {
-                if (File.Exists(Path.Combine(extDir, $"php_{ext}.dll")))
-                    sb.AppendLine($"extension={ext}");
-            }
-            if (File.Exists(Path.Combine(extDir, "php_opcache.dll")))
-                sb.AppendLine("zend_extension=opcache");
+            // Extensions turned on in Settings (defaults: what Laravel / WordPress need). Each is loaded exactly
+            // once and only when its DLL ships with this PHP build.
+            sb.Append(PhpExtensions.IniLines(extDir));
 
             return sb.ToString();
         }

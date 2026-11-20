@@ -176,7 +176,8 @@ namespace Zenvix.Runtime.Services
 
         public async Task<RuntimeMetadata?> GetRuntimeMetadataAsync(RuntimeServiceType type)
         {
-            if (_resolvedRuntimes.TryGetValue(type, out var meta)) return meta;
+            // PHP is looked up fresh: the active version can be switched in Settings.
+            if (type != RuntimeServiceType.PhpFpm && _resolvedRuntimes.TryGetValue(type, out var meta)) return meta;
             return await _runtimeLocator.FindBestAsync(type);
         }
 

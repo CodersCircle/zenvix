@@ -314,18 +314,39 @@ namespace Zenvix.Runtime.Services
             // 3. CONFIGURATION: Generate config.inc.php dynamically
 
             var (user, pass) = _credentialsManager.GetCredentials(mysql.Type);
-            var config = "<?php\n" +
-                         "$cfg['Servers'][1]['auth_type'] = 'config';\n" +
-                         $"$cfg['Servers'][1]['host'] = '127.0.0.1';\n" +
-                         $"$cfg['Servers'][1]['port'] = '{dbPort}';\n" +
-                         $"$cfg['Servers'][1]['user'] = '{user}';\n" +
-                         $"$cfg['Servers'][1]['password'] = '{pass}';\n" +
-                         "$cfg['Servers'][1]['AllowNoPassword'] = true;\n" +
-                         "$cfg['DefaultLang'] = 'en';\n" +
-                         "$cfg['ServerDefault'] = 1;\n" +
-                         "$cfg['blowfish_secret'] = 'zenvix_secret_key_32_chars_long_123';\n";
+            var mysqlBin = (await _servicesOrchestrator.GetRuntimeMetadataAsync(mysql.Type))?.BinDir;
+            var mysqlCli = mysqlBin == null ? null : Path.Combine(mysqlBin, "mysql.exe");
+            if (mysqlCli != null && !File.Exists(mysqlCli)) mysqlCli = null;
+
+            var config = new StringBuilder("<?php\n");
+            config.Append(PmaServer(1, "Zenvix MySQL", dbPort, user, pass));
+
+            // phpMyAdmin configuration storage (bookmarks, relations, designer...). Without it phpMyAdmin
+            // shows "configuration storage is not completely configured".
+            var createTables = Path.Combine(_pmaDir, "sql", "create_tables.sql");
+            if (mysqlCli != null && File.Exists(createTables)
+                && await RunMysqlAsync(mysqlCli, dbPort, user, pass, await File.ReadAllTextAsync(createTables)) == 0)
+                config.Append(PmaStorage(1, user, pass));
+
+            // Databases of another local MySQL (XAMPP, Laragon, WAMP...) live in that server's own data folder,
+            // so they are not in Zenvix MySQL. Offer that server too: phpMyAdmin then shows a server picker.
+            var other = 3306;
+            if (other != dbPort && IsPortListening(other))
+            {
+                var name = Directory.Exists(@"C:\xampp\mysql") ? "XAMPP MySQL" : "Other MySQL";
+                // Checked with PHP's mysqli, exactly what phpMyAdmin uses (MySQL 9's own client can no longer
+                // log in to MariaDB/older MySQL that use mysql_native_password).
+                var phpBin = (await _servicesOrchestrator.GetRuntimeMetadataAsync(RuntimeServiceType.PhpFpm))?.BinDir;
+                var rootNoPassword = phpBin != null && await CanLoginWithPhpAsync(phpBin, other, "root", "");
+                config.Append(PmaServer(2, $"{name} (port {other})", other, "root", "", cookieLogin: !rootNoPassword));
+            }
+
+            config.Append("$cfg['DefaultLang'] = 'en';\n" +
+                          "$cfg['ServerDefault'] = 1;\n" +
+                          "$cfg['PmaNoRelation_DisableWarning'] = true;\n" +
+                          "$cfg['blowfish_secret'] = 'zenvix_secret_key_32_chars_long_123';\n");
             
-            try { await File.WriteAllTextAsync(_pmaConfig, config); }
+            try { await File.WriteAllTextAsync(_pmaConfig, config.ToString()); }
             catch (Exception ex) { Log.Error(ex, "Failed to write phpMyAdmin config."); }
 
             // 3. LAUNCH: Use the active web server port
@@ -334,6 +355,106 @@ namespace Zenvix.Runtime.Services
             OpenUrl(url);
 
             return new ToolSession(url, webServer.Port, null, EmbeddedTool.PhpMyAdmin);
+        }
+
+        private static string Php(string s) => s.Replace("\\", "\\\\").Replace("'", "\\'");
+
+        private static string PmaServer(int i, string label, int port, string user, string pass, bool cookieLogin = false)
+        {
+            var s = $"$cfg['Servers'][{i}]['verbose'] = '{Php(label)}';\n" +
+                    $"$cfg['Servers'][{i}]['host'] = '127.0.0.1';\n" +
+                    $"$cfg['Servers'][{i}]['port'] = '{port}';\n" +
+                    $"$cfg['Servers'][{i}]['AllowNoPassword'] = true;\n";
+            return s + (cookieLogin
+                ? $"$cfg['Servers'][{i}]['auth_type'] = 'cookie';\n"
+                : $"$cfg['Servers'][{i}]['auth_type'] = 'config';\n" +
+                  $"$cfg['Servers'][{i}]['user'] = '{Php(user)}';\n" +
+                  $"$cfg['Servers'][{i}]['password'] = '{Php(pass)}';\n");
+        }
+
+        private static string PmaStorage(int i, string user, string pass)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"$cfg['Servers'][{i}]['controluser'] = '{Php(user)}';\n");
+            sb.Append($"$cfg['Servers'][{i}]['controlpass'] = '{Php(pass)}';\n");
+            sb.Append($"$cfg['Servers'][{i}]['pmadb'] = 'phpmyadmin';\n");
+            var tables = new Dictionary<string, string>
+            {
+                ["bookmarktable"] = "bookmark", ["relation"] = "relation", ["table_info"] = "table_info",
+                ["table_coords"] = "table_coords", ["pdf_pages"] = "pdf_pages", ["column_info"] = "column_info",
+                ["history"] = "history", ["table_uiprefs"] = "table_uiprefs", ["tracking"] = "tracking",
+                ["userconfig"] = "userconfig", ["recent"] = "recent", ["favorite"] = "favorite", ["users"] = "users",
+                ["usergroups"] = "usergroups", ["navigationhiding"] = "navigationhiding", ["savedsearches"] = "savedsearches",
+                ["central_columns"] = "central_columns", ["designer_settings"] = "designer_settings",
+                ["export_templates"] = "export_templates",
+            };
+            foreach (var (key, table) in tables)
+                sb.Append($"$cfg['Servers'][{i}]['{key}'] = 'pma__{table}';\n");
+            return sb.ToString();
+        }
+
+        private static bool IsPortListening(int port)
+        {
+            try
+            {
+                using var c = new TcpClient();
+                return c.ConnectAsync("127.0.0.1", port).Wait(700) && c.Connected;
+            }
+            catch { return false; }
+        }
+
+        private static async Task<bool> CanLoginWithPhpAsync(string phpDir, int port, string user, string pass)
+        {
+            var phpExe = Path.Combine(phpDir, "php.exe");
+            if (!File.Exists(phpExe)) return false;
+            try
+            {
+                var psi = new ProcessStartInfo(phpExe) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+                foreach (var a in new[] { "-n", "-d", $"extension_dir={Path.Combine(phpDir, "ext")}", "-d", "extension=mysqli", "-r",
+                                          "mysqli_report(MYSQLI_REPORT_OFF); exit(@mysqli_connect('127.0.0.1', getenv('ZX_U'), getenv('ZX_P'), '', (int)getenv('ZX_PORT')) ? 0 : 1);" })
+                    psi.ArgumentList.Add(a);
+                psi.Environment["ZX_U"] = user;
+                psi.Environment["ZX_P"] = pass;
+                psi.Environment["ZX_PORT"] = port.ToString();
+                using var p = Process.Start(psi)!;
+                _ = p.StandardError.ReadToEndAsync();
+                await p.StandardOutput.ReadToEndAsync();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                await p.WaitForExitAsync(cts.Token);
+                return p.ExitCode == 0;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>Runs SQL (fed on stdin) with the MySQL client; returns the exit code (-1 on failure to run).</summary>
+        private static async Task<int> RunMysqlAsync(string mysqlExe, int port, string user, string pass, string sql)
+        {
+            try
+            {
+                var psi = new ProcessStartInfo(mysqlExe)
+                {
+                    UseShellExecute = false, CreateNoWindow = true,
+                    RedirectStandardOutput = true, RedirectStandardError = true, RedirectStandardInput = true,
+                };
+                foreach (var a in new[] { "--protocol=TCP", "-h", "127.0.0.1", "-P", port.ToString(), "-u", user, "--connect-timeout=3" })
+                    psi.ArgumentList.Add(a);
+                psi.Environment["MYSQL_PWD"] = pass; // keeps the password off the command line
+                using var p = Process.Start(psi)!;
+                await p.StandardInput.WriteAsync(sql);
+                p.StandardInput.Close();
+                var errTask = p.StandardError.ReadToEndAsync();
+                await p.StandardOutput.ReadToEndAsync();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+                await p.WaitForExitAsync(cts.Token);
+                var err = await errTask;
+                if (p.ExitCode != 0) Log.Debug("[phpMyAdmin] mysql on port {Port} exited {Code}: {Err}", port, p.ExitCode, err.Trim());
+                return p.ExitCode;
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex, "[phpMyAdmin] Could not run mysql client on port {Port}", port);
+                return -1;
+            }
         }
 
         private async Task<bool> EnsurePhpMyAdminAsync()

@@ -521,8 +521,10 @@ namespace Zenvix.Modules.Toolchain
             sb.AppendLine("memory_limit = -1");
             sb.AppendLine("max_execution_time = 0");
             sb.AppendLine($"extension_dir = \"{ext}\"");
-            foreach (var e in new[] { "openssl", "curl", "mbstring", "fileinfo", "zip", "pdo_mysql", "mysqli", "pdo_sqlite", "sqlite3", "intl", "gd", "exif", "sodium", "bcmath" })
-                if (File.Exists(Path.Combine(php, "ext", $"php_{e}.dll"))) sb.AppendLine($"extension={e}");
+            // What Composer/Laravel need, plus whatever the user turned on in Settings → PHP extensions.
+            sb.Append(Zenvix.Runtime.Services.PhpExtensions.IniLines(Path.Combine(php, "ext"),
+                new[] { "openssl", "curl", "mbstring", "fileinfo", "zip", "pdo_mysql", "mysqli", "pdo_sqlite", "sqlite3", "intl", "gd", "exif", "sodium", "bcmath" },
+                includeZend: false, baseDir: _base));
             sb.AppendLine("[curl]");
             var ca = Path.Combine(_base, "ssl", "cacert.pem");
             if (File.Exists(ca)) sb.AppendLine($"curl.cainfo = \"{ca.Replace("\\", "/")}\"");
