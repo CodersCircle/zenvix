@@ -38,6 +38,12 @@
         <DataTemplate DataType="{x:Type vm:DatabasesViewModel}">
             <views:DatabasesView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScalingViewModel}">
+            <views:ScalingView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ApiTestingViewModel}">
+            <views:ApiTestingView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LogsViewModel}">
             <views:LogsView />
         </DataTemplate>
@@ -105,13 +111,19 @@
                         </StackPanel>
                     </RadioButton>
 
-                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Container" Style="{StaticResource ZenvixSidebar.Button}">
+
+                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Scaling" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource Icon.Cube}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
-                            <TextBlock Text="Container" VerticalAlignment="Center" />
+                            <Path Data="{StaticResource Icon.Server}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="Auto Scaling" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
-
+                    <RadioButton Command="{Binding NavigateCommand}" CommandParameter="ApiTesting" Style="{StaticResource ZenvixSidebar.Button}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource Icon.Bolt}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />
+                            <TextBlock Text="API Testing" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
                     <RadioButton Command="{Binding NavigateCommand}" CommandParameter="Logs" Style="{StaticResource ZenvixSidebar.Button}">
                         <StackPanel Orientation="Horizontal">
                             <Path Data="{StaticResource Icon.Logs}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" Fill="Transparent" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,12,0" />

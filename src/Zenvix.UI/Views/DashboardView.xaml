@@ -384,22 +384,22 @@
                         <StackPanel>
                             <TextBlock Text="QUICK ACTIONS" FontSize="11" FontWeight="Bold"
                                 Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15" />
-                            <UniformGrid Columns="1">
-                                <Button Content="Stop All Services"
+                            <UniformGrid Columns="2">
+                                <Button Content="Stop All" ToolTip="Stop all services" Padding="6,0"
                                     Command="{Binding DataContext.StopAllServicesCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    Style="{DynamicResource Zenvix.Button.Danger}" Margin="0,0,0,10" />
-                                <Button Content="Flush DNS Cache"
+                                    Style="{DynamicResource Zenvix.Button.Danger}" Margin="0,0,5,10" />
+                                <Button Content="Flush DNS" ToolTip="Flush DNS cache" Padding="6,0"
                                     Command="{Binding DataContext.FlushDNSCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    Style="{DynamicResource Zenvix.Button}" Margin="0,0,0,10" />
-                                <Button Content="Trust SSL"
+                                    Style="{DynamicResource Zenvix.Button}" Margin="5,0,0,10" />
+                                <Button Content="Trust SSL" Padding="6,0"
                                     Command="{Binding DataContext.TrustRootCACommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    Style="{DynamicResource Zenvix.Button}" Margin="0,0,0,10"
+                                    Style="{DynamicResource Zenvix.Button}" Margin="0,0,5,0"
                                     Background="{DynamicResource AccentBrush}" Foreground="White" BorderThickness="0" FontWeight="Bold" />
-                                <Button Content="Clear Cache"
+                                <Button Content="Clear Cache" Padding="6,0"
                                     Command="{Binding DataContext.ClearCacheCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                     Style="{DynamicResource Zenvix.Button.Ghost}"
                                     BorderBrush="{DynamicResource BorderBrush}" BorderThickness="2"
-                                    HorizontalAlignment="Stretch" Margin="0,0,0,0" />
+                                    HorizontalAlignment="Stretch" Margin="5,0,0,0" />
                             </UniformGrid>
                         </StackPanel>
                     </Border>

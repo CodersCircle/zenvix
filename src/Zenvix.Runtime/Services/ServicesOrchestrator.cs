@@ -326,6 +326,7 @@ namespace Zenvix.Runtime.Services
                 }
 
                 var configPath = _configGenerator.GenerateAndSave(inst, meta);
+                inst.ConfigPath = configPath; // used by Auto Scaling (nginx reload, extra PHP workers)
                 var args       = BuildArgs(inst, meta, configPath);
                 var workDir    = Path.GetDirectoryName(binPath)!;
 

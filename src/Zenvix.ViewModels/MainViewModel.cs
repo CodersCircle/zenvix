@@ -55,6 +55,8 @@ namespace Zenvix.ViewModels
         private readonly SettingsViewModel _settingsVm;
         private readonly DeploymentViewModel _deploymentVm;
         private readonly ContainersViewModel _containersVm;
+        private readonly ScalingViewModel _scalingVm;
+        private readonly ApiTestingViewModel _apiTestingVm;
         private readonly IAppUpdaterService _updater;
 
         public MainViewModel(
@@ -76,8 +78,12 @@ namespace Zenvix.ViewModels
             ISSLManager sslManager,
             DeploymentViewModel deploymentViewModel,
             ContainersViewModel containersViewModel,
-            LogsViewModel logsViewModel)
+            LogsViewModel logsViewModel,
+            ScalingViewModel scalingViewModel,
+            ApiTestingViewModel apiTestingViewModel)
         {
+            _scalingVm = scalingViewModel;
+            _apiTestingVm = apiTestingViewModel;
             _logsVm = logsViewModel;
             _deploymentVm = deploymentViewModel;
             _containersVm = containersViewModel;
@@ -198,11 +204,14 @@ namespace Zenvix.ViewModels
                 "Deployment" => _deploymentVm,
                 "Container" => _containersVm,
                 "Logs" => _logsVm,
+                "Scaling" => _scalingVm,
+                "ApiTesting" => _apiTestingVm,
                 "Settings" => _settingsVm,
                 _ => _dashboardVm
             };
             _containersVm.SetActive(CurrentViewModel == _containersVm);
             _logsVm.SetActive(CurrentViewModel == _logsVm);
+            _scalingVm.SetActive(CurrentViewModel == _scalingVm);
             StatusText = $"Zenvix - {viewName}";
         }
 

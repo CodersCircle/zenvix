@@ -94,6 +94,7 @@ namespace Zenvix.UI
         {
             Serilog.Log.Information("Zenvix shutting down – stopping managed services.");
             try { ServiceProvider?.GetService<Zenvix.Modules.Deployment.IShareTunnelService>()?.StopAll(); } catch { }
+            try { ServiceProvider?.GetService<Zenvix.Modules.Scaling.IScalingManager>()?.StopAll(); } catch { }
             try { ServiceProvider?.GetService<Zenvix.Modules.Containers.IContainerEngine>()?.StopAllAsync().Wait(TimeSpan.FromSeconds(20)); } catch { }
             try
             {
@@ -163,6 +164,10 @@ namespace Zenvix.UI
             services.AddSingleton<Zenvix.ViewModels.Deployment.DeploymentViewModel>();
             services.AddSingleton<Zenvix.ViewModels.Containers.ContainersViewModel>();
             services.AddSingleton<LogsViewModel>();
+            services.AddSingleton<Zenvix.Modules.Scaling.IScalingManager, Zenvix.Modules.Scaling.ScalingManager>();
+            services.AddSingleton<Zenvix.Modules.ApiTesting.IApiTestingService, Zenvix.Modules.ApiTesting.ApiTestingService>();
+            services.AddSingleton<ScalingViewModel>();
+            services.AddSingleton<ApiTestingViewModel>();
             services.AddSingleton<DatabasesViewModel>();
             services.AddSingleton<ServicesViewModel>();
             services.AddSingleton<WebsitesViewModel>();

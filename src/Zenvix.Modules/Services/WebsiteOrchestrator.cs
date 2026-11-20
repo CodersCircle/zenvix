@@ -100,7 +100,8 @@ namespace Zenvix.Runtime.Services
                 if (!Directory.Exists(dir)) return;
                 var keep = new HashSet<string>(Websites.Select(w => w.Domain + ".conf"), StringComparer.OrdinalIgnoreCase);
                 foreach (var f in Directory.GetFiles(dir, "*.conf"))
-                    if (!keep.Contains(Path.GetFileName(f))) File.Delete(f);
+                    if (!keep.Contains(Path.GetFileName(f)) && !Path.GetFileName(f).StartsWith("zx-scale-", StringComparison.OrdinalIgnoreCase))
+                        File.Delete(f); // zx-scale-*.conf belong to Auto Scaling
             }
             catch (Exception ex) { Log.Warning(ex, "[WebOrchestrator] could not prune stale vhosts"); }
         }

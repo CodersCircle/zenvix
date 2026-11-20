@@ -1,0 +1,284 @@
+<UserControl x:Class="Zenvix.UI.Views.ScalingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="1100">
+
+    <UserControl.Resources>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="18" />
+        </Style>
+        <Style x:Key="Caps" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+        <Style x:Key="Label" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="Margin" Value="0,2" />
+        </Style>
+        <Style x:Key="Value" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Margin" Value="0,2" />
+        </Style>
+        <Style x:Key="Stat" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="0,0,0,16">
+            <TextBlock Text="Auto Scaling" Style="{DynamicResource Zenvix.Title}" />
+            <TextBlock Text="Each project gets its own local Nginx load balancer. Instances are added and removed with traffic and CPU – all on this machine."
+                       Style="{DynamicResource Zenvix.Subtitle}" Margin="0,4,0,0" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <!-- No projects yet -->
+        <Border Grid.Row="1" Style="{StaticResource Card}" VerticalAlignment="Top" Padding="28"
+                Visibility="{Binding HasProjects, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}">
+            <StackPanel>
+                <TextBlock Text="No projects to scale yet" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                <TextBlock Text="Add a PHP (Laravel, WordPress...) or Node.js project in Websites – it appears here automatically."
+                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,0" />
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1" Visibility="{Binding HasProjects, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Projects -->
+            <Border Style="{StaticResource Card}" Padding="10">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="PROJECTS" Style="{StaticResource Caps}" Margin="8,6,0,8" />
+                    <ListBox ItemsSource="{Binding Projects}" SelectedItem="{Binding Selected}" Background="Transparent" BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Margin" Value="0,0,0,4" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="Bd" CornerRadius="8" Padding="8,2" Background="Transparent">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBrush}" /></Trigger>
+                                                <Trigger Property="IsSelected" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBrush}" /></Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel Margin="2,6">
+                                    <Ellipse DockPanel.Dock="Left" Width="8" Height="8" Margin="0,0,10,0" VerticalAlignment="Center">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{DynamicResource BorderBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsRunning}" Value="True"><Setter Property="Fill" Value="{DynamicResource SuccessBrush}" /></DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis">
+                                            <Run Text="{Binding Domain, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding KindLabel, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding State, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- Selected project -->
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                          Visibility="{Binding HasSelection, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel>
+                    <!-- Balancer bar -->
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="−" Command="{Binding ScaleDownCommand}" ToolTip="Remove one instance (manual)" Width="38" Height="36"
+                                        Style="{DynamicResource Zenvix.Button.Ghost}" FontSize="16" IsEnabled="{Binding IsRunning}" />
+                                <Button Content="+" Command="{Binding ScaleUpCommand}" ToolTip="Add one instance (manual)" Width="38" Height="36" Margin="6,0,12,0"
+                                        Style="{DynamicResource Zenvix.Button.Ghost}" FontSize="16" IsEnabled="{Binding IsRunning}" />
+                                <Button Command="{Binding ToggleBalancerCommand}" Height="36" MinWidth="150" Padding="16,0">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource Zenvix.Button.Primary}">
+                                            <Setter Property="Content" Value="Start balancer" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                                    <Setter Property="Content" Value="Stop balancer" />
+                                                    <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="Content" Value="Working..." /></DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}">
+                                    <Run Text="{Binding Selected.Name, Mode=OneWay}" /><Run Text="  " /><Run Text="{Binding Selected.KindLabel, Mode=OneWay}" FontSize="11" Foreground="{DynamicResource AccentBrush}" />
+                                </TextBlock>
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <TextBlock Text="Balancer: " FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                    <TextBlock FontSize="12">
+                                        <Hyperlink Command="{Binding OpenBalancerCommand}"><Run Text="{Binding BalancerUrl, Mode=OneWay}" /></Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Stats -->
+                    <UniformGrid Columns="5" Margin="0,0,-10,14">
+                        <Border Style="{StaticResource Stat}"><StackPanel><TextBlock Text="INSTANCES" Style="{StaticResource Caps}" /><TextBlock Text="{Binding InstanceSummary}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" /></StackPanel></Border>
+                        <Border Style="{StaticResource Stat}"><StackPanel><TextBlock Text="REQUESTS / SEC" Style="{StaticResource Caps}" /><TextBlock Text="{Binding RequestsPerSecond}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" /></StackPanel></Border>
+                        <Border Style="{StaticResource Stat}"><StackPanel><TextBlock Text="AVG CPU" Style="{StaticResource Caps}" /><TextBlock Text="{Binding AvgCpu}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" /></StackPanel></Border>
+                        <Border Style="{StaticResource Stat}"><StackPanel><TextBlock Text="RAM" Style="{StaticResource Caps}" /><TextBlock Text="{Binding TotalRam}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" /></StackPanel></Border>
+                        <Border Style="{StaticResource Stat}"><StackPanel><TextBlock Text="UTILIZATION" Style="{StaticResource Caps}" /><TextBlock Text="{Binding Utilization}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" /></StackPanel></Border>
+                    </UniformGrid>
+
+                    <!-- Instances -->
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="INSTANCE MONITORING" Style="{StaticResource Caps}" Margin="0,0,0,10" />
+                            <TextBlock Text="Start the balancer to run instances of this project." Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"
+                                       Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}" />
+                            <ItemsControl ItemsSource="{Binding Instances}">
+                                <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Width="230" Margin="0,0,12,12" Padding="14" CornerRadius="10" Background="{DynamicResource CardBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6" />
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Text="Process ID" Style="{StaticResource Label}" /><TextBlock Grid.Column="1" Text="{Binding Id}" Style="{StaticResource Value}" />
+                                                    <TextBlock Grid.Row="1" Text="Port" Style="{StaticResource Label}" /><TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Port}" Style="{StaticResource Value}" />
+                                                    <TextBlock Grid.Row="2" Text="Requests (60s)" Style="{StaticResource Label}" /><TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Requests}" Style="{StaticResource Value}" />
+                                                    <TextBlock Grid.Row="3" Text="Capacity" Style="{StaticResource Label}" /><TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Capacity}" Style="{StaticResource Value}" />
+                                                    <TextBlock Grid.Row="4" Text="Utilization" Style="{StaticResource Label}" /><TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Utilization, StringFormat={}{0:0}%}" Style="{StaticResource Value}" />
+                                                    <TextBlock Grid.Row="5" Text="CPU" Style="{StaticResource Label}" /><TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Cpu}" Style="{StaticResource Value}" />
+                                                    <TextBlock Grid.Row="6" Text="RAM" Style="{StaticResource Label}" /><TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Ram}" Style="{StaticResource Value}" />
+                                                    <TextBlock Grid.Row="7" Text="Status" Style="{StaticResource Label}" VerticalAlignment="Center" />
+                                                    <Border Grid.Row="7" Grid.Column="1" CornerRadius="9" Padding="9,1" Margin="0,3">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsHealthy}" Value="True"><Setter Property="Background" Value="{DynamicResource SuccessBrush}" /></DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <TextBlock Text="{Binding Status}" Foreground="White" FontSize="11" FontWeight="SemiBold" />
+                                                    </Border>
+                                                </Grid>
+                                                <ProgressBar Value="{Binding Utilization, Mode=OneWay}" Maximum="100" Height="5" Margin="0,10,0,0"
+                                                             Foreground="{DynamicResource AccentBrush}" Background="{DynamicResource BorderBrush}" BorderThickness="0" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Traffic + configuration -->
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="TRAFFIC SIMULATION" Style="{StaticResource Caps}" />
+                                <TextBlock Text="Requests go through this project's Nginx balancer to the instance pool." FontSize="12" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,12" />
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding TrafficRps, StringFormat={}{0} req/s}" Width="70" TextAlignment="Right"
+                                               FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                                    <Slider Minimum="0" Maximum="100" Value="{Binding TrafficRps}" IsSnapToTickEnabled="True" TickFrequency="1"
+                                            IsEnabled="{Binding IsRunning}" VerticalAlignment="Center" />
+                                </DockPanel>
+                                <UniformGrid Columns="3" Margin="0,12,0,0">
+                                    <Button Content="Increase load" Command="{Binding IncreaseLoadCommand}" IsEnabled="{Binding IsRunning}" Height="34" Margin="0,0,6,0" Style="{DynamicResource Zenvix.Button.Primary}" />
+                                    <Button Content="Decrease load" Command="{Binding DecreaseLoadCommand}" IsEnabled="{Binding IsRunning}" Height="34" Margin="3,0" Style="{DynamicResource Zenvix.Button.Ghost}" />
+                                    <Button Content="Stop traffic" Command="{Binding StopTrafficCommand}" IsEnabled="{Binding IsRunning}" Height="34" Margin="6,0,0,0" Style="{DynamicResource Zenvix.Button.Danger}" />
+                                </UniformGrid>
+                                <TextBlock Text="{Binding TrafficInfo}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,8,0,0" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="CONFIGURATION" Style="{StaticResource Caps}" Margin="0,0,0,10" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="130" /></Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /></Grid.RowDefinitions>
+                                    <TextBlock Text="Minimum instances" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <mah:NumericUpDown Grid.Column="1" Value="{Binding MinInstances}" Minimum="1" Maximum="20" Height="30" Margin="0,3" />
+                                    <TextBlock Grid.Row="1" Text="Maximum instances" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <mah:NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding MaxInstances}" Minimum="1" Maximum="20" Height="30" Margin="0,3" />
+                                    <TextBlock Grid.Row="2" Text="Capacity per instance (req/min)" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <mah:NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Capacity}" Minimum="1" Maximum="100000" Interval="10" Height="30" Margin="0,3" />
+                                    <TextBlock Grid.Row="3" Text="Auto scaling" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <mah:ToggleSwitch Grid.Row="3" Grid.Column="1" IsOn="{Binding AutoScale}" OnContent="On" OffContent="Off" Margin="0,3" />
+                                </Grid>
+                                <Button Content="Apply configuration" Command="{Binding ApplyConfigCommand}" Style="{DynamicResource Zenvix.Button.Primary}" Height="34" Margin="0,12,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Event log -->
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="SCALING EVENTS" Style="{StaticResource Caps}" Margin="0,0,0,8" />
+                            <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding Events}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" FontFamily="Cascadia Mono, Consolas" FontSize="11.5" TextWrapping="Wrap"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,1" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>
