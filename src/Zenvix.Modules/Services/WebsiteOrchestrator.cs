@@ -146,6 +146,7 @@ namespace Zenvix.Runtime.Services
             {
                 Log.Information("[WebOrchestrator] Deploying website: {Domain}", website.Domain);
                 website.Status = WebsiteStatus.Starting;
+                website.Notes = null; // drop the reason from a previous failed start
 
                 if (!Websites.Contains(website)) Websites.Add(website);
 
