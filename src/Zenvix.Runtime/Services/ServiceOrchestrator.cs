@@ -165,11 +165,11 @@ namespace Zenvix.Runtime.Services
                 _processes.Remove(type);
             }
 
-            // Also kill any externally-detected instances
+            // Also kill leftover Zenvix-owned instances (never other programs with the same name)
             if (_binaryMap.TryGetValue(type, out var info))
             {
                 foreach (var procName in info.ProcessNames)
-                foreach (var p in Process.GetProcessesByName(procName))
+                foreach (var p in Process.GetProcessesByName(procName).Where(ProcessOwnership.IsZenvixOwned))
                 {
                     try { p.Kill(true); } catch { /* already dead */ }
                 }
@@ -199,8 +199,11 @@ namespace Zenvix.Runtime.Services
                 var type = kvp.Key;
                 var info = kvp.Value;
 
+                // Only leftovers from Zenvix itself; conflicts with other stacks are handled per port
+                // by LocalStackConflictResolver when a service actually needs that port.
                 var runningProcs = info.ProcessNames
                     .SelectMany(n => Process.GetProcessesByName(n))
+                    .Where(ProcessOwnership.IsZenvixOwned)
                     .ToList();
 
                 if (runningProcs.Any())

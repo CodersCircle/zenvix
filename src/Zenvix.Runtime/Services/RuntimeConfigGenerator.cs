@@ -466,7 +466,10 @@ namespace Zenvix.Runtime.Services
             sb.AppendLine("display_errors = On");
             // Startup warnings must never be printed into HTTP responses (they break headers/redirects).
             sb.AppendLine("display_startup_errors = Off");
-            sb.AppendLine("error_reporting = E_ALL");
+            // Deprecation notices (e.g. is_integer() on PHP 8.6 inside phpMyAdmin's vendor libs) were printed
+            // before headers, breaking sessions/redirects ("headers already sent"), so they are not reported.
+            sb.AppendLine("error_reporting = E_ALL & ~E_DEPRECATED");
+            sb.AppendLine("output_buffering = 4096");
             sb.AppendLine("log_errors = On");
             var phpLog = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "php_errors.log").Replace("\\", "/");
             Directory.CreateDirectory(Path.GetDirectoryName(phpLog)!);

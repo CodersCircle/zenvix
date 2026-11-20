@@ -85,14 +85,15 @@ namespace Zenvix.Runtime.Services
             if (!Instances.Any())
                 SeedDefaultInstances();
 
-            // Detect and STOP external database processes to ensure clean ownership
+            // Stop leftovers from a previous Zenvix run only. Other programs' databases (XAMPP, Herd,
+            // a MySQL service...) must keep running – projects may keep their data there.
             foreach (var instance in Instances)
             {
                 if (_processNames.TryGetValue(instance.Engine, out var processNames))
                 {
                     foreach (var name in processNames)
                     {
-                        var procs = Process.GetProcessesByName(name);
+                        var procs = Process.GetProcessesByName(name).Where(ProcessOwnership.IsZenvixOwned).ToArray();
                         if (procs.Any())
                         {
                             Log.Warning("[Database] Found external {Engine} instance — stopping for clean portable ownership.", instance.Engine);

@@ -251,6 +251,7 @@ namespace Zenvix.Runtime.Services
                 inst.Status = ServiceStatus.Starting;
                 InstanceStateChanged?.Invoke(inst);
 
+                _resolvedRuntimes.Remove(inst.Type); // pick up a PHP version switch / newly installed runtime
                 var binPath = GetBinaryPath(inst.Type);
                 
                 // ── 0. DYNAMIC INSTALLATION IF MISSING ──────────────────────────

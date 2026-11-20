@@ -104,6 +104,9 @@ namespace Zenvix.Modules.Toolchain
         {
             var root = Path.Combine(_base, "runtimes", "phpfpm");
             if (!Directory.Exists(root)) return null;
+            if (Zenvix.Runtime.Services.ActivePhpVersion.Get(_base) is string pinned
+                && File.Exists(Path.Combine(root, pinned, "php.exe")))
+                return Path.Combine(root, pinned);
             return Directory.GetDirectories(root)
                 .Where(d => File.Exists(Path.Combine(d, "php.exe")))
                 .OrderByDescending(d => ParseVersion(Path.GetFileName(d)))
@@ -390,6 +393,13 @@ namespace Zenvix.Modules.Toolchain
         /// <param name="version">One of the versions from GetReleasesAsync; null = latest.</param>
         public async Task<bool> InstallVersionAsync(ToolKind kind, string? version, IProgress<string> log, CancellationToken ct = default)
         {
+            // Switching to a PHP that is already downloaded needs no download: just make it the active one.
+            if (kind == ToolKind.Php && version != null && File.Exists(Path.Combine(_base, "runtimes", "phpfpm", version, "php-cgi.exe")))
+            {
+                Zenvix.Runtime.Services.ActivePhpVersion.Set(version, _base);
+                log.Report($"✔ Switched to PHP {version}.");
+                return true;
+            }
             await _installLock.WaitAsync(ct);
             try
             {
@@ -445,6 +455,8 @@ namespace Zenvix.Modules.Toolchain
 
                 if (kind != ToolKind.Php)
                     await File.WriteAllTextAsync(Path.Combine(target, ".zenvix-version"), version, ct);
+                else
+                    Zenvix.Runtime.Services.ActivePhpVersion.Set(version, _base); // the version you picked becomes active
                 if (kind == ToolKind.Composer || kind == ToolKind.Php) WriteComposerShim();
 
                 if (kind == ToolKind.Flutter)

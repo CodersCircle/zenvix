@@ -75,6 +75,18 @@ namespace Zenvix.Runtime.Services
         public async Task<RuntimeMetadata?> FindBestAsync(RuntimeServiceType type)
         {
             var all = await DiscoverAllAsync();
+
+            // The PHP version picked in Settings wins over "newest installed".
+            if (type == RuntimeServiceType.PhpFpm && ActivePhpVersion.Get(Path.GetDirectoryName(_runtimesRoot)) is string pinned)
+            {
+                var chosen = all.FirstOrDefault(r => r.Type == type && r.Version == pinned);
+                if (chosen != null)
+                {
+                    LogDiscovery($"[SELECTED] PHP {pinned} (chosen in Settings): {chosen.ExecutablePath}");
+                    return chosen;
+                }
+            }
+
             var best = all.Where(r => r.Type == type)
                           .OrderBy(r => GetPriority(r.InstallSource))
                           .ThenByDescending(r => {
