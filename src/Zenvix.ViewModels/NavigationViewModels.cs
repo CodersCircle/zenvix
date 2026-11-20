@@ -52,7 +52,13 @@ namespace Zenvix.ViewModels
         [ObservableProperty] private string _updateButtonText = "Update Now";
         [ObservableProperty] private bool _isDownloadComplete = false;
         [ObservableProperty] private ObservableCollection<GitVersionItem> _gitVersions = new();
-        [ObservableProperty] private GitVersionItem? _selectedGitVersion;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(InstallVersionText), nameof(CanInstallSelectedVersion))]
+        private GitVersionItem? _selectedGitVersion;
+
+        /// <summary>"Update" for a newer build, "Roll back" for an older one, "Installed" for the running one.</summary>
+        public string InstallVersionText => SelectedGitVersion?.Relation switch { > 0 => "Update", < 0 => "Roll back", _ => "Installed" };
+        public bool CanInstallSelectedVersion => SelectedGitVersion is { Relation: not 0 } v && !string.IsNullOrEmpty(v.DownloadUrl);
         [ObservableProperty] private bool _isLoadingVersions = false;
 
         public bool IsNotCheckingUpdate => !IsCheckingUpdate;
@@ -92,7 +98,7 @@ namespace Zenvix.ViewModels
                         {
                             GitVersions.Add(item);
                         }
-                        SelectedGitVersion = GitVersions.FirstOrDefault();
+                        SelectedGitVersion = GitVersions.FirstOrDefault(v => v.Relation > 0) ?? GitVersions.FirstOrDefault(v => v.Relation == 0) ?? GitVersions.FirstOrDefault();
                     }, null);
                 }
                 else
@@ -102,7 +108,7 @@ namespace Zenvix.ViewModels
                     {
                         GitVersions.Add(item);
                     }
-                    SelectedGitVersion = GitVersions.FirstOrDefault();
+                    SelectedGitVersion = GitVersions.FirstOrDefault(v => v.Relation > 0) ?? GitVersions.FirstOrDefault(v => v.Relation == 0) ?? GitVersions.FirstOrDefault();
                 }
             }
             catch (System.Exception ex)

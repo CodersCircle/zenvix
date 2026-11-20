@@ -151,8 +151,17 @@
                                     </Grid.ColumnDefinitions>
                                     <ComboBox ItemsSource="{Binding GitVersions}" SelectedItem="{Binding SelectedGitVersion}"
                                               DisplayMemberPath="DisplayName" MinHeight="36" Margin="0,0,8,0" IsEnabled="{Binding IsLoadingVersions, Converter={StaticResource InverseBoolConverter}}" />
-                                    <Button Grid.Column="1" Content="Install" Command="{Binding InstallSpecificVersionCommand}" CommandParameter="{Binding SelectedGitVersion}"
-                                            Style="{DynamicResource Zenvix.Button.Primary}" MinHeight="36" Padding="18,0" />
+                                    <Button Grid.Column="1" Content="{Binding InstallVersionText}" IsEnabled="{Binding CanInstallSelectedVersion}" MinWidth="100"
+                                            Command="{Binding InstallSpecificVersionCommand}" CommandParameter="{Binding SelectedGitVersion}"
+                                            MinHeight="36" Padding="18,0">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource Zenvix.Button.Primary}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45" /></Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
                                 </Grid>
                             </StackPanel>
                         </Border>

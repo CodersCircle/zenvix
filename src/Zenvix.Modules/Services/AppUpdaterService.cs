@@ -24,6 +24,8 @@ namespace Zenvix.Modules.Services
         public string VersionName { get; set; } = "";
         public string DownloadUrl { get; set; } = "";
         public string DisplayName { get; set; } = "";
+        /// <summary>Compared with the running Zenvix: 1 newer, 0 the installed one, -1 older.</summary>
+        public int Relation { get; set; }
     }
 
     public interface IAppUpdaterService
@@ -265,10 +267,22 @@ namespace Zenvix.Modules.Services
                 Log.Error(ex, "[Updater] Failed to get versions history");
             }
 
-            return list.OrderByDescending(v => {
-                Version.TryParse(v.VersionName.TrimStart('v', 'V'), out var parsed);
-                return parsed ?? new Version(0, 0);
-            }).ToList();
+            // Label every build relative to the running one, so picking an older build reads as a roll back.
+            static Version V(string s) => Version.TryParse(s.TrimStart('v', 'V'), out var p) ? p : new Version(0, 0);
+            var current = V(CurrentVersion);
+            if (list.All(v => V(v.VersionName) != current))
+                list.Add(new GitVersionItem { VersionName = $"v{current.ToString(3)}" }); // running build not uploaded (yet)
+            foreach (var v in list)
+            {
+                v.Relation = V(v.VersionName).CompareTo(current) switch { > 0 => 1, < 0 => -1, _ => 0 };
+                v.DisplayName = $"Version {v.VersionName.TrimStart('v', 'V')}" + v.Relation switch
+                {
+                    0 => "  (installed)",
+                    > 0 => "  (new)",
+                    _ => "  (older)",
+                };
+            }
+            return list.OrderByDescending(v => V(v.VersionName)).ToList();
         }
     }
 }
