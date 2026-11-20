@@ -328,19 +328,6 @@ namespace Zenvix.Runtime.Services
                 && await RunMysqlAsync(mysqlCli, dbPort, user, pass, await File.ReadAllTextAsync(createTables)) == 0)
                 config.Append(PmaStorage(1, user, pass));
 
-            // Databases of another local MySQL (XAMPP, Laragon, WAMP...) live in that server's own data folder,
-            // so they are not in Zenvix MySQL. Offer that server too: phpMyAdmin then shows a server picker.
-            var other = 3306;
-            if (other != dbPort && IsPortListening(other))
-            {
-                var name = Directory.Exists(@"C:\xampp\mysql") ? "XAMPP MySQL" : "Other MySQL";
-                // Checked with PHP's mysqli, exactly what phpMyAdmin uses (MySQL 9's own client can no longer
-                // log in to MariaDB/older MySQL that use mysql_native_password).
-                var phpBin = (await _servicesOrchestrator.GetRuntimeMetadataAsync(RuntimeServiceType.PhpFpm))?.BinDir;
-                var rootNoPassword = phpBin != null && await CanLoginWithPhpAsync(phpBin, other, "root", "");
-                config.Append(PmaServer(2, $"{name} (port {other})", other, "root", "", cookieLogin: !rootNoPassword));
-            }
-
             config.Append("$cfg['DefaultLang'] = 'en';\n" +
                           "$cfg['ServerDefault'] = 1;\n" +
                           "$cfg['PmaNoRelation_DisableWarning'] = true;\n" +
@@ -391,39 +378,6 @@ namespace Zenvix.Runtime.Services
             foreach (var (key, table) in tables)
                 sb.Append($"$cfg['Servers'][{i}]['{key}'] = 'pma__{table}';\n");
             return sb.ToString();
-        }
-
-        private static bool IsPortListening(int port)
-        {
-            try
-            {
-                using var c = new TcpClient();
-                return c.ConnectAsync("127.0.0.1", port).Wait(700) && c.Connected;
-            }
-            catch { return false; }
-        }
-
-        private static async Task<bool> CanLoginWithPhpAsync(string phpDir, int port, string user, string pass)
-        {
-            var phpExe = Path.Combine(phpDir, "php.exe");
-            if (!File.Exists(phpExe)) return false;
-            try
-            {
-                var psi = new ProcessStartInfo(phpExe) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
-                foreach (var a in new[] { "-n", "-d", $"extension_dir={Path.Combine(phpDir, "ext")}", "-d", "extension=mysqli", "-r",
-                                          "mysqli_report(MYSQLI_REPORT_OFF); exit(@mysqli_connect('127.0.0.1', getenv('ZX_U'), getenv('ZX_P'), '', (int)getenv('ZX_PORT')) ? 0 : 1);" })
-                    psi.ArgumentList.Add(a);
-                psi.Environment["ZX_U"] = user;
-                psi.Environment["ZX_P"] = pass;
-                psi.Environment["ZX_PORT"] = port.ToString();
-                using var p = Process.Start(psi)!;
-                _ = p.StandardError.ReadToEndAsync();
-                await p.StandardOutput.ReadToEndAsync();
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-                await p.WaitForExitAsync(cts.Token);
-                return p.ExitCode == 0;
-            }
-            catch { return false; }
         }
 
         /// <summary>Runs SQL (fed on stdin) with the MySQL client; returns the exit code (-1 on failure to run).</summary>

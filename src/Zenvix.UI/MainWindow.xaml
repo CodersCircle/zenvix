@@ -127,22 +127,13 @@
                     </RadioButton>
                 </StackPanel>
  
-                <Border Grid.Row="2" Background="{StaticResource Zenvix.Card}" BorderBrush="{StaticResource Zenvix.Border}" BorderThickness="1" CornerRadius="12" Padding="15">
-                    <StackPanel>
-                        <TextBlock Text="ENGINE STATUS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource Zenvix.TextSecondary}" />
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <Ellipse Width="8" Height="8" Fill="{StaticResource Zenvix.Success}" Margin="0,0,8,0" />
-                            <TextBlock Text="Orchestrator Active" Foreground="{StaticResource Zenvix.TextPrimary}" FontSize="12" />
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
             </Grid>
         </Border>
 
         <!-- MAIN AREA -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="80" /> <!-- Topbar -->
+                <RowDefinition Height="96" /> <!-- Topbar -->
                 <RowDefinition Height="*" />  <!-- Content -->
             </Grid.RowDefinitions>
 
@@ -153,6 +144,33 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
+                <!-- Live metrics, shown on every page -->
+                <UniformGrid Grid.Column="0" Columns="4" Rows="1" VerticalAlignment="Center">
+                    <Border Style="{DynamicResource Zenvix.CardStyle}" Padding="16,8" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock Text="SYSTEM STATUS" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" />
+                            <TextBlock Text="{Binding StatusText}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding StatusText}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{DynamicResource Zenvix.CardStyle}" Padding="16,8" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock Text="CPU USAGE" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" />
+                            <TextBlock Text="{Binding State.CpuUsage}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{DynamicResource Zenvix.CardStyle}" Padding="16,8" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock Text="MEMORY" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" />
+                            <TextBlock Text="{Binding State.RamUsage}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{DynamicResource Zenvix.CardStyle}" Padding="16,8" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <StackPanel>
+                            <TextBlock Text="HEALTH MONITOR" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" />
+                            <TextBlock Text="{Binding State.SystemHealthStatus}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource SuccessBrush}" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <!-- Update notification: shown when SDK or project updates are available -->
@@ -164,14 +182,7 @@
                             <TextBlock Text="{Binding Settings.Updates.AvailableCount, StringFormat='{}{0} updates available'}" FontSize="12" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <StackPanel Margin="20,0">
-                        <TextBlock Text="CPU" HorizontalAlignment="Right" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" />
-                        <TextBlock Text="{Binding State.CpuUsage}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
-                    </StackPanel>
-                    <StackPanel Margin="20,0">
-                        <TextBlock Text="MEMORY" HorizontalAlignment="Right" Style="{DynamicResource Zenvix.Subtitle}" FontSize="10" />
-                        <TextBlock Text="{Binding State.RamUsage}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
-                    </StackPanel>
+                    <Border Width="20" />
                     <Border Width="45" Height="45" CornerRadius="22" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2">
                         <TextBlock Text="{Binding Settings.AvatarText}" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>

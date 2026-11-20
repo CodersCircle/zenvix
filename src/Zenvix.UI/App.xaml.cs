@@ -133,6 +133,7 @@ namespace Zenvix.UI
             services.AddSingleton<IDatabaseCredentialsManager, DatabaseCredentialsManager>();
             services.AddSingleton<IRuntimeConfigGenerator, RuntimeConfigGenerator>();
             services.AddSingleton<IWebsiteOrchestrator, WebsiteOrchestrator>();
+            services.AddSingleton<Zenvix.Modules.Services.ILegacyDatabaseImporter, Zenvix.Modules.Services.LegacyDatabaseImporter>();
 
             // Deployment & containers
             services.AddSingleton<Zenvix.Modules.Deployment.IDeploymentStore, Zenvix.Modules.Deployment.DeploymentStore>();

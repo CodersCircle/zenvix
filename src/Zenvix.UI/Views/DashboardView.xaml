@@ -157,43 +157,6 @@
                 </Grid>
             </Border>
 
-            <!-- 1. TOP METRICS -->
-            <UniformGrid Columns="4" Margin="0,0,0,24">
-                <Border Style="{DynamicResource Zenvix.CardStyle}" Margin="0,0,15,0">
-                    <StackPanel>
-                        <TextBlock Text="SYSTEM STATUS" Style="{DynamicResource Zenvix.Subtitle}" />
-                        <TextBlock
-                            Text="{Binding DataContext.StatusText, RelativeSource={RelativeSource AncestorType=Window}}"
-                            FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"
-                            Foreground="{DynamicResource AccentBrush}" Margin="0,8,0,0" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{DynamicResource Zenvix.CardStyle}" Margin="0,0,15,0">
-                    <StackPanel>
-                        <TextBlock Text="CPU USAGE" Style="{DynamicResource Zenvix.Subtitle}" />
-                        <TextBlock Text="{Binding StateManager.CpuUsage}"
-                            FontSize="15" FontWeight="SemiBold"
-                            Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,8,0,0" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{DynamicResource Zenvix.CardStyle}" Margin="0,0,15,0">
-                    <StackPanel>
-                        <TextBlock Text="MEMORY" Style="{DynamicResource Zenvix.Subtitle}" />
-                        <TextBlock Text="{Binding StateManager.RamUsage}"
-                            FontSize="15" FontWeight="SemiBold"
-                            Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,8,0,0" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{DynamicResource Zenvix.CardStyle}">
-                    <StackPanel>
-                        <TextBlock Text="HEALTH MONITOR" Style="{DynamicResource Zenvix.Subtitle}" />
-                        <TextBlock Text="{Binding StateManager.SystemHealthStatus}"
-                            FontSize="15" FontWeight="SemiBold"
-                            Foreground="{DynamicResource SuccessBrush}" Margin="0,8,0,0" />
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
-
             <!-- 2. MAIN CONTENT AREA — Left + Right columns -->
             <Grid>
                 <Grid.ColumnDefinitions>

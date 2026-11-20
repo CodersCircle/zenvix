@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Zenvix.Core.Models;
+using Zenvix.Modules.Services;
 using Zenvix.Runtime.Services;
 using Zenvix.ViewModels.Services;
 
@@ -12,6 +13,15 @@ namespace Zenvix.ViewModels
     {
         private readonly IDatabaseOrchestrationService _dbService;
         private readonly IDispatcherService _dispatcher;
+        private readonly ILegacyDatabaseImporter _importer;
+
+        /// <summary>"XAMPP" when another stack's MySQL with databases is installed.</summary>
+        public string? LegacySourceName { get; }
+        public bool CanImportLegacy => LegacySourceName != null;
+        public string ImportButtonText => $"Import from {LegacySourceName}";
+        public ObservableCollection<string> ImportLog { get; } = new();
+        [ObservableProperty] private bool _isImporting;
+        [ObservableProperty] private string _importStatus = "";
 
         public ObservableCollection<DatabaseInstance> Instances => _dbService.Instances;
 
@@ -32,8 +42,10 @@ namespace Zenvix.ViewModels
             DbEngineType.PlanetScale, DbEngineType.Neon,
         };
 
-        public DatabasesViewModel(IDatabaseOrchestrationService dbService, IDispatcherService dispatcher)
+        public DatabasesViewModel(IDatabaseOrchestrationService dbService, IDispatcherService dispatcher, ILegacyDatabaseImporter importer)
         {
+            _importer = importer;
+            LegacySourceName = importer.Detect()?.Name;
             _dbService  = dbService;
             _dispatcher = dispatcher;
 
@@ -41,6 +53,28 @@ namespace Zenvix.ViewModels
                 _dispatcher.Invoke(() => OnPropertyChanged(nameof(Instances)));
 
             _ = System.Threading.Tasks.Task.Run(_dbService.InitializeAsync);
+        }
+
+        /// <summary>Copies the other stack's databases into Zenvix MySQL (kept when that stack is uninstalled).</summary>
+        [RelayCommand]
+        private async Task ImportLegacy()
+        {
+            if (IsImporting) return;
+            IsImporting = true;
+            ImportLog.Clear();
+            ImportStatus = $"Copying {LegacySourceName} databases into Zenvix MySQL...";
+            var progress = new System.Progress<string>(line => _dispatcher.BeginInvoke(() =>
+            {
+                ImportLog.Add(line);
+                ImportStatus = line;
+            }));
+            try
+            {
+                var result = await System.Threading.Tasks.Task.Run(() => _importer.ImportAsync(progress));
+                ImportStatus = (result.Success ? "✔ " : "✖ ") + result.Message;
+            }
+            catch (System.Exception ex) { ImportStatus = "✖ " + ex.Message; }
+            finally { IsImporting = false; }
         }
 
         [RelayCommand]

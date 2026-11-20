@@ -17,12 +17,37 @@
                     <TextBlock Text="Manage local database instances and runtimes."
                                Style="{DynamicResource Zenvix.Subtitle}" Margin="0,4,0,0" />
                 </StackPanel>
-                <Button Content="+ Add Instance"
-                        Command="{Binding ShowAddInstanceCommand}"
-                        Style="{DynamicResource Zenvix.Button.Primary}"
-                        HorizontalAlignment="Right" VerticalAlignment="Center"
-                        Padding="20,10" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Content="{Binding ImportButtonText}" Command="{Binding ImportLegacyCommand}"
+                            Style="{DynamicResource Zenvix.Button.Ghost}" Padding="18,10" Margin="0,0,10,0"
+                            Visibility="{Binding CanImportLegacy, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            ToolTip="Copy your old databases into Zenvix MySQL so they stay even if you uninstall it. Nothing is deleted there." />
+                    <Button Content="+ Add Instance"
+                            Command="{Binding ShowAddInstanceCommand}"
+                            Style="{DynamicResource Zenvix.Button.Primary}"
+                            Padding="20,10" />
+                </StackPanel>
             </Grid>
+
+            <!-- ── Import from another stack: progress ── -->
+            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="18" Margin="0,0,0,20"
+                    Visibility="{Binding ImportStatus, Converter={StaticResource StringToVisibilityConverter}}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <mah:ProgressRing Width="16" Height="16" Margin="0,0,10,0"
+                                          Visibility="{Binding IsImporting, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <TextBlock Text="{Binding ImportStatus}" FontWeight="SemiBold" TextWrapping="Wrap" MaxWidth="900"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding ImportLog}" Margin="0,8,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
             <!-- ── Add Instance Form ── -->
             <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="16" Padding="24"
