@@ -328,6 +328,21 @@ namespace Zenvix.Runtime.Services
                 && await RunMysqlAsync(mysqlCli, dbPort, user, pass, await File.ReadAllTextAsync(createTables)) == 0)
                 config.Append(PmaStorage(1, user, pass));
 
+            // Other MySQL servers running on this PC (XAMPP, WAMP, Laragon, MySQL service...) stay reachable from
+            // phpMyAdmin's "Current server" picker. Their data is also copied into Zenvix MySQL in the background.
+            var index = 2;
+            var phpBin = (await _servicesOrchestrator.GetRuntimeMetadataAsync(RuntimeServiceType.PhpFpm))?.BinDir;
+            var others = LocalMySqlServers.DetectAll(AppDomain.CurrentDomain.BaseDirectory)
+                .GroupBy(s => s.Port).Select(g => (Port: g.Key, Name: string.Join(" / ", g.Select(x => x.Name).Distinct())))
+                .ToList();
+            if (others.All(o => o.Port != 3306)) others.Add((3306, "Other MySQL"));
+            foreach (var (port, name) in others)
+            {
+                if (port == dbPort || !IsPortListening(port)) continue;
+                var rootNoPassword = phpBin != null && await CanLoginWithPhpAsync(phpBin, port, "root", "");
+                config.Append(PmaServer(index++, $"{name} (port {port})", port, "root", "", cookieLogin: !rootNoPassword));
+            }
+
             config.Append("$cfg['DefaultLang'] = 'en';\n" +
                           "$cfg['ServerDefault'] = 1;\n" +
                           "$cfg['PmaNoRelation_DisableWarning'] = true;\n" +
@@ -342,6 +357,37 @@ namespace Zenvix.Runtime.Services
             OpenUrl(url);
 
             return new ToolSession(url, webServer.Port, null, EmbeddedTool.PhpMyAdmin);
+        }
+
+        private static bool IsPortListening(int port)
+        {
+            try { using var c = new TcpClient(); return c.ConnectAsync("127.0.0.1", port).Wait(700) && c.Connected; }
+            catch { return false; }
+        }
+
+        /// <summary>Checks a login with PHP's mysqli, exactly what phpMyAdmin uses (MySQL 9's own client can no
+        /// longer log in to MariaDB/older MySQL that use mysql_native_password).</summary>
+        private static async Task<bool> CanLoginWithPhpAsync(string phpDir, int port, string user, string pass)
+        {
+            var phpExe = Path.Combine(phpDir, "php.exe");
+            if (!File.Exists(phpExe)) return false;
+            try
+            {
+                var psi = new ProcessStartInfo(phpExe) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+                foreach (var a in new[] { "-n", "-d", $"extension_dir={Path.Combine(phpDir, "ext")}", "-d", "extension=mysqli", "-r",
+                                          "mysqli_report(MYSQLI_REPORT_OFF); exit(@mysqli_connect('127.0.0.1', getenv('ZX_U'), getenv('ZX_P'), '', (int)getenv('ZX_PORT')) ? 0 : 1);" })
+                    psi.ArgumentList.Add(a);
+                psi.Environment["ZX_U"] = user;
+                psi.Environment["ZX_P"] = pass;
+                psi.Environment["ZX_PORT"] = port.ToString();
+                using var p = Process.Start(psi)!;
+                _ = p.StandardError.ReadToEndAsync();
+                await p.StandardOutput.ReadToEndAsync();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                await p.WaitForExitAsync(cts.Token);
+                return p.ExitCode == 0;
+            }
+            catch { return false; }
         }
 
         private static string Php(string s) => s.Replace("\\", "\\\\").Replace("'", "\\'");

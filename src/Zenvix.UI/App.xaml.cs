@@ -34,6 +34,19 @@ namespace Zenvix.UI
             var mainWindow = new MainWindow();
             mainWindow.DataContext = ServiceProvider.GetRequiredService<MainViewModel>();
             mainWindow.Show();
+
+            // Quietly copy databases from XAMPP / WAMP / Laragon / a local MySQL into Zenvix MySQL, once per
+            // database, so projects keep their data even if that stack is uninstalled. Log only, no UI.
+            var importer = ServiceProvider.GetRequiredService<ILegacyDatabaseImporter>();
+            _ = System.Threading.Tasks.Task.Run(async () =>
+            {
+                try
+                {
+                    await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(20));
+                    await importer.AutoImportAsync();
+                }
+                catch (Exception ex) { Serilog.Log.Warning(ex, "[Import] background import failed"); }
+            });
         }
 
         private bool _errorDialogOpen;
