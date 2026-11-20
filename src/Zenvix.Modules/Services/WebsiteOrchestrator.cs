@@ -216,6 +216,20 @@ namespace Zenvix.Runtime.Services
                     await _services.StartAsync(nginxInstance.Id);
                 }
 
+                // 5.5 DATABASE PRE-FLIGHT
+                // If the project's .env points at a local database port where nothing is listening, every
+                // page waits on ~2s connection retries per query (Windows) until Nginx returns 504.
+                // Say so immediately instead of letting the site (and the health check) hang.
+                var dbProblem = CheckProjectDatabase(website, mysqlInstance);
+                if (dbProblem != null)
+                {
+                    Log.Warning("[WebOrchestrator] {Domain}: {Problem}", website.Domain, dbProblem);
+                    website.Status = WebsiteStatus.Error;
+                    website.Notes = dbProblem;
+                    await SaveAsync();
+                    return false;
+                }
+
                 // 6. HEALTH CHECK
                 website.Status = WebsiteStatus.Starting;
                 var healthy = await VerifyWebsiteHealthAsync(website);
@@ -228,7 +242,7 @@ namespace Zenvix.Runtime.Services
                 else
                 {
                     website.Status = WebsiteStatus.Error;
-                    website.Notes = "Website started but health check failed. Check domain mapping.";
+                    website.Notes = "The site did not answer within 45 seconds. Open Logs → PHP / Nginx, or check that the database in .env is running.";
                 }
 
                 await SaveAsync();
@@ -242,6 +256,44 @@ namespace Zenvix.Runtime.Services
             }
         }
 
+        /// <summary>
+        /// Reads DB_CONNECTION/DB_HOST/DB_PORT from the project's .env (Laravel and most PHP apps).
+        /// Returns a user-facing message when a local database port has nothing listening, else null.
+        /// </summary>
+        private static string? CheckProjectDatabase(Website website, RuntimeServiceInstance? zenvixMySql)
+        {
+            try
+            {
+                var envPath = Path.Combine(website.LocalPath, ".env");
+                if (!File.Exists(envPath)) return null;
+                var env = File.ReadAllLines(envPath)
+                    .Select(l => l.Trim())
+                    .Where(l => l.Length > 0 && !l.StartsWith('#') && l.Contains('='))
+                    .Select(l => l.Split('=', 2))
+                    .GroupBy(p => p[0].Trim()).ToDictionary(g => g.Key, g => g.Last()[1].Trim().Trim('"', '\''));
+
+                env.TryGetValue("DB_CONNECTION", out var conn);
+                if (conn is not ("mysql" or "mariadb" or "pgsql")) return null; // sqlite etc. need no server
+                env.TryGetValue("DB_HOST", out var host);
+                if (host is not ("127.0.0.1" or "localhost" or "") && host != null) return null; // remote DB: not our business
+                var port = env.TryGetValue("DB_PORT", out var ps) && int.TryParse(ps, out var p) ? p : (conn == "pgsql" ? 5432 : 3306);
+
+                var listening = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties()
+                    .GetActiveTcpListeners().Any(e => e.Port == port);
+                if (listening) return null;
+
+                var hint = zenvixMySql != null && zenvixMySql.Status == ServiceStatus.Running && conn != "pgsql"
+                    ? $" Start the MySQL that holds this project's data on port {port} (e.g. XAMPP), or set DB_PORT={zenvixMySql.Port} in .env to use Zenvix MySQL."
+                    : $" Start that database server, or update DB_HOST/DB_PORT in .env.";
+                return $"Database not running: .env uses {conn} at 127.0.0.1:{port}, but nothing is listening there.{hint}";
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex, "[WebOrchestrator] .env database check skipped for {Domain}", website.Domain);
+                return null;
+            }
+        }
+
         private async Task<bool> VerifyWebsiteHealthAsync(Website website)
         {
             using var client = new HttpClient(new HttpClientHandler 
@@ -250,16 +302,16 @@ namespace Zenvix.Runtime.Services
             });
             
             // The first request to a framework app (Laravel/Filament cold boot, OPcache warm-up) can take 10-20s.
-            client.Timeout = TimeSpan.FromSeconds(30);
+            client.Timeout = TimeSpan.FromSeconds(45);
             
             // CRITICAL: Wait for Nginx to actually bind and start listening
             await Task.Delay(2000); 
 
-            for (int i = 0; i < 6; i++) 
+            for (int i = 0; i < 2; i++) 
             {
                 try
                 {
-                    Log.Information("[WebOrchestrator] Health-check probe {Count}/6 for {Domain}...", i + 1, website.Domain);
+                    Log.Information("[WebOrchestrator] Health-check probe {Count}/2 for {Domain}...", i + 1, website.Domain);
                     
                     var response = await client.GetAsync(website.DisplayUrl);
                     
@@ -294,6 +346,8 @@ namespace Zenvix.Runtime.Services
                 catch (Exception ex) 
                 {
                     Log.Warning("[WebOrchestrator] Health probe {Count} failed for {Domain}: {Msg}", i + 1, website.Domain, ex.Message);
+                    // A timeout means PHP is busy/stuck; another probe would only queue behind it.
+                    if (ex is TaskCanceledException) break;
                 }
                 
                 await Task.Delay(2500); // Wait for runtime stability

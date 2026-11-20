@@ -49,6 +49,9 @@ namespace Zenvix.Runtime.Services
         private readonly string _configRoot;
         private readonly Dictionary<RuntimeServiceType, RuntimeMetadata> _resolvedRuntimes = new();
         private readonly Dictionary<Guid, Process> _runningProcesses = new();
+        /// <summary>Extra php-cgi workers per PHP instance (php-cgi serves one request at a time).</summary>
+        private readonly Dictionary<Guid, List<Process>> _phpWorkers = new();
+        public const int PhpWorkerCount = 4;
         
         private Timer? _metricsTimer;
 
@@ -78,6 +81,8 @@ namespace Zenvix.Runtime.Services
             _runtimeInstaller = runtimeInstaller;
             _configGenerator = configGenerator;
             _credentialsManager = credentialsManager;
+            // php-cgi on Windows exits after 500 requests by default, silently taking PHP down.
+            Environment.SetEnvironmentVariable("PHP_FCGI_MAX_REQUESTS", "0");
             _binRoot    = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
             _logsRoot   = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
             _configRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config");
@@ -385,6 +390,15 @@ namespace Zenvix.Runtime.Services
                 _runningProcesses[instanceId] = proc;
                 inst.ProcessId = proc.Id;
 
+                // ── 3.5 PHP WORKER POOL ──────────────────────────────────────────
+                // One php-cgi handles one request at a time: a single slow page (e.g. waiting on an
+                // unreachable database) used to freeze every site with 504s. Start extra workers and
+                // let Nginx balance across them.
+                if (inst.Type == RuntimeServiceType.PhpFpm)
+                {
+                    await StartPhpWorkersAsync(inst, binPath, configPath, workDir);
+                }
+
                 // ── 4. HEALTH VALIDATION ──────────────────────────
                 // Databases can take longer to initialize, give them up to 45s
                 var timeout = (inst.Type == RuntimeServiceType.MySQL || inst.Type == RuntimeServiceType.MariaDB) ? 45_000 : 30_000;
@@ -472,6 +486,32 @@ namespace Zenvix.Runtime.Services
             return notes.Count == 0 ? null : string.Join(" ", notes);
         }
 
+        private async Task StartPhpWorkersAsync(RuntimeServiceInstance inst, string binPath, string configPath, string workDir)
+        {
+            if (_phpWorkers.Remove(inst.Id, out var old))
+                foreach (var w in old) { try { w.Kill(true); } catch { } }
+
+            var ports = new List<int> { inst.Port };
+            var workers = new List<Process>();
+            var next = inst.Port + 1;
+            for (int i = 1; i < PhpWorkerCount; i++)
+            {
+                var port = GetFreePort(next);
+                next = port + 1;
+                try
+                {
+                    var w = await _processManager.StartProcessAsync(binPath,
+                        $"-b 127.0.0.1:{port} -d cgi.fix_pathinfo=1 -c \"{configPath}\"", workDir);
+                    workers.Add(w);
+                    ports.Add(port);
+                }
+                catch (Exception ex) { Log.Warning(ex, "[Orchestrator] extra PHP worker on {Port} failed", port); }
+            }
+            _phpWorkers[inst.Id] = workers;
+            _configGenerator.WritePhpUpstream(ports);
+            Log.Information("[Orchestrator] PHP pool: {Count} workers on ports {Ports}", ports.Count, string.Join(",", ports));
+        }
+
         private string GetProcessNameSafely(int pid)
         {
             try
@@ -530,6 +570,10 @@ namespace Zenvix.Runtime.Services
             {
                 try { proc.Kill(true); } catch { }
                 _runningProcesses.Remove(instanceId);
+            }
+            if (_phpWorkers.Remove(instanceId, out var workers))
+            {
+                foreach (var w in workers) { try { w.Kill(true); } catch { } }
             }
             else
             {

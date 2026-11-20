@@ -286,6 +286,21 @@
                                                     </Button.Style>
                                                 </Button>
                                             </StackPanel>
+
+                                            <!-- Why it failed (e.g. database not running) – only shown on Error -->
+                                            <TextBlock Text="{Binding Notes}" FontSize="10.5" Foreground="#DC2626" TextWrapping="Wrap" MaxWidth="200"
+                                                       Margin="0,6,0,0" ToolTip="{Binding Notes}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Error">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
