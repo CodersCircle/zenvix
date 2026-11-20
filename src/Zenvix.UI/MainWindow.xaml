@@ -12,7 +12,7 @@
         xmlns:conv="clr-namespace:Zenvix.UI.Converters"
         xmlns:ds="clr-namespace:Zenvix.DesignSystem"
         mc:Ignorable="d"
-        Title="ZENVIX - Local Hosting OS" Height="800" Width="1300"
+        Title="ZENVIX - Local Hosting OS" Height="800" Width="1300" MinWidth="900" MinHeight="560"
         Icon="/Assets/Icons/zenvix.ico"
         Background="{StaticResource Zenvix.Background}"
         GlowBrush="{StaticResource BorderBrush}"

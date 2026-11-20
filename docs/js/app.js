@@ -315,6 +315,18 @@ async function loadReleaseStats() {
     return stats;
 }
 
+// The installer version the download buttons point to (versions/Zenvix-Setup-V111.exe).
+const SITE_VERSION = '1.1.1';
+
+function compareVersions(a, b) {
+    const pa = String(a).replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+    const pb = String(b).replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+        if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) - (pb[i] || 0);
+    }
+    return 0;
+}
+
 async function updateDownloadCounter() {
     const counterElement = document.getElementById('download-counter');
     if (counterElement) counterElement.innerText = HISTORIC_DOWNLOADS.toLocaleString();
@@ -323,8 +335,11 @@ async function updateDownloadCounter() {
         const stats = await loadReleaseStats();
         if (counterElement) counterElement.innerText = (HISTORIC_DOWNLOADS + stats.total).toLocaleString();
 
-        // Point every download button at the release asset so each download is counted by GitHub.
-        if (stats.latestInstaller) {
+        // Point every download button at the release asset so each download is counted by GitHub –
+        // but only when that release is not older than the version this page offers.
+        if (stats.latestInstaller && compareVersions(stats.latestInstaller.tag, SITE_VERSION) >= 0) {
+            const tag = 'v' + String(stats.latestInstaller.tag).replace(/^v/i, '');
+            document.querySelectorAll('.zx-version').forEach(el => el.textContent = tag);
             document.querySelectorAll('a[download][href*="Zenvix-Setup"]').forEach(a => {
                 a.setAttribute('href', stats.latestInstaller.url);
             });

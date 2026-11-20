@@ -2113,3 +2113,21 @@ a {
         padding: 10px 14px;
     }
 }
+
+/* Version shown next to every download button */
+.latest-version {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-secondary);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border-glass-highlight);
+    background: rgba(99, 102, 241, 0.12);
+    white-space: nowrap;
+}
+.latest-version strong { color: var(--text-primary); font-weight: 700; }
+.nav-download-wrapper .latest-version { font-size: 0.62rem; padding: 1px 8px; }

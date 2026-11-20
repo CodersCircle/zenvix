@@ -12,7 +12,7 @@
 ; so the in-app updater (which reads the versions/ folder on GitHub) offers it.
 ; â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-#define AppVersion "1.1.0"
+#define AppVersion "1.1.1"
 
 [Setup]
 ; No explicit AppId: Inno uses AppName ("Zenvix"), the same as every earlier installer,

@@ -140,21 +140,21 @@
 
                         <!-- ZENVIX VERSION (was the Version History list) -->
                         <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Margin="0,22,0,0" Padding="0,18,0,0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="200" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="Zenvix version" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                    <TextBlock Text="{Binding AppVersion, StringFormat='Running v{0} - pick a build to update or roll back'}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
-                                </StackPanel>
-                                <ComboBox Grid.Column="1" ItemsSource="{Binding GitVersions}" SelectedItem="{Binding SelectedGitVersion}"
-                                          DisplayMemberPath="DisplayName" Height="36" Margin="12,0,8,0" IsEnabled="{Binding IsLoadingVersions, Converter={StaticResource InverseBoolConverter}}" />
-                                <Button Grid.Column="2" Content="Install" Command="{Binding InstallSpecificVersionCommand}" CommandParameter="{Binding SelectedGitVersion}"
-                                        Style="{DynamicResource Zenvix.Button.Primary}" Height="36" Padding="18,0" />
-                            </Grid>
+                            <StackPanel>
+                                <TextBlock Text="Zenvix version" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                <TextBlock Text="{Binding AppVersion, StringFormat='Running v{0} · pick a build to update or roll back'}" FontSize="11"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,2,0,10" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox ItemsSource="{Binding GitVersions}" SelectedItem="{Binding SelectedGitVersion}"
+                                              DisplayMemberPath="DisplayName" MinHeight="36" Margin="0,0,8,0" IsEnabled="{Binding IsLoadingVersions, Converter={StaticResource InverseBoolConverter}}" />
+                                    <Button Grid.Column="1" Content="Install" Command="{Binding InstallSpecificVersionCommand}" CommandParameter="{Binding SelectedGitVersion}"
+                                            Style="{DynamicResource Zenvix.Button.Primary}" MinHeight="36" Padding="18,0" />
+                                </Grid>
+                            </StackPanel>
                         </Border>
                     </StackPanel>
                 </Border>
@@ -186,31 +186,19 @@
                                 </Grid>
 
                                 <!-- Version Text Details & Status Text (Center-Left) -->
-                                <DockPanel Grid.Column="1" Margin="16,0,16,0" LastChildFill="False" VerticalAlignment="Center">
-                                    <!-- Left side: Title & Version -->
-                                    <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                                        <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding AppVersion, StringFormat='Current Version: v{0}'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" Margin="0,4,0,0" />
-                                    </StackPanel>
-
-                                    <!-- Right side: Dynamic status text -->
-                                    <TextBlock DockPanel.Dock="Right" 
-                                               Text="{Binding UpdateStatus}" 
-                                               Foreground="{DynamicResource TextPrimaryBrush}" 
-                                               FontWeight="Medium" 
-                                               FontSize="12" 
-                                               VerticalAlignment="Center" 
-                                               TextAlignment="Right"
-                                               TextWrapping="Wrap"
-                                               MaxWidth="320" />
-                                </DockPanel>
+                                <StackPanel Grid.Column="1" Margin="14,0,12,0" VerticalAlignment="Center">
+                                    <TextBlock Text="App Updates" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding AppVersion, StringFormat='Current version: v{0}'}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,2,0,0" />
+                                    <TextBlock Text="{Binding UpdateStatus}" Foreground="{DynamicResource AccentBrush}" FontWeight="Medium" FontSize="11"
+                                               TextWrapping="Wrap" Margin="0,3,0,0" />
+                                </StackPanel>
 
                                 <!-- Buttons (Right) -->
                                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                                     <!-- Check Update button -->
                                     <Button Command="{Binding CheckForUpdatesCommand}"
                                             Style="{StaticResource Zenvix.Button}"
-                                            Width="120" Height="36" Cursor="Hand" Margin="0,0,5,0">
+                                            MinWidth="110" Height="36" Padding="12,0" Cursor="Hand" Margin="0,0,6,0">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <mah:ProgressRing Width="14" Height="14" Margin="0,0,6,0" Foreground="{DynamicResource TextPrimaryBrush}">
                                                 <mah:ProgressRing.Style>
@@ -235,7 +223,7 @@
                                     <!-- Install/Download button -->
                                     <Button Command="{Binding InstallUpdateCommand}"
                                             Style="{StaticResource Zenvix.Button.Primary}"
-                                            Width="120" Height="36" Cursor="Hand"
+                                            MinWidth="110" Height="36" Padding="12,0" Cursor="Hand"
                                             Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <mah:ProgressRing Width="14" Height="14" Margin="0,0,6,0" Foreground="White">
