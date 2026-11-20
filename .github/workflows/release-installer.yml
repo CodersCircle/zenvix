@@ -1,0 +1,63 @@
+# Publishes every installer added to versions/ as a GitHub Release.
+#
+# How to release: build the installer as versions/Zenvix-Setup-V<major><minor><patch>.exe
+# (e.g. V112 = v1.1.2) and push it to main. This workflow then creates the Release "v1.1.2"
+# with the installer attached. The website (docs/js/app.js) picks up the newest Release, points its
+# Download buttons at it, shows its version, and GitHub counts every download for the counter.
+name: Publish installer release
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'versions/Zenvix-Setup-V*.exe', '.github/workflows/release-installer.yml' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-installer
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: versions
+          sparse-checkout-cone-mode: true
+
+      - name: Find the newest installer
+        id: pick
+        run: |
+          file=$(ls versions/Zenvix-Setup-V*.exe | sort -V | tail -1)
+          digits=$(basename "$file" .exe | sed 's/^Zenvix-Setup-V//')
+          if ! [[ "$digits" =~ ^[0-9]{3,}$ ]]; then echo "Unexpected installer name: $file"; exit 1; fi
+          version="${digits:0:1}.${digits:1:1}.${digits:2}"
+          echo "file=$file" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+          echo "Newest installer: $file -> v$version"
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FILE: ${{ steps.pick.outputs.file }}
+          TAG: ${{ steps.pick.outputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            # Same version rebuilt: replace the installer only if it changed.
+            gh release download "$TAG" --pattern "$(basename "$FILE")" --dir /tmp/old || true
+            if [ -f "/tmp/old/$(basename "$FILE")" ] && cmp -s "/tmp/old/$(basename "$FILE")" "$FILE"; then
+              echo "Release $TAG already has this installer."
+            else
+              gh release upload "$TAG" "$FILE" --clobber
+              echo "Replaced the installer of $TAG."
+            fi
+          else
+            gh release create "$TAG" "$FILE" \
+              --target "$GITHUB_SHA" \
+              --title "Zenvix $TAG" \
+              --notes "Zenvix $TAG for Windows 10 / 11. Download **$(basename "$FILE")** below and run it. Windows may show \"Windows protected your PC\" because the installer isn't code-signed yet: click **More info → Run anyway**." \
+              --latest
+          fi

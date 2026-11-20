@@ -2130,4 +2130,4 @@ a {
     white-space: nowrap;
 }
 .latest-version strong { color: var(--text-primary); font-weight: 700; }
-.nav-download-wrapper .latest-version { font-size: 0.62rem; padding: 1px 8px; }
+.nav-latest { align-self: center; font-size: 0.72rem; padding: 5px 12px; }
